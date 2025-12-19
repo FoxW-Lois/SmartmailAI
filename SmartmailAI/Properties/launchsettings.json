@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SmartmailAI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SmartmailAI (Unpackaged)": {
+      "commandName": "Project",
+      "commandLineArgs": "/startup"
+    }
+  }
+}
