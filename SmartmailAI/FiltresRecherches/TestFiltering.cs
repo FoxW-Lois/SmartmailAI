@@ -1,151 +1,127 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MailFiltering;
 
-namespace MailFiltering
+class Program
 {
-    // =========================
-    // MODELE MAIL
-    // =========================
-    public sealed class MailMessage
+    static void Main()
     {
-        public Guid Id { get; init; }
-        public string From { get; init; } = "";
-        public string To { get; init; } = "";
-        public string Subject { get; init; } = "";
-        public string Body { get; init; } = "";
-        public DateTime Date { get; init; }
-        public bool IsRead { get; init; }
-        public bool HasAttachments { get; init; }
-        public string Folder { get; init; } = "";
-        public long Size { get; init; }
-    }
+        Console.WriteLine("=== MAIL FILTERING TESTS ===\n");
 
-    // =========================
-    // INTERFACE FILTRE
-    // =========================
-    public interface IMailFilter
-    {
-        bool Match(MailMessage mail);
-    }
+        var mails = SeedMails();
 
-    // =========================
-    // FILTRES SIMPLES
-    // =========================
-    public sealed class TextContainsFilter : IMailFilter
-    {
-        private readonly Func<MailMessage, string> _selector;
-        private readonly string _value;
-
-        public TextContainsFilter(Func<MailMessage, string> selector, string value)
-        {
-            _selector = selector;
-            _value = value;
-        }
-
-        public bool Match(MailMessage mail)
-            => _selector(mail)
-                .Contains(_value, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public sealed class DateAfterFilter : IMailFilter
-    {
-        private readonly DateTime _date;
-        public DateAfterFilter(DateTime date) => _date = date;
-        public bool Match(MailMessage mail) => mail.Date >= _date;
-    }
-
-    public sealed class DateBeforeFilter : IMailFilter
-    {
-        private readonly DateTime _date;
-        public DateBeforeFilter(DateTime date) => _date = date;
-        public bool Match(MailMessage mail) => mail.Date <= _date;
-    }
-
-    public sealed class BooleanFilter : IMailFilter
-    {
-        private readonly Func<MailMessage, bool> _selector;
-        private readonly bool _expected;
-
-        public BooleanFilter(Func<MailMessage, bool> selector, bool expected)
-        {
-            _selector = selector;
-            _expected = expected;
-        }
-
-        public bool Match(MailMessage mail)
-            => _selector(mail) == _expected;
-    }
-
-    public sealed class SizeGreaterThanFilter : IMailFilter
-    {
-        private readonly long _size;
-        public SizeGreaterThanFilter(long size) => _size = size;
-        public bool Match(MailMessage mail) => mail.Size >= _size;
-    }
-
-    // =========================
-    // FILTRES COMPOSES
-    // =========================
-    public enum LogicalOperator
-    {
-        And,
-        Or
-    }
-
-    public sealed class FilterGroup : IMailFilter
-    {
-        public LogicalOperator Operator { get; }
-        public IReadOnlyList<IMailFilter> Filters { get; }
-
-        public FilterGroup(LogicalOperator op, params IMailFilter[] filters)
-        {
-            Operator = op;
-            Filters = filters;
-        }
-
-        public bool Match(MailMessage mail)
-        {
-            return Operator switch
-            {
-                LogicalOperator.And => Filters.All(f => f.Match(mail)),
-                LogicalOperator.Or  => Filters.Any(f => f.Match(mail)),
-                _ => false
-            };
-        }
-    }
-
-    public sealed class NotFilter : IMailFilter
-    {
-        private readonly IMailFilter _filter;
-        public NotFilter(IMailFilter filter) => _filter = filter;
-        public bool Match(MailMessage mail) => !_filter.Match(mail);
-    }
-
-    // =========================
-    // SERVICE DE RECHERCHE
-    // =========================
-    public static class MailSearch
-    {
-        public static IEnumerable<MailMessage> Apply(
-            IEnumerable<MailMessage> mails,
-            IMailFilter filter)
-        {
-            return mails.Where(filter.Match);
-        }
-    }
-
-    // =========================
-    // EXEMPLES D'USAGE
-    // =========================
-    /*
-        var filter = new FilterGroup(
-            LogicalOperator.And,
-            new TextContainsFilter(m => m.From, "paul"),
-            new BooleanFilter(m => m.HasAttachments, true),
-            new DateAfterFilter(DateTime.Today.AddDays(-7))
+        Test(
+            name: "Filtre simple sur expéditeur",
+            expectedCount: 1,
+            mails,
+            new TextContainsFilter(m => m.From, "paul")
         );
 
-        var result = MailSearch.Apply(allMails, filter);
-    */
+        Test(
+            name: "Filtre AND (from + pièce jointe)",
+            expectedCount: 1,
+            mails,
+            new FilterGroup(
+                LogicalOperator.And,
+                new TextContainsFilter(m => m.From, "paul"),
+                new BooleanFilter(m => m.HasAttachments, true)
+            )
+        );
+
+        Test(
+            name: "Filtre OR (paul OU spam)",
+            expectedCount: 2,
+            mails,
+            new FilterGroup(
+                LogicalOperator.Or,
+                new TextContainsFilter(m => m.From, "paul"),
+                new TextContainsFilter(m => m.Subject, "million")
+            )
+        );
+
+        Test(
+            name: "Filtre NOT (exclure spam)",
+            expectedCount: 1,
+            mails,
+            new NotFilter(
+                new TextContainsFilter(m => m.Subject, "million")
+            )
+        );
+
+        Test(
+            name: "Filtre date (7 derniers jours)",
+            expectedCount: 1,
+            mails,
+            new DateAfterFilter(DateTime.Now.AddDays(-7))
+        );
+
+        Console.WriteLine("\n✅ Tous les tests sont passés avec succès.");
+    }
+
+    // =========================
+    // TEST
+    // =========================
+    static void Test(
+        string name,
+        int expectedCount,
+        List<MailMessage> mails,
+        IMailFilter filter)
+    {
+        var result = MailSearch.Apply(mails, filter).ToList();
+
+        if (result.Count != expectedCount)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"❌ ECHEC : {name}");
+            Console.ResetColor();
+
+            Console.WriteLine($"Attendu : {expectedCount}");
+            Console.WriteLine($"Obtenu : {result.Count}");
+            Console.WriteLine("Résultats obtenus :");
+
+            foreach (var mail in result)
+                Console.WriteLine($"- {mail.From} | {mail.Subject}");
+
+            Environment.Exit(1);
+        }
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"✔ {name}");
+        Console.ResetColor();
+    }
+
+    // =========================
+    // DONNEES DE TEST
+    // =========================
+    static List<MailMessage> SeedMails() => new()
+    {
+        new MailMessage
+        {
+            From = "paul@example.com",
+            Subject = "Facture EDF",
+            Date = DateTime.Now.AddDays(-2),
+            HasAttachments = true,
+            IsRead = false,
+            Size = 300_000
+        },
+        new MailMessage
+        {
+            From = "spam@pub.com",
+            Subject = "Gagne 1 million",
+            Date = DateTime.Now.AddDays(-1),
+            HasAttachments = false,
+            IsRead = false,
+            Size = 50_000
+        },
+        new MailMessage
+        {
+            From = "marie@example.com",
+            Subject = "Réunion",
+            Date = DateTime.Now.AddDays(-30),
+            HasAttachments = false,
+            IsRead = true,
+            Size = 80_000
+        }
+    };
 }
