@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Models;
 
@@ -10,6 +11,7 @@ namespace SmartmailAI.Core.Services;
 public class MailboxDataService : IMailboxDataService
 {
 	private List<Email> _AllEmails;
+	private static readonly ResourceLoader _resources =	new();
 
 	public MailboxDataService()
 	{
@@ -23,19 +25,19 @@ public class MailboxDataService : IMailboxDataService
 		{
 			new MailboxCategory
 			{
-				Title = "Boîte de réception",
+				Title = _resources.GetString("Mailbox_Inbox"),
 				Icon = "\uE715", // Mail
 			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox)
 			},
 			new MailboxCategory
 			{
-				Title = "Messages envoyés",
+				Title = _resources.GetString("Mailbox_Sent"),
 				Icon = "\uE122", // Send
 			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent)
 			},
 			new MailboxCategory
 			{
-				Title = "Phishing",
+				Title = _resources.GetString("Mailbox_Phishing"),
 				Icon = "\uE7BA", // Warning
 			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Phishing)
 			}

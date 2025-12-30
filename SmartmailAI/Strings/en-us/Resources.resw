@@ -244,4 +244,13 @@
   <data name="Shell_DataGrid.Content" xml:space="preserve">
     <value>DataGrid</value>
   </data>
+  <data name="Mailbox_Inbox" xml:space="preserve">
+    <value>Inbox</value>
+  </data>
+  <data name="Mailbox_Sent" xml:space="preserve">
+    <value>Sent messages</value>
+  </data>
+  <data name="Mailbox_Phishing" xml:space="preserve">
+    <value>Phishing</value>
+  </data>
 </root>
