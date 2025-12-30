@@ -4,15 +4,15 @@ namespace SmartmailAI.Contracts.Services;
 
 public interface IAppNotificationService
 {
-    void Initialize();
+	void Initialize();
 
-    bool Show(string payload);
+	bool Show(string payload);
 
-    void TryShow(string payload);
+	void TryShow(string payload);
 
-    void RunShow(string payload);
+	void RunShow(string payload);
 
-    NameValueCollection ParseArguments(string arguments);
+	NameValueCollection ParseArguments(string arguments);
 
-    void Unregister();
+	void Unregister();
 }
