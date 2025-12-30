@@ -34,7 +34,7 @@
 					Text="Réceptionnaire" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
 					<Run Text="À (vous) : " />
-					<Run Text="{x:Bind DetailsListMenuItem_Email.ReceiverEmails, Mode=OneWay}" />
+					<Run Text="{x:Bind DetailsListMenuItem_Email.ReceiverEmail, Mode=OneWay}" />
 				</TextBlock>
 
 				<TextBlock

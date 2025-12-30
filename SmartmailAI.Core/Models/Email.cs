@@ -23,7 +23,7 @@ public class Email
 	}
 
 	public string ReceiverName { get; set; }
-	public string ReceiverEmails { get; set; }
+	public string ReceiverEmail { get; set; }
 	public Uri ReceiverProfileImage { get; set; }
 
 	public ImageSource ReceiverProfileImageSource
