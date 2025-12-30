@@ -5,37 +5,36 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly ISampleDataService _sampleDataService;
+	private readonly IMailboxDataService _mailboxDataService;
 
-    [ObservableProperty]
-    private SampleOrder? selected;
+	[ObservableProperty]
+	private MailboxCategory? selectedCategory;
 
-    public ObservableCollection<SampleOrder> SampleItems { get; private set; } = [];
+	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
-    public DetailsList_ViewModel(ISampleDataService sampleDataService)
-    {
-        _sampleDataService = sampleDataService;
-    }
+	public DetailsList_ViewModel(IMailboxDataService mailboxDataService)
+	{
+		_mailboxDataService = mailboxDataService;
+	}
 
-    public async void OnNavigatedTo(object parameter)
-    {
-        SampleItems.Clear();
+	public async void OnNavigatedTo(object parameter)
+	{
+		Categories.Clear();
 
-        // TODO: Replace with real data.
-        var data = await _sampleDataService.GetListDetailsDataAsync();
+		var categories = await _mailboxDataService.GetAllCategoriesAsync();
 
-        foreach (var item in data)
-        {
-            SampleItems.Add(item);
-        }
-    }
+		foreach (var category in categories)
+		{
+			Categories.Add(category);
+		}
+	}
 
-    public void OnNavigatedFrom()
-    {
-    }
+	public void OnNavigatedFrom()
+	{
+	}
 
-    public void EnsureItemSelected()
-    {
-        Selected ??= SampleItems.First();
-    }
+	public void EnsureItemSelected()
+	{
+		SelectedCategory ??= Categories.FirstOrDefault();
+	}
 }

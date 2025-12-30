@@ -50,6 +50,7 @@
         <DefineConstants>SINGLE_INSTANCE;$(DefineConstants)</DefineConstants><!-- Single Instance -->
         <DefineConstants>TRAY_ICON;$(DefineConstants)</DefineConstants><!-- Tray Icon -->
         <DefineConstants>SPLASH_SCREEN;$(DefineConstants)</DefineConstants><!-- Splash Screen -->
+        <DefaultLanguage>fr-FR</DefaultLanguage>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(BuildingInsideVisualStudio)'!='True'">
