@@ -4,5 +4,11 @@ public enum MailboxType
 {
 	Inbox,
 	Sent,
-	Phishing
+	Snoozed,
+	Drafts,
+	Starred,
+	Trash,
+	AllMails,
+	Archives,
+	PhishingSpam,
 }

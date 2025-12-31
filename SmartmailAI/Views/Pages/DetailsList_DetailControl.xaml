@@ -26,14 +26,17 @@
 			</StackPanel>
 			<StackPanel Padding="0 15 0 0">
 				<TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Expéditeur" />
-				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind DetailsListMenuItem_Email.SenderEmail, Mode=OneWay}" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
+					<Run Text="De :" />
+					<Run Text="{x:Bind DetailsListMenuItem_Email.SenderEmail, Mode=OneWay}" />
+				</TextBlock>
 
 				<TextBlock
 					Margin="{StaticResource MediumTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"
 					Text="Réceptionnaire" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
-					<Run Text="À (vous) : " />
+					<Run Text="À :" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.ReceiverEmail, Mode=OneWay}" />
 				</TextBlock>
 
@@ -41,7 +44,12 @@
 					Margin="{StaticResource MediumTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"
 					Text="Date d'envoi" />
-				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind DetailsListMenuItem_Email.DateSent, Mode=OneWay}" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
+					<Run Text="Le :" />
+					<Run Text="{x:Bind DetailsListMenuItem_Email.DaySent, Mode=OneWay}" />
+					<Run Text=" à :" />
+					<Run Text="{x:Bind DetailsListMenuItem_Email.TimeSent, Mode=OneWay}" />
+				</TextBlock>
 
 				<TextBlock
 					Margin="{StaticResource MediumTopMargin}"

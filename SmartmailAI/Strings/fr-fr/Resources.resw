@@ -250,7 +250,25 @@
   <data name="Mailbox_Sent" xml:space="preserve">
     <value>Messages envoyés</value>
   </data>
-  <data name="Mailbox_Phishing" xml:space="preserve">
-    <value>Phishing</value>
+  <data name="Mailbox_Snoozed" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="Mailbox_Drafts" xml:space="preserve">
+    <value>Brouillons</value>
+  </data>
+  <data name="Mailbox_Trash" xml:space="preserve">
+    <value>Corbeille</value>
+  </data>
+  <data name="Mailbox_Starred" xml:space="preserve">
+    <value>Favoris</value>
+  </data>
+  <data name="Mailbox_AllMails" xml:space="preserve">
+    <value>Tous les messages</value>
+  </data>
+  <data name="Mailbox_Archives" xml:space="preserve">
+    <value>Archivés</value>
+  </data>
+  <data name="Mailbox_PhishingSpam" xml:space="preserve">
+    <value>Phishing &amp; Spams</value>
   </data>
 </root>
