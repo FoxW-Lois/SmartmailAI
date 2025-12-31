@@ -64,7 +64,7 @@
 						<TextBlock
 							Grid.Column="1"
 							Style="{StaticResource ListSubTitle_RightStyle}"
-							Text="{x:Bind DateSent}" />
+							Text="{x:Bind DisplayDateSent}" />
 					</Grid>
 					<TextBlock Style="{StaticResource ListSubTitle_BoldStyle}" Text="{x:Bind Subject}" />
 					<TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind PreviewContent}" />

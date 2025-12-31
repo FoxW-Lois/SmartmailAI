@@ -11,6 +11,26 @@ public class Email
 	public string SenderEmail { get; set; }
 	public Uri? SenderProfileImage { get; set; }
 
+	public string? ReceiverName { get; set; }
+	public string? ReceiverEmail { get; set; }
+	public Uri? ReceiverProfileImage { get; set; }
+
+	public string? Subject { get; set; }
+	public string? Content { get; set; }
+
+	public DateTime? DateSent { get; set; }
+
+	public List<string>? Attachments { get; set; }
+
+	public string AttachmentsDisplay => Attachments != null && Attachments.Count != 0
+		? string.Join(", ", Attachments) 
+		: "Aucune pièce jointe";
+
+	// Pour la catégorisation
+	public MailboxType MailboxType { get; set; }
+
+	// --- Propriété seulement pour l'affichage ---
+	// Se remplit à partir de SenderProfileImage
 	public ImageSource SenderProfileImageSource
 	{
 		get
@@ -22,10 +42,7 @@ public class Email
 		}
 	}
 
-	public string? ReceiverName { get; set; }
-	public string? ReceiverEmail { get; set; }
-	public Uri? ReceiverProfileImage { get; set; }
-
+	// Se remplit à partir de ReceiverProfileImage
 	public ImageSource ReceiverProfileImageSource
 	{
 		get
@@ -37,9 +54,7 @@ public class Email
 		}
 	}
 
-	public string? Subject { get; set; }
-	public string? Content { get; set; }
-
+	// Se remplit à partir de Content
 	public string? PreviewContent
 	{
 		get
@@ -53,17 +68,22 @@ public class Email
 		}
 	}
 
-	public DateTime? DateSent { get; set; }
-
+	// Se remplissent à partir de DateSent
 	public DateOnly? DaySent => DateSent is null ? null : DateOnly.FromDateTime(DateSent.Value);
 
 	public TimeOnly? TimeSent => DateSent is null ? null : TimeOnly.FromDateTime(DateSent.Value);
 
-	public List<string>? Attachments { get; set; }
+	public bool IsSameDay => DateSent.HasValue && DateSent.Value.Date == DateTime.Today;
 
-	public string AttachmentsDisplay => Attachments != null && Attachments.Count != 0
-		? string.Join(", ", Attachments) : "Aucune pièce jointe";
+	public string DisplayDateSent
+	{
+		get
+		{
+			if (!DateSent.HasValue) return string.Empty;
 
-	// Pour la catégorisation
-	public MailboxType MailboxType { get; set; }
+			return IsSameDay
+				? DateSent.Value.ToString("HH:mm")
+				: DateSent.Value.ToString("dd/MM/yyyy");
+		}
+	}
 }
