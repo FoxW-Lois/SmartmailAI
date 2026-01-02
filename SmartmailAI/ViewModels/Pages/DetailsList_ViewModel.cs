@@ -17,7 +17,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		_mailboxDataService = mailboxDataService;
 	}
 
-	public async void OnNavigatedTo(object parameter)
+	public async Task OnNavigatedTo(object parameter)
 	{
 		Categories.Clear();
 

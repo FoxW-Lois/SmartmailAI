@@ -14,7 +14,7 @@ public partial class DataGrid_ViewModel : ObservableRecipient, INavigationAware
         _sampleDataService = sampleDataService;
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public async Task OnNavigatedTo(object parameter)
     {
         Source.Clear();
 

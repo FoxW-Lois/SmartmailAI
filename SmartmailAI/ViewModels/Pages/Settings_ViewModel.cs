@@ -68,7 +68,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 	#region INavigationAware
 
-	public async void OnNavigatedTo(object parameter)
+	public async Task OnNavigatedTo(object parameter)
 	{
 		LanguageIndex = AppLanguageHelper.SupportedLanguages.IndexOf(AppLanguageHelper.PreferredLanguage);
 
