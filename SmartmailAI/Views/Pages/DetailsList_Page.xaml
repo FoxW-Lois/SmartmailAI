@@ -74,7 +74,7 @@
 
 		<DataTemplate x:Key="DetailsMailsTemplate" x:DataType="models:Email">
 			<Grid Margin="64 0 0 0">
-				<views:DetailsList_DetailControl DetailsListMenuItem_Email="{x:Bind}" />
+				<views:DetailsList_StandardControl DetailsListMenuItem_Email="{x:Bind}" />
 			</Grid>
 		</DataTemplate>
 
