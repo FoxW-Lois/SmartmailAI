@@ -7,6 +7,7 @@ namespace SmartmailAI.Core.Models;
 
 public class Email
 {
+	// --- Propriétés de base / Composition ---
 	public string SenderName { get; set; }
 	public string SenderEmail { get; set; }
 	public Uri? SenderProfileImage { get; set; }
@@ -28,6 +29,12 @@ public class Email
 
 	// Pour la catégorisation
 	public MailboxType MailboxType { get; set; }
+
+	// Statut de favori
+	public bool IsStarred { get; set; } = false;
+
+	// Statut de lecture
+	public bool IsRead { get; set; } = false;
 
 	// --- Propriété seulement pour l'affichage ---
 	// Se remplit à partir de SenderProfileImage

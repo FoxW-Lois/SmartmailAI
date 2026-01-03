@@ -9,6 +9,7 @@
 	xmlns:models="using:SmartmailAI.Core.Models"
 	xmlns:viewmodels="using:SmartmailAI.ViewModels.Pages"
 	xmlns:views="using:SmartmailAI.Views.Pages"
+	x:Name="RootPage"
 	behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
 	d:DataContext="{d:DesignInstance Type=viewmodels:DetailsList_ViewModel}"
 	NavigationCacheMode="Required"
@@ -40,6 +41,51 @@
 
 		<DataTemplate x:Key="MailItemTemplate" x:DataType="models:Email">
 			<Grid Height="110" Margin="0 0 12 0">
+				<Grid.ContextFlyout>
+					<MenuFlyout>
+						<!--  Favoris  -->
+						<MenuFlyoutItem
+							Command="{Binding DataContext.MarkAsStarredCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Icon="Favorite"
+							Text="Favoris" />
+
+						<MenuFlyoutSeparator />
+
+						<!--  Marquer comme lu  -->
+						<MenuFlyoutItem
+							Command="{Binding DataContext.MarkAsReadCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Icon="Accept"
+							Text="Marquer comme lu" />
+
+						<!--  Marquer comme non-lu  -->
+						<MenuFlyoutItem
+							Command="{Binding DataContext.MarkAsUnreadCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Icon="Undo"
+							Text="Marquer comme non-lu" />
+
+						<MenuFlyoutSeparator />
+
+						<!--  Archiver  -->
+						<MenuFlyoutItem
+							Command="{Binding DataContext.ArchiveMailCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Icon="Folder"
+							Text="Archiver" />
+
+						<!--  Supprimer  -->
+						<MenuFlyoutItem
+							Command="{Binding DataContext.DeleteMailCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Foreground="IndianRed"
+							Icon="Delete"
+							Text="Supprimer" />
+
+					</MenuFlyout>
+				</Grid.ContextFlyout>
+
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />

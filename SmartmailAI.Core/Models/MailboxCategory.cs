@@ -8,8 +8,6 @@ public class MailboxCategory
 	public string Icon { get; set; }
 	public IEnumerable<Email> Items { get; set; }
 
-	// Clé de navigation
-	public MailboxCategoryViewType ViewType { get; set; }
 
 	// Pour le second ListDetailsView
 	public Email SelectedEmail { get; set; }

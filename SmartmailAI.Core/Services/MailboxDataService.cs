@@ -17,6 +17,8 @@ public class MailboxDataService : IMailboxDataService
 	{
 	}
 
+	#region Données de test
+
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
 		_AllEmails ??= [.. AllEmails()];
@@ -27,64 +29,55 @@ public class MailboxDataService : IMailboxDataService
 			{
 				Title = _resources.GetString("Mailbox_Inbox"),
 				Icon = "\uE715", // Mail
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
-				ViewType = MailboxCategoryViewType.Standard
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Sent"),
 				Icon = "\uE122", // Send
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
-				ViewType = MailboxCategoryViewType.Standard
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Snoozed"),
 				Icon = "\uE823", // Clock
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
-				ViewType = MailboxCategoryViewType.Standard
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Drafts"),
 				Icon = "\uE7C3", // Document
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
-				ViewType = MailboxCategoryViewType.Special
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Starred"),
 				Icon = "\uE734", // FavoriteStar
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Starred),
-				ViewType = MailboxCategoryViewType.Special
+			    Items = _AllEmails.Where(e => e.IsStarred == true)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Trash"),
 				Icon = "\uE74D", // Delete
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
-				ViewType = MailboxCategoryViewType.Grid
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.AllMails),
-				ViewType = MailboxCategoryViewType.Standard
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.AllMails)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Archives"),
 				Icon = "\uE7B8", // Archive
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
-				ViewType = MailboxCategoryViewType.Grid
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives)
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_PhishingSpam"),
 				Icon = "\uE7BA", // Warning
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
-				ViewType = MailboxCategoryViewType.Grid
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam)
 			}
 		};
 
@@ -108,7 +101,9 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nPeux-tu me confirmer ta disponibilité pour la réunion de suivi prévue demain à 10h ?\n\nCordialement,\nMarie",
 				DateSent = DateTime.Now.AddDays(-2),
 				Attachments = [ "Ordre_du_jour.pdf" ],
-				MailboxType = MailboxType.Inbox
+				MailboxType = MailboxType.Inbox,
+				IsRead = false,
+				IsStarred = true
 			},
 			new Email
 			{
@@ -122,7 +117,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nMerci de vérifier les informations de ton dossier RH via l’intranet.\n\nCordialement,\nService RH",
 				DateSent = DateTime.Now.AddDays(-5),
 				Attachments = [],
-				MailboxType = MailboxType.Inbox
+				MailboxType = MailboxType.Inbox,
+				IsRead = false
 			},
 			new Email
 			{
@@ -136,7 +132,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nUne maintenance du système est prévue ce soir entre 22h et 23h.\n\nMerci de ta compréhension.",
 				DateSent = DateTime.Now.AddHours(-8),
 				Attachments = [],
-				MailboxType = MailboxType.Inbox
+				MailboxType = MailboxType.Inbox,
+				IsRead = true
 			},
 			// ------ Sent Emails ------
 			new Email
@@ -151,7 +148,9 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Marie,\n\nC’est confirmé pour demain à 10h.\n\nÀ demain,\nJean",
 				DateSent = DateTime.Now.AddDays(-1),
 				Attachments = [],
-				MailboxType = MailboxType.Sent
+				MailboxType = MailboxType.Sent,
+				IsRead = true,
+				IsStarred = true
 			},
 			new Email
 			{
@@ -165,7 +164,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour,\n\nLes informations ont été vérifiées et mises à jour.\n\nCordialement,\nJean Dupont",
 				DateSent = DateTime.Now.AddDays(-4),
 				Attachments = [],
-				MailboxType = MailboxType.Sent
+				MailboxType = MailboxType.Sent,
+				IsRead = true
 			},
 			new Email
 			{
@@ -179,7 +179,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour,\n\nCette maintenance aura-t-elle un impact sur l’accès distant ?\n\nMerci,\nJean",
 				DateSent = DateTime.Now.AddHours(-6),
 				Attachments = [],
-				MailboxType = MailboxType.Sent
+				MailboxType = MailboxType.Sent,
+				IsRead = true
 			},
 			// ------ Snoozed Emails ------
 			new Email
@@ -194,7 +195,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nMerci de valider la note de frais du mois dernier avant la fin de semaine.\n\nCordialement,\nComptabilité",
 				DateSent = DateTime.Now.AddDays(-3),
 				Attachments = [ "note_de_frais.pdf" ],
-				MailboxType = MailboxType.Snoozed
+				MailboxType = MailboxType.Snoozed,
+				IsRead = false
 			},
 			new Email
 			{
@@ -208,7 +210,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nJe reviens vers toi concernant la proposition envoyée la semaine dernière.\n\nÀ bientôt,\nClaire",
 				DateSent = DateTime.Now.AddDays(-4),
 				Attachments = [],
-				MailboxType = MailboxType.Snoozed
+				MailboxType = MailboxType.Snoozed,
+				IsRead = false
 			},
 			// ------ Drafts Emails ------
 			new Email
@@ -221,7 +224,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour,\n\nJe souhaiterais discuter de la possibilité de télétravailler un jour par semaine.",
 				DateSent = DateTime.Now,
 				Attachments = [],
-				MailboxType = MailboxType.Drafts
+				MailboxType = MailboxType.Drafts,
+				IsRead = false
 			},
 			new Email
 			{
@@ -233,36 +237,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Marie,\n\nVoici un premier brouillon du compte-rendu de la réunion.",
 				DateSent = DateTime.Now,
 				Attachments = [ "compte_rendu_draft.docx" ],
-				MailboxType = MailboxType.Drafts
-			},
-			// ------ Starred Emails ------
-			new Email
-			{
-				SenderName = "Direction Générale",
-				SenderEmail = "direction@entreprise.com",
-				SenderProfileImage = new Uri("https://randomuser.me/api/portraits/men/80.jpg"),
-				ReceiverName = "Jean Dupont",
-				ReceiverEmail = "jean.dupont@exemple.com",
-				ReceiverProfileImage = new Uri("https://randomuser.me/api/portraits/men/32.jpg"),
-				Subject = "Annonce stratégique",
-				Content = "Bonjour Jean,\n\nUne annonce importante sera faite lors de la réunion de vendredi.\n\nCordialement,\nLa Direction",
-				DateSent = DateTime.Now.AddDays(-10),
-				Attachments = [],
-				MailboxType = MailboxType.Starred
-			},
-			new Email
-			{
-				SenderName = "Jean Dupont",
-				SenderEmail = "jean.dupont@exemple.com",
-				SenderProfileImage = new Uri("https://randomuser.me/api/portraits/men/32.jpg"),
-				ReceiverName = "Client Premium",
-				ReceiverEmail = "contact@client-premium.com",
-				ReceiverProfileImage = null,
-				Subject = "Contrat signé",
-				Content = "Bonjour,\n\nJe vous confirme que le contrat a bien été signé.\n\nCordialement,\nJean Dupont",
-				DateSent = DateTime.Now.AddDays(-15),
-				Attachments = [ "contrat_signe.pdf" ],
-				MailboxType = MailboxType.Starred
+				MailboxType = MailboxType.Drafts,
+				IsRead = false
 			},
 			// ------ Trash Emails ------
 			new Email
@@ -277,7 +253,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Découvrez les dernières tendances technologiques de la semaine.",
 				DateSent = DateTime.Now.AddDays(-20),
 				Attachments = [],
-				MailboxType = MailboxType.Trash
+				MailboxType = MailboxType.Trash,
+				IsRead = true
 			},
 			new Email
 			{
@@ -291,7 +268,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Profitez de cette offre exceptionnelle valable aujourd’hui seulement.",
 				DateSent = DateTime.Now.AddDays(-30),
 				Attachments = [],
-				MailboxType = MailboxType.Trash
+				MailboxType = MailboxType.Trash,
+				IsRead = true
 			},
 			// ------ Archives Emails ------
 			new Email
@@ -306,7 +284,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nMerci pour ton travail durant cette mission.\n\nBonne continuation.",
 				DateSent = DateTime.Now.AddYears(-1),
 				Attachments = [],
-				MailboxType = MailboxType.Archives
+				MailboxType = MailboxType.Archives,
+				IsRead = true
 			},
 			new Email
 			{
@@ -320,7 +299,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Bonjour Jean,\n\nTa formation a bien été validée.\n\nCordialement,\nService Formation",
 				DateSent = DateTime.Now.AddMonths(-6),
 				Attachments = [ "certificat.pdf" ],
-				MailboxType = MailboxType.Archives
+				MailboxType = MailboxType.Archives,
+				IsRead = true
 			},
 			// ------ Phishing & Spam Emails ------
 			new Email
@@ -335,7 +315,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Nous avons détecté une activité inhabituelle sur votre compte.\nMerci de confirmer vos informations sous 24h.",
 				DateSent = DateTime.Now.AddHours(-12),
 				Attachments = [],
-				MailboxType = MailboxType.PhishingSpam
+				MailboxType = MailboxType.PhishingSpam,
+				IsRead = false
 			},
 			new Email
 			{
@@ -349,7 +330,8 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Votre mot de passe Microsoft arrive à expiration.\nCliquez sur le lien ci-dessous pour le renouveler.",
 				DateSent = DateTime.Now.AddDays(-1),
 				Attachments = [],
-				MailboxType = MailboxType.PhishingSpam
+				MailboxType = MailboxType.PhishingSpam,
+				IsRead = false
 			},
 			new Email
 			{
@@ -362,10 +344,13 @@ public class MailboxDataService : IMailboxDataService
 				Content = "Votre colis est en attente de frais de livraison.\nVeuillez régulariser la situation rapidement.",
 				DateSent = DateTime.Now.AddDays(-3),
 				Attachments = [ "facture.zip" ],
-				MailboxType = MailboxType.PhishingSpam
+				MailboxType = MailboxType.PhishingSpam,
+				IsRead = false
 			}
 		];
 	}
+
+	#endregion Données de test
 
 	public async Task<IEnumerable<Email>> GetListDetails_AllEmailsAsync()
 	{
@@ -373,5 +358,72 @@ public class MailboxDataService : IMailboxDataService
 
 		await Task.CompletedTask;
 		return _AllEmails;
+	}
+
+	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
+	{
+		_AllEmails ??= [.. AllEmails()];
+		var emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
+
+		await Task.CompletedTask;
+		return emails;
+	}
+
+	public Task MarkEmailAsReadAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.IsRead = true;
+		return Task.CompletedTask;
+	}
+
+	public Task MarkEmailAsUnreadAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.IsRead = false;
+		return Task.CompletedTask;
+	}
+
+	public Task DeleteEmailAsync(Email email)
+	{
+		if (email is null || _AllEmails is null)
+			return Task.CompletedTask;
+
+		_AllEmails.Remove(email);
+		return Task.CompletedTask;
+	}
+
+	public Task MarkEmailAsTrashedAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.MailboxType = MailboxType.Trash;
+		return Task.CompletedTask;
+	}
+
+	public Task MarkEmailAsArchivedAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.MailboxType = MailboxType.Archives;
+		return Task.CompletedTask;
+	}
+
+	public Task MarkEmailAsStarredAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		if (!email.IsStarred)
+			email.IsStarred = true;
+		else
+			email.IsStarred = false;
+
+		return Task.CompletedTask;
 	}
 }
