@@ -271,4 +271,25 @@
   <data name="Mailbox_PhishingSpam" xml:space="preserve">
     <value>Phishing &amp; Spams</value>
   </data>
+  <data name="Email_Action_Favorite.Text" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
+  <data name="Email_Action_MarkAsRead.Text" xml:space="preserve">
+    <value>Mark as read</value>
+  </data>
+  <data name="Email_Action_MarkAsUnread.Text" xml:space="preserve">
+    <value>Mark as unread</value>
+  </data>
+  <data name="Email_Action_Archive.Text" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="Email_Action_Restore.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Email_Action_Delete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Mailbox_Unread" xml:space="preserve">
+    <value>Unread</value>
+  </data>
 </root>

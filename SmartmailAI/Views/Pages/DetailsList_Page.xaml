@@ -45,51 +45,51 @@
 					<MenuFlyout>
 						<!--  Favoris  -->
 						<MenuFlyoutItem
+							x:Uid="Email_Action_Favorite"
 							Command="{Binding DataContext.MarkAsStarredCommand, ElementName=RootPage}"
 							CommandParameter="{Binding}"
-							Icon="Favorite"
-							Text="Favoris" />
+							Icon="Favorite" />
 
 						<!--  Marquer comme lu  -->
 						<MenuFlyoutItem
+							x:Uid="Email_Action_MarkAsRead"
 							Command="{Binding DataContext.MarkAsReadCommand, ElementName=RootPage}"
 							CommandParameter="{Binding}"
-							Icon="Accept"
-							Text="Marquer comme lu" />
+							Icon="Accept" />
 
 						<!--  Marquer comme non-lu  -->
 						<MenuFlyoutItem
+							x:Uid="Email_Action_MarkAsUnread"
 							Command="{Binding DataContext.MarkAsUnreadCommand, ElementName=RootPage}"
 							CommandParameter="{Binding}"
-							Icon="Undo"
-							Text="Marquer comme non-lu" />
+							Icon="Undo" />
 
 						<MenuFlyoutSeparator />
 
 						<!--  Archiver  -->
 						<MenuFlyoutItem
+							x:Uid="Email_Action_Archive"
 							Command="{Binding DataContext.ArchiveMailCommand, ElementName=RootPage}"
 							CommandParameter="{Binding}"
-							Icon="Folder"
-							Text="Archiver" />
+							Icon="Folder" />
 
 						<!--  Restaurer  -->
 						<MenuFlyoutItem
+							x:Uid="Email_Action_Restore"
 							Command="{Binding DataContext.RestoreMailCommand, ElementName=RootPage}"
 							CommandParameter="{Binding}"
 							Foreground="LightGreen"
-							Icon="Back"
-							Text="Restaurer" />
+							Icon="Back" />
 
 						<MenuFlyoutSeparator />
 
 						<!--  Supprimer  -->
 						<MenuFlyoutItem
+							x:Uid="Email_Action_Delete"
 							Command="{Binding DataContext.DeleteMailCommand, ElementName=RootPage}"
 							CommandParameter="{Binding}"
 							Foreground="IndianRed"
-							Icon="Delete"
-							Text="Supprimer" />
+							Icon="Delete" />
 
 					</MenuFlyout>
 				</Grid.ContextFlyout>

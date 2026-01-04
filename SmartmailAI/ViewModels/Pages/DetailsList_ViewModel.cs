@@ -60,7 +60,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsReadAsync(email);
 
-		var newMailboxType = email.MailboxType;
+		var newMailboxType = MailboxType.Unread;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
@@ -72,7 +72,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsUnreadAsync(email);
 
-		var newMailboxType = email.MailboxType;
+		var newMailboxType = MailboxType.Unread;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 

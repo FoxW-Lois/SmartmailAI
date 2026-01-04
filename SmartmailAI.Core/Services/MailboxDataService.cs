@@ -62,6 +62,13 @@ public class MailboxDataService : IMailboxDataService
 			},
 			new MailboxCategory
 			{
+				Title = _resources.GetString("Mailbox_Unread"),
+				Icon = "\uE8A8", // MailFill
+				Items = _AllEmails.Where(e => e.IsRead == false),
+				MailboxType = MailboxType.Unread
+			},
+			new MailboxCategory
+			{
 				Title = _resources.GetString("Mailbox_Trash"),
 				Icon = "\uE74D", // Delete
 			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
@@ -71,7 +78,7 @@ public class MailboxDataService : IMailboxDataService
 			{
 				Title = _resources.GetString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.AllMails),
+			    Items = _AllEmails,
 				MailboxType = MailboxType.AllMails
 			},
 			new MailboxCategory

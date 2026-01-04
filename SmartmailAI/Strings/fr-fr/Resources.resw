@@ -178,7 +178,7 @@
     <value>Accueil</value>
   </data>
   <data name="TrayMenu_MenuFlyoutItem_ExitApp.Text" xml:space="preserve">
-    <value>Sortie</value>
+    <value>Sortir</value>
   </data>
   <data name="TrayMenu_MenuFlyoutItem_ShowWindow.Text" xml:space="preserve">
     <value>Montrer</value>
@@ -270,5 +270,26 @@
   </data>
   <data name="Mailbox_PhishingSpam" xml:space="preserve">
     <value>Phishing &amp; Spams</value>
+  </data>
+  <data name="Email_Action_Favorite.Text" xml:space="preserve">
+    <value>Favori</value>
+  </data>
+  <data name="Email_Action_MarkAsRead.Text" xml:space="preserve">
+    <value>Marquer comme lu</value>
+  </data>
+  <data name="Email_Action_MarkAsUnread.Text" xml:space="preserve">
+    <value>Marquer comme non-lu</value>
+  </data>
+  <data name="Email_Action_Archive.Text" xml:space="preserve">
+    <value>Archiver</value>
+  </data>
+  <data name="Email_Action_Restore.Text" xml:space="preserve">
+    <value>Restaurer</value>
+  </data>
+  <data name="Email_Action_Delete.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Mailbox_Unread" xml:space="preserve">
+    <value>Non-lus</value>
   </data>
 </root>

@@ -7,6 +7,7 @@ public enum MailboxType
 	Snoozed,
 	Drafts,
 	Starred,
+	Unread,
 	Trash,
 	AllMails,
 	Archives,
