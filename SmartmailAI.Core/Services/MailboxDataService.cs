@@ -385,7 +385,14 @@ public class MailboxDataService : IMailboxDataService
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
 	{
 		_AllEmails ??= [.. AllEmails()];
-		var emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
+		IEnumerable<Email> emails;
+
+		if (mailboxType == MailboxType.Starred)
+			emails = _AllEmails.Where(e => e.IsStarred == true);
+		else if (mailboxType == MailboxType.Unread)
+			emails = _AllEmails.Where(e => e.IsRead == false);
+		else 
+			emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
 
 		await Task.CompletedTask;
 		return emails;

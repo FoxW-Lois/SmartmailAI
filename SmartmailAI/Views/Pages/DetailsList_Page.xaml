@@ -90,7 +90,6 @@
 							CommandParameter="{Binding}"
 							Foreground="IndianRed"
 							Icon="Delete" />
-
 					</MenuFlyout>
 				</Grid.ContextFlyout>
 

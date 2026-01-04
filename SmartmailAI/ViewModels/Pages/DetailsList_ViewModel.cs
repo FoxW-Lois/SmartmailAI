@@ -50,7 +50,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsStarredAsync(email);
 
-		var newMailboxType = email.MailboxType;
+		var newMailboxType = MailboxType.Starred;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
