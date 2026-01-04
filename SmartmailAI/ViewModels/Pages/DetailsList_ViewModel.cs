@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -45,7 +44,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand(CanExecute = nameof(CanMarkAsRead))]
 	private async Task MarkAsReadAsync(Email email)
 	{
+		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsReadAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
 	private static bool CanMarkAsRead(Email? email) => email is not null && !email.IsRead;
@@ -53,7 +56,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand(CanExecute = nameof(CanMarkAsUnread))]
 	private async Task MarkAsUnreadAsync(Email email)
 	{
+		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsUnreadAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
 	private static bool CanMarkAsUnread(Email? email) => email is not null && email.IsRead;
@@ -64,14 +71,15 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		if (email is null)
 			return;
 
-		if (email.MailboxType != MailboxType.Trash)
-		{
-			await _mailboxDataService.MarkEmailAsTrashedAsync(email);
-			RefreshSelectedCategory();
-			return;
-		}
+		var previousMailboxType = email.MailboxType;
 
-		await _mailboxDataService.DeleteEmailAsync(email);
+		if (email.MailboxType != MailboxType.Trash)
+			await _mailboxDataService.MarkEmailAsTrashedAsync(email);
+		else
+			await _mailboxDataService.DeleteEmailAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
 	[RelayCommand]
@@ -80,7 +88,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		if (email is null)
 			return;
 
+		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsTrashedAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
 	[RelayCommand]
@@ -89,7 +101,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		if (email is null)
 			return;
 
+		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsArchivedAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
 	[RelayCommand]
@@ -98,6 +114,40 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		if (email is null)
 			return;
 
+		var previousMailboxType = email.MailboxType;
 		await _mailboxDataService.MarkEmailAsStarredAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
+
+	// --- Méthode pour Refresh la liste des emails affichés ---
+
+	private async void RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType)
+	{
+		if (SelectedCategory is null)
+			return;
+
+		// --- Refresh de l'onglet actuellement ouvert (ancien emplacement du mail) ---
+
+		var previousCategory = SelectedCategory;
+
+		// Recharge les mails depuis le service
+		var previousRefreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(previousMailboxType);
+
+		// Refresh UI
+		previousCategory.ItemsCollection.Clear();
+		foreach (var email in previousRefreshedEmails)
+			previousCategory.ItemsCollection.Add(email);
+
+		// --- Refresh de l'onglet devenant le nouvel emplacement du mail ---
+
+		var newCategory = Categories.FirstOrDefault(c => c.MailboxType == newMailboxType);
+
+		var newRefreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(newMailboxType);
+
+		newCategory.ItemsCollection.Clear();
+		foreach (var email in newRefreshedEmails)
+			newCategory.ItemsCollection.Add(email);
 	}
 }

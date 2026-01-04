@@ -29,55 +29,64 @@ public class MailboxDataService : IMailboxDataService
 			{
 				Title = _resources.GetString("Mailbox_Inbox"),
 				Icon = "\uE715", // Mail
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
+				MailboxType = MailboxType.Inbox
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Sent"),
 				Icon = "\uE122", // Send
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+				MailboxType = MailboxType.Sent
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Snoozed"),
 				Icon = "\uE823", // Clock
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
+				MailboxType = MailboxType.Snoozed
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Drafts"),
 				Icon = "\uE7C3", // Document
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
+				MailboxType = MailboxType.Drafts
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Starred"),
 				Icon = "\uE734", // FavoriteStar
-			    Items = _AllEmails.Where(e => e.IsStarred == true)
+			    Items = _AllEmails.Where(e => e.IsStarred == true),
+				MailboxType = MailboxType.Starred
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Trash"),
 				Icon = "\uE74D", // Delete
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
+				MailboxType = MailboxType.Trash
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.AllMails)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.AllMails),
+				MailboxType = MailboxType.AllMails
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_Archives"),
 				Icon = "\uE7B8", // Archive
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
+				MailboxType = MailboxType.Archives
 			},
 			new MailboxCategory
 			{
 				Title = _resources.GetString("Mailbox_PhishingSpam"),
 				Icon = "\uE7BA", // Warning
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam)
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
+				MailboxType = MailboxType.PhishingSpam
 			}
 		};
 
@@ -352,6 +361,8 @@ public class MailboxDataService : IMailboxDataService
 
 	#endregion Données de test
 
+	#region CRUD Emails
+
 	public async Task<IEnumerable<Email>> GetListDetails_AllEmailsAsync()
 	{
 		_AllEmails ??= [.. AllEmails()];
@@ -426,4 +437,6 @@ public class MailboxDataService : IMailboxDataService
 
 		return Task.CompletedTask;
 	}
+
+	#endregion CRUD Emails
 }
