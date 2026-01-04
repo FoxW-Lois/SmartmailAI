@@ -263,6 +263,7 @@ public class MailboxDataService : IMailboxDataService
 				DateSent = DateTime.Now.AddDays(-20),
 				Attachments = [],
 				MailboxType = MailboxType.Trash,
+				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
 			new Email
@@ -278,6 +279,7 @@ public class MailboxDataService : IMailboxDataService
 				DateSent = DateTime.Now.AddDays(-30),
 				Attachments = [],
 				MailboxType = MailboxType.Trash,
+				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
 			// ------ Archives Emails ------
@@ -294,6 +296,7 @@ public class MailboxDataService : IMailboxDataService
 				DateSent = DateTime.Now.AddYears(-1),
 				Attachments = [],
 				MailboxType = MailboxType.Archives,
+				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
 			new Email
@@ -309,6 +312,7 @@ public class MailboxDataService : IMailboxDataService
 				DateSent = DateTime.Now.AddMonths(-6),
 				Attachments = [ "certificat.pdf" ],
 				MailboxType = MailboxType.Archives,
+				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
 			// ------ Phishing & Spam Emails ------
@@ -363,7 +367,7 @@ public class MailboxDataService : IMailboxDataService
 
 	#region CRUD Emails
 
-	public async Task<IEnumerable<Email>> GetListDetails_AllEmailsAsync()
+	public async Task<IEnumerable<Email>> GetAllEmailsAsync()
 	{
 		_AllEmails ??= [.. AllEmails()];
 
@@ -378,6 +382,19 @@ public class MailboxDataService : IMailboxDataService
 
 		await Task.CompletedTask;
 		return emails;
+	}
+
+	public Task MarkEmailAsStarredAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		if (!email.IsStarred)
+			email.IsStarred = true;
+		else
+			email.IsStarred = false;
+
+		return Task.CompletedTask;
 	}
 
 	public Task MarkEmailAsReadAsync(Email email)
@@ -398,6 +415,25 @@ public class MailboxDataService : IMailboxDataService
 		return Task.CompletedTask;
 	}
 
+	public Task MarkEmailAsArchivedAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.PreviousMailboxType = email.MailboxType;
+		email.MailboxType = MailboxType.Archives;
+		return Task.CompletedTask;
+	}
+
+	public Task RestoreEmailAsync(Email email)
+	{
+		if (email is null || email.PreviousMailboxType is null)
+			return Task.CompletedTask;
+
+		email.MailboxType = (MailboxType)email.PreviousMailboxType;
+		return Task.CompletedTask;
+	}
+
 	public Task DeleteEmailAsync(Email email)
 	{
 		if (email is null || _AllEmails is null)
@@ -412,29 +448,8 @@ public class MailboxDataService : IMailboxDataService
 		if (email is null)
 			return Task.CompletedTask;
 
+		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Trash;
-		return Task.CompletedTask;
-	}
-
-	public Task MarkEmailAsArchivedAsync(Email email)
-	{
-		if (email is null)
-			return Task.CompletedTask;
-
-		email.MailboxType = MailboxType.Archives;
-		return Task.CompletedTask;
-	}
-
-	public Task MarkEmailAsStarredAsync(Email email)
-	{
-		if (email is null)
-			return Task.CompletedTask;
-
-		if (!email.IsStarred)
-			email.IsStarred = true;
-		else
-			email.IsStarred = false;
-
 		return Task.CompletedTask;
 	}
 

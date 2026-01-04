@@ -7,7 +7,8 @@ namespace SmartmailAI.Core.Models;
 
 public class Email
 {
-	// --- Propriétés de base / Composition ---
+	#region Propriétés de base / Composition
+
 	public string SenderName { get; set; }
 	public string SenderEmail { get; set; }
 	public Uri? SenderProfileImage { get; set; }
@@ -24,11 +25,18 @@ public class Email
 	public List<string>? Attachments { get; set; }
 
 	public string AttachmentsDisplay => Attachments != null && Attachments.Count != 0
-		? string.Join(", ", Attachments) 
+		? string.Join(", ", Attachments)
 		: "Aucune pièce jointe";
 
-	// Pour la catégorisation
+	#endregion Propriétés de base / Composition
+
+	#region Propriétés de gestion de l'état des mails
+
+	// Catégorisation/localisation du mail
 	public MailboxType MailboxType { get; set; }
+
+	// Précédente catégorisation/localisation avant suppression
+	public MailboxType? PreviousMailboxType { get; set; } = null;
 
 	// Statut de favori
 	public bool IsStarred { get; set; } = false;
@@ -36,7 +44,10 @@ public class Email
 	// Statut de lecture
 	public bool IsRead { get; set; } = false;
 
-	// --- Propriété seulement pour l'affichage ---
+	#endregion Propriétés de gestion de l'état des mails
+
+	#region Propriétés dédiées à l'affichage
+
 	// Se remplit à partir de SenderProfileImage
 	public ImageSource SenderProfileImageSource
 	{
@@ -93,4 +104,6 @@ public class Email
 				: DateSent.Value.ToString("dd/MM/yyyy");
 		}
 	}
+
+	#endregion Propriétés dédiées à l'affichage
 }

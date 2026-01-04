@@ -50,8 +50,6 @@
 							Icon="Favorite"
 							Text="Favoris" />
 
-						<MenuFlyoutSeparator />
-
 						<!--  Marquer comme lu  -->
 						<MenuFlyoutItem
 							Command="{Binding DataContext.MarkAsReadCommand, ElementName=RootPage}"
@@ -74,6 +72,16 @@
 							CommandParameter="{Binding}"
 							Icon="Folder"
 							Text="Archiver" />
+
+						<!--  Restaurer  -->
+						<MenuFlyoutItem
+							Command="{Binding DataContext.RestoreMailCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Foreground="LightGreen"
+							Icon="Back"
+							Text="Restaurer" />
+
+						<MenuFlyoutSeparator />
 
 						<!--  Supprimer  -->
 						<MenuFlyoutItem

@@ -21,9 +21,13 @@ public class MailboxCategory : ObservableObject
 		}
 	}
 
+	#region Propriétés pour le refresh graphique
+
 	private ObservableCollection<Email> _items = [];
 	public ObservableCollection<Email> ItemsCollection => _items;
 	public MailboxType MailboxType { get; set; }
+
+	#endregion Propriétés pour le refresh graphique
 
 	// Pour le second ListDetailsView
 	public Email SelectedEmail { get; set; }

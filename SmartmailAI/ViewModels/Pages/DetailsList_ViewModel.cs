@@ -39,7 +39,20 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedCategory ??= Categories.FirstOrDefault();
 	}
 
-	// --- Commandes au clic droit ---
+	#region Commandes au clic droit
+
+	[RelayCommand]
+	private async Task MarkAsStarredAsync(Email email)
+	{
+		if (email is null)
+			return;
+
+		var previousMailboxType = email.MailboxType;
+		await _mailboxDataService.MarkEmailAsStarredAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
 
 	[RelayCommand(CanExecute = nameof(CanMarkAsRead))]
 	private async Task MarkAsReadAsync(Email email)
@@ -64,6 +77,31 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	}
 
 	private static bool CanMarkAsUnread(Email? email) => email is not null && email.IsRead;
+
+	[RelayCommand]
+	private async Task ArchiveMailAsync(Email email)
+	{
+		if (email is null)
+			return;
+
+		var previousMailboxType = email.MailboxType;
+		await _mailboxDataService.MarkEmailAsArchivedAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
+
+	[RelayCommand(CanExecute = nameof(CanRestore))]
+	private async Task RestoreMailAsync(Email email)
+	{
+		var previousMailboxType = email.MailboxType;
+		await _mailboxDataService.RestoreEmailAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
+
+	private static bool CanRestore(Email? email) => email is not null && (email.MailboxType == MailboxType.Trash || email.MailboxType == MailboxType.Archives);
 
 	[RelayCommand]
 	private async Task DeleteMailAsync(Email email)
@@ -95,34 +133,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
-	[RelayCommand]
-	private async Task ArchiveMailAsync(Email email)
-	{
-		if (email is null)
-			return;
-
-		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsArchivedAsync(email);
-
-		var newMailboxType = email.MailboxType;
-		RefreshSelectedCategory(previousMailboxType, newMailboxType);
-	}
-
-	[RelayCommand]
-	private async Task MarkAsStarredAsync(Email email)
-	{
-		if (email is null)
-			return;
-
-		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsStarredAsync(email);
-
-		var newMailboxType = email.MailboxType;
-		RefreshSelectedCategory(previousMailboxType, newMailboxType);
-	}
+	#endregion Commandes au clic droit
 
 	// --- Méthode pour Refresh la liste des emails affichés ---
-
 	private async void RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType)
 	{
 		if (SelectedCategory is null)
