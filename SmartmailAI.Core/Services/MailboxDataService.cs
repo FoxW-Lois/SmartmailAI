@@ -21,7 +21,7 @@ public class MailboxDataService : IMailboxDataService
 
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
-		_AllEmails ??= [.. AllEmails()];
+		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
 
 		var categories = new List<MailboxCategory>
 		{
@@ -78,7 +78,8 @@ public class MailboxDataService : IMailboxDataService
 			{
 				Title = _resources.GetString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails,
+			    Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
+				// ↑ Tous les mails sauf Corbeille & Phishings/Spams
 				MailboxType = MailboxType.AllMails
 			},
 			new MailboxCategory
@@ -391,7 +392,7 @@ public class MailboxDataService : IMailboxDataService
 			emails = _AllEmails.Where(e => e.IsStarred == true);
 		else if (mailboxType == MailboxType.Unread)
 			emails = _AllEmails.Where(e => e.IsRead == false);
-		else 
+		else
 			emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
 
 		await Task.CompletedTask;
