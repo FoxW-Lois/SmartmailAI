@@ -163,19 +163,9 @@ public partial class App : Application
 				services.AddTransient<DetailsList_ViewModel>();
 				services.AddTransient<DetailsList_Page>();
 
-				services.AddTransient<ContentGrid_ViewModel>();
-				services.AddTransient<ContentGrid_Page>();
-
-				services.AddTransient<ContentGridDetail_ViewModel>();
-				services.AddTransient<ContentGridDetail_Page>();
-
-				services.AddTransient<DataGrid_ViewModel>();
-				services.AddTransient<DataGrid_Page>();
-
 				services.AddTransient<Settings_ViewModel>();
 				services.AddTransient<Settings_Page>();
 
-				services.AddTransient<ISampleDataService, SampleDataService>();
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
 
 				#endregion Views & ViewModels
