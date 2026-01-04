@@ -105,21 +105,35 @@
 					<!--  Alignement SenderName / DateSent  -->
 					<Grid>
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 						</Grid.ColumnDefinitions>
 
-						<TextBlock
+						<!--  Étoile  -->
+						<FontIcon
 							Grid.Column="0"
-							Style="{StaticResource ListTitle_Style}"
-							Text="{x:Bind SenderName}" />
+							Margin="0 0 6 0"
+							FontFamily="Segoe MDL2 Assets"
+							Foreground="Gold"
+							Glyph="&#xE734;"
+							Visibility="{x:Bind IsStarred}" />
 
 						<TextBlock
 							Grid.Column="1"
+							FontWeight="{x:Bind IsRead, Converter={StaticResource BoolToFontWeight}}"
+							Style="{StaticResource ListTitleItem_Style}"
+							Text="{x:Bind SenderName}" />
+
+						<TextBlock
+							Grid.Column="2"
 							Style="{StaticResource ListSubTitle_RightStyle}"
 							Text="{x:Bind DisplayDateSent}" />
 					</Grid>
-					<TextBlock Style="{StaticResource ListSubTitle_BoldStyle}" Text="{x:Bind Subject}" />
+					<TextBlock
+						FontWeight="{x:Bind IsRead, Converter={StaticResource BoolToFontWeight}}"
+						Style="{StaticResource ListSubTitleStyle}"
+						Text="{x:Bind Subject}" />
 					<TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind PreviewContent}" />
 				</StackPanel>
 			</Grid>

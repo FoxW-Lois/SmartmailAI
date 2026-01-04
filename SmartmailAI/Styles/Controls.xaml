@@ -44,11 +44,11 @@
 	</Style>
 
 	<Style
-		x:Key="ListTitle_Style"
+		x:Key="ListTitleItem_Style"
 		BasedOn="{StaticResource BaseTextBlockStyle}"
 		TargetType="TextBlock">
 		<Setter Property="FontSize" Value="16" />
-		<Setter Property="FontWeight" Value="Bold" />
+		<Setter Property="FontWeight" Value="Normal" />
 		<Setter Property="MaxLines" Value="1" />
 		<Setter Property="TextTrimming" Value="CharacterEllipsis" />
 	</Style>
@@ -71,16 +71,6 @@
 		<Setter Property="FontWeight" Value="Normal" />
 		<Setter Property="MaxLines" Value="1" />
 		<Setter Property="HorizontalAlignment" Value="Right" />
-		<Setter Property="TextTrimming" Value="CharacterEllipsis" />
-	</Style>
-
-	<Style
-		x:Key="ListSubTitle_BoldStyle"
-		BasedOn="{StaticResource BaseTextBlockStyle}"
-		TargetType="TextBlock">
-		<Setter Property="FontSize" Value="14" />
-		<Setter Property="FontWeight" Value="Bold" />
-		<Setter Property="MaxLines" Value="1" />
 		<Setter Property="TextTrimming" Value="CharacterEllipsis" />
 	</Style>
 
@@ -123,5 +113,4 @@
 			<Setter Property="Margin" Value="1 10 0 5" />
 		</Style.Setters>
 	</Style>
-
 </ResourceDictionary>
