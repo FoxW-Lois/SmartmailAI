@@ -13,6 +13,12 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
+	[ObservableProperty]
+	private string searchText;
+
+	// Pas de private/public car utilisé uniquement par la partial method
+	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
+
 	public DetailsList_ViewModel(IMailboxDataService mailboxDataService)
 	{
 		_mailboxDataService = mailboxDataService;
@@ -120,29 +126,15 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
-	[RelayCommand]
-	private async Task TrashMailAsync(Email email)
-	{
-		if (email is null)
-			return;
-
-		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsTrashedAsync(email);
-
-		var newMailboxType = email.MailboxType;
-		RefreshSelectedCategory(previousMailboxType, newMailboxType);
-	}
-
 	#endregion Commandes au clic droit
 
-	// --- Méthode pour Refresh la liste des emails affichés ---
+	// --- Méthode pour Refresh la liste des emails affichés lors des actions clic droit ---
 	private async void RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType)
 	{
 		if (SelectedCategory is null)
 			return;
 
 		// --- Refresh de l'onglet actuellement ouvert (ancien emplacement du mail) ---
-
 		var previousCategory = SelectedCategory;
 
 		// Recharge les mails depuis le service
@@ -154,7 +146,6 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			previousCategory.ItemsCollection.Add(email);
 
 		// --- Refresh de l'onglet devenant le nouvel emplacement du mail ---
-
 		var newCategory = Categories.FirstOrDefault(c => c.MailboxType == newMailboxType);
 
 		var newRefreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(newMailboxType);
@@ -162,5 +153,20 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		newCategory.ItemsCollection.Clear();
 		foreach (var email in newRefreshedEmails)
 			newCategory.ItemsCollection.Add(email);
+	}
+
+	// --- Méthode pour Refresh la liste des emails affichés quand la barre de recherches est utilisée ---
+	private async void RefreshSearchbarAsync(string researchValue)
+	{
+		if (SelectedCategory is null)
+			return;
+
+		var refreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(SelectedCategory.MailboxType);
+
+		// Recharge les données sans casser le binding
+		SelectedCategory.ReplaceAllItems(refreshedEmails);
+
+		// Applique le filtre sur la collection observable
+		SelectedCategory.ApplyFilter(researchValue);
 	}
 }

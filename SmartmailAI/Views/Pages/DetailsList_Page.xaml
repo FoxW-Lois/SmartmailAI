@@ -186,9 +186,23 @@
 	</Page.Resources>
 
 	<Grid x:Name="ContentArea" Margin="-56 0 0 0">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<!--  Barre de recherche  -->
+		<TextBox
+			Grid.Row="0"
+			Height="40"
+			Margin="58 8 16 32"
+			PlaceholderText="Rechercher un mail..."
+			Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
 		<controls:ListDetailsView
 			x:Name="ListDetailsViewControl"
 			x:Uid="ListDetails"
+			Grid.Row="1"
 			BackButtonBehavior="Manual"
 			Background="Transparent"
 			BorderBrush="Transparent"
