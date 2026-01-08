@@ -393,7 +393,7 @@ public class MailboxDataService : IMailboxDataService
 		else if (mailboxType == MailboxType.Unread)
 			emails = _AllEmails.Where(e => e.IsRead == false);
 		else
-			emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
+			emails = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam);
 
 		await Task.CompletedTask;
 		return emails;
