@@ -55,7 +55,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		if (SearchText != null)
 			SearchText += "  ";
-		//if (SearchText != null && SearchText.Length > 0)
+		SearchText += "Date:";
 	}
 
 	[RelayCommand]
