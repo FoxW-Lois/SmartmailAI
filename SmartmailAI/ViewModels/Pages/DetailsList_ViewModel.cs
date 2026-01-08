@@ -45,6 +45,27 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedCategory ??= Categories.FirstOrDefault();
 	}
 
+	[RelayCommand]
+	private async Task FilterAsync()
+	{
+	}
+
+	[RelayCommand]
+	private async Task DateFilterAsync()
+	{
+		if (SearchText != null)
+			SearchText += "  ";
+		//if (SearchText != null && SearchText.Length > 0)
+	}
+
+	[RelayCommand]
+	private async Task AttachmentFilterAsync()
+	{
+		if (SearchText != null)
+			SearchText += "  ";
+		SearchText += "Attachment:";
+	}
+
 	#region Commandes au clic droit
 
 	[RelayCommand]
@@ -128,6 +149,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion Commandes au clic droit
 
+	#region Méthodes de refresh
+
 	// --- Méthode pour Refresh la liste des emails affichés lors des actions clic droit ---
 	private async void RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType)
 	{
@@ -169,4 +192,6 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		// Applique le filtre sur la collection observable
 		SelectedCategory.ApplyFilter(researchValue);
 	}
+
+	#endregion Méthodes de refresh
 }

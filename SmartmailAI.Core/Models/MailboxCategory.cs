@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -64,6 +66,38 @@ public class MailboxCategory : ObservableObject
 		{
 			foreach (var mail in _allItems)
 				ItemsCollection.Add(mail);
+			return;
+		}
+
+		if (filter.Contains("Date:", StringComparison.OrdinalIgnoreCase))
+		{
+			var raw = filter["Date:".Length..].Trim();
+
+			if (DateTime.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out var searchedDate))
+			{
+				foreach (var mail in _allItems.Where(m => m.DateSent!.Value.Date == searchedDate.Date))
+				{
+					ItemsCollection.Add(mail);
+				}
+				return;
+			}
+		}
+
+		if (filter.Contains("Attachment:true", StringComparison.OrdinalIgnoreCase))
+		{
+			foreach (var mail in _allItems.Where(m => m.Attachments.Count > 0))
+			{
+				ItemsCollection.Add(mail);
+			}
+			return;
+		}
+
+		if (filter.Contains("Attachment:false", StringComparison.OrdinalIgnoreCase))
+		{
+			foreach (var mail in _allItems.Where(m => m.Attachments.Count == 0))
+			{
+				ItemsCollection.Add(mail);
+			}
 			return;
 		}
 

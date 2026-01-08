@@ -81,8 +81,8 @@ public class Email
 
 			string cleaned = System.Text.RegularExpressions.Regex.Replace(Content, @"\s+", " ").Trim();
 
-			// Prend les 60 premiers caractères
-			return cleaned[..Math.Min(60, cleaned.Length)];
+			// Prend les 100 premiers caractères
+			return cleaned[..Math.Min(100, cleaned.Length)];
 		}
 	}
 

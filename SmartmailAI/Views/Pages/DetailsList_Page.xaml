@@ -191,13 +191,44 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<!--  Barre de recherche  -->
-		<TextBox
-			Grid.Row="0"
-			Height="40"
-			Margin="58 8 16 32"
-			PlaceholderText="Rechercher un mail..."
-			Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<!--  Barre de recherche  -->
+			<TextBox
+				Grid.Column="0"
+				Height="40"
+				Margin="58 8 16 32"
+				PlaceholderText="Rechercher un mail..."
+				Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+			<!--  Contenu principal du bouton  -->
+			<SplitButton
+				x:Uid="DetailsList_RefreshButton"
+				Grid.Column="1"
+				Width="200"
+				Height="40"
+				Margin="0 8 16 32"
+				Command="{Binding DataContext.FilterCommand, ElementName=RootPage}">
+				<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+					<FontIcon
+						Margin="0 0 8 0"
+						FontFamily="Segoe MDL2 Assets"
+						Glyph="&#xE71C;" />
+					<TextBlock Text="Ajouter un filtre" />
+				</StackPanel>
+
+				<!--  Menu déroulant du bouton  -->
+				<SplitButton.Flyout>
+					<MenuFlyout>
+						<MenuFlyoutItem Command="{x:Bind ViewModel.DateFilterCommand}" Text="Filtre par date" />
+						<MenuFlyoutItem Command="{x:Bind ViewModel.AttachmentFilterCommand}" Text="Pièces jointes" />
+					</MenuFlyout>
+				</SplitButton.Flyout>
+			</SplitButton>
+		</Grid>
 
 		<controls:ListDetailsView
 			x:Name="ListDetailsViewControl"
