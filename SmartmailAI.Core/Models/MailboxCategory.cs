@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SmartmailAI.Core.Models;
 
 public class MailboxCategory : ObservableObject
 {
-	public string Title { get; set; }
-	public string Icon { get; set; }
+	public string Title { get; set; } = null!;
+	public string Icon { get; set; } = null!;
 
 	public IEnumerable<Email> Items
 	{
@@ -42,7 +43,7 @@ public class MailboxCategory : ObservableObject
 	#endregion Propriétés pour le refresh graphique
 
 	// Pour le second ListDetailsView
-	public Email SelectedEmail { get; set; }
+	public Email SelectedEmail { get; set; } = null!;
 
 	// Update des mails triés par le filtre (_allItems)
 	public void ReplaceAllItems(IEnumerable<Email> emails)
@@ -58,9 +59,9 @@ public class MailboxCategory : ObservableObject
 	}
 
 	// Méthode de filtrage des mails
-	public void ApplyFilter(string filter)
+	public void ApplyFilter(string filter, MailboxType mailboxType)
 	{
-		ItemsCollection.Clear();
+		var filteredMails = _allItems.AsEnumerable();
 
 		if (string.IsNullOrWhiteSpace(filter))
 		{
@@ -69,46 +70,52 @@ public class MailboxCategory : ObservableObject
 			return;
 		}
 
-		if (filter.Contains("Date:", StringComparison.OrdinalIgnoreCase))
-		{
-			var raw = filter["Date:".Length..].Trim();
+		// Regex pour des filtres spéciaux
+		var dateBeforeMatch = Regex.Match(filter, @"Date:Before:(\d{4}-\d{2}-\d{2})", RegexOptions.IgnoreCase);
+		var dateAfterMatch = Regex.Match(filter, @"Date:After:(\d{4}-\d{2}-\d{2})", RegexOptions.IgnoreCase);
+		var attachmentYesMatch = Regex.Match(filter, @"Attachment:Yes", RegexOptions.IgnoreCase);
+		var attachmentNoMatch = Regex.Match(filter, @"Attachment:No", RegexOptions.IgnoreCase);
 
-			if (DateTime.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out var searchedDate))
-			{
-				foreach (var mail in _allItems.Where(m => m.DateSent!.Value.Date == searchedDate.Date))
-				{
-					ItemsCollection.Add(mail);
-				}
-				return;
-			}
+		if (dateBeforeMatch.Success && DateTime.TryParseExact(dateBeforeMatch.Groups[1].Value, "yyyy-MM-dd",
+			CultureInfo.InvariantCulture, DateTimeStyles.None, out var searchedDateBefore))
+		{
+			filteredMails = filteredMails.Where(m => m.DateSent.HasValue && m.DateSent.Value.Date <= searchedDateBefore.Date);
+			filter = filter.Replace(dateBeforeMatch.Value, "");
 		}
 
-		if (filter.Contains("Attachment:true", StringComparison.OrdinalIgnoreCase))
+		if (dateAfterMatch.Success && DateTime.TryParseExact(dateAfterMatch.Groups[1].Value, "yyyy-MM-dd",
+			CultureInfo.InvariantCulture, DateTimeStyles.None, out var searchedDateAfter))
 		{
-			foreach (var mail in _allItems.Where(m => m.Attachments.Count > 0))
-			{
-				ItemsCollection.Add(mail);
-			}
-			return;
+			filteredMails = filteredMails.Where(m => m.DateSent.HasValue && m.DateSent.Value.Date >= searchedDateAfter.Date);
+			filter = filter.Replace(dateAfterMatch.Value, "");
 		}
 
-		if (filter.Contains("Attachment:false", StringComparison.OrdinalIgnoreCase))
+		if (attachmentYesMatch.Success)
 		{
-			foreach (var mail in _allItems.Where(m => m.Attachments.Count == 0))
-			{
-				ItemsCollection.Add(mail);
-			}
-			return;
+			filteredMails = filteredMails.Where(m => m.Attachments != null && m.Attachments.Count > 0);
+			filter = filter.Replace(attachmentYesMatch.Value, "");
 		}
 
-		var lower = filter.ToLowerInvariant();
-
-		foreach (var mail in _allItems.Where(mail =>
-			(mail.SenderName?.ToLowerInvariant().Contains(lower) ?? false) ||
-			(mail.Subject?.ToLowerInvariant().Contains(lower) ?? false) ||
-			(mail.PreviewContent?.ToLowerInvariant().Contains(lower) ?? false)))
+		if (attachmentNoMatch.Success)
 		{
+			filteredMails = filteredMails.Where(m => m.Attachments != null && m.Attachments.Count == 0);
+			filter = filter.Replace(attachmentNoMatch.Value, "");
+		}
+
+		var searchText = filter.Trim();
+
+		if (!string.IsNullOrWhiteSpace(searchText))
+		{
+			var lower = searchText.ToLowerInvariant();
+
+			filteredMails = filteredMails.Where(mail =>
+			(mail.SenderName?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
+			(mail.Subject?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
+			(mail.PreviewContent?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false));
+		}
+
+		ItemsCollection.Clear();
+		foreach (var mail in filteredMails)
 			ItemsCollection.Add(mail);
-		}
 	}
 }

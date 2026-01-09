@@ -51,19 +51,35 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	}
 
 	[RelayCommand]
-	private async Task DateFilterAsync()
+	private async Task DateBeforeFilterAsync()
 	{
-		if (SearchText != null)
-			SearchText += "  ";
-		SearchText += "Date:";
+		if (SearchText != null && SearchText.Length > 0)
+			SearchText += " ";
+		SearchText += "Date:Before:";
 	}
 
 	[RelayCommand]
-	private async Task AttachmentFilterAsync()
+	private async Task DateAfterFilterAsync()
 	{
-		if (SearchText != null)
-			SearchText += "  ";
-		SearchText += "Attachment:";
+		if (SearchText != null && SearchText.Length > 0)
+			SearchText += " ";
+		SearchText += "Date:After:";
+	}
+
+	[RelayCommand]
+	private async Task AttachmentYesFilterAsync()
+	{
+		if (SearchText != null && SearchText.Length > 0)
+			SearchText += " ";
+		SearchText += "Attachment:Yes";
+	}
+
+	[RelayCommand]
+	private async Task AttachmentNoFilterAsync()
+	{
+		if (SearchText != null && SearchText.Length > 0)
+			SearchText += " ";
+		SearchText += "Attachment:No";
 	}
 
 	#region Commandes au clic droit
@@ -190,7 +206,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedCategory.ReplaceAllItems(refreshedEmails);
 
 		// Applique le filtre sur la collection observable
-		SelectedCategory.ApplyFilter(researchValue);
+		SelectedCategory.ApplyFilter(researchValue, SelectedCategory.MailboxType);
 	}
 
 	#endregion Méthodes de refresh

@@ -223,8 +223,10 @@
 				<!--  Menu déroulant du bouton  -->
 				<SplitButton.Flyout>
 					<MenuFlyout>
-						<MenuFlyoutItem Command="{x:Bind ViewModel.DateFilterCommand}" Text="Filtre par date" />
-						<MenuFlyoutItem Command="{x:Bind ViewModel.AttachmentFilterCommand}" Text="Pièces jointes" />
+						<MenuFlyoutItem Command="{x:Bind ViewModel.DateBeforeFilterCommand}" Text="Date (Avant)" />
+						<MenuFlyoutItem Command="{x:Bind ViewModel.DateAfterFilterCommand}" Text="Date (Après)" />
+						<MenuFlyoutItem Command="{x:Bind ViewModel.AttachmentYesFilterCommand}" Text="Pièces jointes" />
+						<MenuFlyoutItem Command="{x:Bind ViewModel.AttachmentNoFilterCommand}" Text="Aucune Pièce jointe" />
 					</MenuFlyout>
 				</SplitButton.Flyout>
 			</SplitButton>
