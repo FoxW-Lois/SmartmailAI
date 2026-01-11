@@ -198,10 +198,10 @@
 			</Grid.ColumnDefinitions>
 			<!--  Barre de recherche  -->
 			<TextBox
+				x:Uid="SearchbarMailTextBox"
 				Grid.Column="0"
 				Height="40"
 				Margin="58 8 16 32"
-				PlaceholderText="Rechercher un mail..."
 				Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 			<!--  Contenu principal du bouton  -->
@@ -217,16 +217,16 @@
 						Margin="0 0 8 0"
 						FontFamily="Segoe MDL2 Assets"
 						Glyph="&#xE71C;" />
-					<TextBlock Text="Ajouter un filtre" />
+					<TextBlock x:Uid="AddFilterTextBlock" />
 				</StackPanel>
 
 				<!--  Menu déroulant du bouton  -->
 				<SplitButton.Flyout>
 					<MenuFlyout>
-						<MenuFlyoutItem Command="{x:Bind ViewModel.DateBeforeFilterCommand}" Text="Date (Avant)" />
-						<MenuFlyoutItem Command="{x:Bind ViewModel.DateAfterFilterCommand}" Text="Date (Après)" />
-						<MenuFlyoutItem Command="{x:Bind ViewModel.AttachmentYesFilterCommand}" Text="Pièces jointes" />
-						<MenuFlyoutItem Command="{x:Bind ViewModel.AttachmentNoFilterCommand}" Text="Aucune Pièce jointe" />
+						<MenuFlyoutItem x:Uid="Filter_Date_Before" Command="{x:Bind ViewModel.DateBeforeFilterCommand}" />
+						<MenuFlyoutItem x:Uid="Filter_Date_After" Command="{x:Bind ViewModel.DateAfterFilterCommand}" />
+						<MenuFlyoutItem x:Uid="Filter_Attachments_Yes" Command="{x:Bind ViewModel.AttachmentYesFilterCommand}" />
+						<MenuFlyoutItem x:Uid="Filter_Attachments_No" Command="{x:Bind ViewModel.AttachmentNoFilterCommand}" />
 					</MenuFlyout>
 				</SplitButton.Flyout>
 			</SplitButton>

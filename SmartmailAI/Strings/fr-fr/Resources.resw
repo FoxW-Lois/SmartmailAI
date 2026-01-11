@@ -292,4 +292,22 @@
   <data name="Mailbox_Unread" xml:space="preserve">
     <value>Non-lus</value>
   </data>
+  <data name="Filter_Date_Before.Text" xml:space="preserve">
+    <value>Date (Avant)</value>
+  </data>
+  <data name="Filter_Date_After.Text" xml:space="preserve">
+    <value>Date (Après)</value>
+  </data>
+  <data name="Filter_Attachments_Yes.Text" xml:space="preserve">
+    <value>Pièces jointes</value>
+  </data>
+  <data name="Filter_Attachments_No.Text" xml:space="preserve">
+    <value>Aucune Pièce jointe</value>
+  </data>
+  <data name="SearchbarMailTextBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher un mail…</value>
+  </data>
+  <data name="AddFilterTextBlock.Text" xml:space="preserve">
+    <value>Ajouter un filtre</value>
+  </data>
 </root>
