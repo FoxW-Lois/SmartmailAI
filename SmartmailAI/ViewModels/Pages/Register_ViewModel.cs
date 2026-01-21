@@ -1,0 +1,83 @@
+﻿using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
+
+namespace SmartmailAI.ViewModels.Pages;
+
+public partial class Register_ViewModel(IAuthService authService) : ObservableRecipient
+{
+	private readonly IAuthService _authService = authService;
+
+	private string _login = string.Empty;
+	private string _phoneNumber = string.Empty;
+	private string _errorMessage = string.Empty;
+	private readonly ResourceLoader resourceLoader = new();
+
+	public string Login
+	{
+		get => _login;
+		set => SetProperty(ref _login, value);
+	}
+
+	public string PhoneNumber
+	{
+		get => _phoneNumber;
+		set => SetProperty(ref _phoneNumber, value);
+	}
+
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		set
+		{
+			SetProperty(ref _errorMessage, value);
+			OnPropertyChanged(nameof(ErrorVisibility));
+		}
+	}
+
+	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+
+	public async Task RegisterAsync(string login, string phoneNumber, string password, string confirmPassword)
+	{
+		ErrorMessage = string.Empty;
+
+		if (string.IsNullOrWhiteSpace(login))
+		{
+			ErrorMessage = resourceLoader.GetString("Error_LoginRequired");
+			return;
+		}
+
+		if (string.IsNullOrWhiteSpace(phoneNumber))
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PhoneNumberRequired");
+			return;
+		}
+
+		if (!Regex.IsMatch(phoneNumber, @"^\d{10}$"))
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PhoneNumberInvalid");
+			return;
+		}
+
+		if (password.Length < 8 || string.IsNullOrWhiteSpace(password))
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PasswordInvalid");
+			return;
+		}
+
+		if (password != confirmPassword)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_ConfirmPasswordInvalid");
+			return;
+		}
+
+		var (Success, Error) = await _authService.RegisterAsync(login, phoneNumber, password);
+
+		if (!Success)
+		{
+			ErrorMessage = Error;
+			return;
+		}
+	}
+}

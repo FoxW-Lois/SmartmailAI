@@ -1,0 +1,51 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
+
+namespace SmartmailAI.ViewModels.Pages;
+
+public partial class Login_ViewModel(IAuthService authService) : ObservableRecipient
+{
+	private readonly IAuthService _authService = authService;
+
+	private string _login = string.Empty;
+	private string _errorMessage = string.Empty;
+	private readonly ResourceLoader resourceLoader = new();
+
+	public string Login
+	{
+		get => _login;
+		set => SetProperty(ref _login, value);
+	}
+
+	public string ErrorMessage
+	{
+		get => _errorMessage;
+		set
+		{
+			SetProperty(ref _errorMessage, value);
+			OnPropertyChanged(nameof(ErrorVisibility));
+		}
+	}
+
+	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+
+	public async Task LoginAsync(string password)
+	{
+		ErrorMessage = string.Empty;
+
+		(bool success, string? specificError) = await _authService.LoginAsync(Login, password);
+
+		if (!success && specificError != string.Empty)
+		{
+			ErrorMessage = resourceLoader.GetString(specificError);
+			return;
+		}
+
+		if (!success)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_LoginOrPasswordInvalid");
+			return;
+		}
+	}
+}
