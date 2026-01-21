@@ -20,6 +20,8 @@ internal class PageService : IPageService
 
 		// Main Window Subpages
 		Configure<DetailsList_ViewModel, DetailsList_Page>();
+		Configure<Login_ViewModel, Login_Page>();
+		Configure<Register_ViewModel, Register_Page>();
 	}
 
 	public Type GetPageType(string viewModel)
