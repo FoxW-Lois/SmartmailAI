@@ -32,6 +32,7 @@
 			<TextBlock
 				Foreground="Red"
 				Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+				TextWrapping="Wrap"
 				Visibility="{Binding ErrorVisibility}" />
 
 			<Button x:Uid="Account_Create" Click="OnRegisterClicked" />

@@ -353,7 +353,7 @@
     <value>Le numéro de téléphone n'est pas valide.</value>
   </data>
   <data name="Error_PasswordInvalid" xml:space="preserve">
-    <value>Le mot de passe doit contenir au moins 8 caractères.</value>
+    <value>Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial</value>
   </data>
   <data name="Error_ConfirmPasswordInvalid" xml:space="preserve">
     <value>Les mots de passe ne correspondent pas.</value>

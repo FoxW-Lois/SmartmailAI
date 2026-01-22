@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
@@ -60,7 +61,8 @@ public partial class Register_ViewModel(IAuthService authService) : ObservableRe
 			return false;
 		}
 
-		if (password.Length < 8 || string.IsNullOrWhiteSpace(password))
+		// Le mot de passe ne contient pas au moins : une majuscule, une minuscule, un chiffre, un caractère spécial
+		if (password.Length < 12 || !Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$"))
 		{
 			ErrorMessage = resourceLoader.GetString("Error_PasswordInvalid");
 			return false;

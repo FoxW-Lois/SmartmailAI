@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Data;
@@ -62,10 +63,16 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 	public async Task<(bool Success, string Error)> RegisterAsync(string login, string phoneNumber, string password)
 	{
 		if (await _accountRepository.LoginExistsAsync(login))
-			return (false, "Ce login est déjà utilisé");
+			return (false, "Ce login est déjà utilisé.");
 
-		if (password.Length < 8)
-			return (false, "Mot de passe trop court");
+		if (password.Length < 12)
+			return (false, "Mot de passe trop court.");
+
+		if (password.Length < 12 || !Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$"))
+			return (false, "Mot de passe pas assez fort.");
+
+		if (!Regex.IsMatch(phoneNumber, @"^\d{10}$"))
+			return (false, "Numéro de téléphone invalide.");
 
 		var (hash, salt) = Hasher.HashPassword(password);
 
@@ -76,7 +83,7 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 			Password = hash,
 			Salt = salt,
 			//TODO: mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
-			Enabled = false
+			Enabled = true
 		};
 
 		await _accountRepository.AddAsync(account);
