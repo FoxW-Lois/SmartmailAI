@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.IRepository;
@@ -10,11 +11,36 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 {
 	private readonly IAccountRepository _accountRepository = accountRepository;
 
-	public bool IsAuthenticated { get; private set; }
-	public Account? CurrentAccount { get; private set; }
+	#region Notification du changement d'état concernant l'authentification de l'utilisateur
+
+	public event EventHandler<bool>? AuthenticationStateChanged;
+
+	private bool _isAuthenticated = false;
+
+	public bool IsAuthenticated
+	{
+		get => _isAuthenticated;
+		private set
+		{
+			if (_isAuthenticated != value)
+			{
+				_isAuthenticated = value;
+				AuthenticationStateChanged?.Invoke(this, value);
+			}
+		}
+	}
+
+	#endregion Notification du changement d'état concernant l'authentification de l'utilisateur
+
+	public async Task<bool> TryRestoreSessionAsync()
+	{
+		// Exemple : token stocké localement
+		IsAuthenticated = false;
+		return IsAuthenticated;
+	}
 
 	// Connexion
-	public async Task<(bool, string?)> LoginAsync(string login, string password)
+	public async Task<(bool Success, string? SpecificError)> LoginAsync(string login, string password)
 	{
 		var account = await _accountRepository.GetByLoginAsync(login);
 		if (account is null)
@@ -29,7 +55,6 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 			return (false, null);
 
 		IsAuthenticated = true;
-		CurrentAccount = account;
 		return (true, null);
 	}
 
@@ -51,13 +76,11 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 			Password = hash,
 			Salt = salt,
 			//TODO: mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
-			Enabled = true
+			Enabled = false
 		};
 
 		await _accountRepository.AddAsync(account);
 
-		IsAuthenticated = true;
-		CurrentAccount = account;
 		return (true, string.Empty);
 	}
 
@@ -65,6 +88,5 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 	public void Logout()
 	{
 		IsAuthenticated = false;
-		CurrentAccount = null;
 	}
 }

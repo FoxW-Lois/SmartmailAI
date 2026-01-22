@@ -17,9 +17,14 @@ public sealed partial class Login_Page : Page
 
 	private async void OnLoginClicked(object sender, RoutedEventArgs e)
 	{
-		await ViewModel.LoginAsync(PasswordBox.Password);
-		//Frame.Navigate(typeof(Home_Page));
+		bool success = await ViewModel.LoginAsync(PasswordBox.Password);
 
+		if (success)
+		{
+			Frame.Navigate(typeof(Home_Page));
+			// Nettoie l'historique de navigation
+			Frame.BackStack.Clear();
+		}
 	}
 
 	private void OnRegisterClicked(object sender, RoutedEventArgs e)

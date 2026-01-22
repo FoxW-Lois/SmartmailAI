@@ -30,22 +30,24 @@ public partial class Login_ViewModel(IAuthService authService) : ObservableRecip
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public async Task LoginAsync(string password)
+	public async Task<bool> LoginAsync(string password)
 	{
 		ErrorMessage = string.Empty;
 
 		(bool success, string? specificError) = await _authService.LoginAsync(Login, password);
 
-		if (!success && specificError != string.Empty)
+		if (!success && specificError != null)
 		{
 			ErrorMessage = resourceLoader.GetString(specificError);
-			return;
+			return false;
 		}
 
 		if (!success)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_LoginOrPasswordInvalid");
-			return;
+			return false;
 		}
+
+		return true;
 	}
 }

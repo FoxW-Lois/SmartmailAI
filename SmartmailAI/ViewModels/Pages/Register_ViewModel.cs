@@ -38,38 +38,38 @@ public partial class Register_ViewModel(IAuthService authService) : ObservableRe
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public async Task RegisterAsync(string login, string phoneNumber, string password, string confirmPassword)
+	public async Task<bool> RegisterAsync(string login, string phoneNumber, string password, string confirmPassword)
 	{
 		ErrorMessage = string.Empty;
 
 		if (string.IsNullOrWhiteSpace(login))
 		{
 			ErrorMessage = resourceLoader.GetString("Error_LoginRequired");
-			return;
+			return false;
 		}
 
 		if (string.IsNullOrWhiteSpace(phoneNumber))
 		{
 			ErrorMessage = resourceLoader.GetString("Error_PhoneNumberRequired");
-			return;
+			return false;
 		}
 
 		if (!Regex.IsMatch(phoneNumber, @"^\d{10}$"))
 		{
 			ErrorMessage = resourceLoader.GetString("Error_PhoneNumberInvalid");
-			return;
+			return false;
 		}
 
 		if (password.Length < 8 || string.IsNullOrWhiteSpace(password))
 		{
 			ErrorMessage = resourceLoader.GetString("Error_PasswordInvalid");
-			return;
+			return false;
 		}
 
 		if (password != confirmPassword)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_ConfirmPasswordInvalid");
-			return;
+			return false;
 		}
 
 		var (Success, Error) = await _authService.RegisterAsync(login, phoneNumber, password);
@@ -77,7 +77,9 @@ public partial class Register_ViewModel(IAuthService authService) : ObservableRe
 		if (!Success)
 		{
 			ErrorMessage = Error;
-			return;
+			return false;
 		}
+
+		return true;
 	}
 }

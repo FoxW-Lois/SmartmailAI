@@ -17,8 +17,10 @@ public sealed partial class Register_Page : Page
 
 	private async void OnRegisterClicked(object sender, RoutedEventArgs e)
 	{
-		await ViewModel.RegisterAsync(LoginBox.Text, PhoneNumberBox.Text, PasswordBox.Password, ConfirmPasswordBox.Password);
-		//Frame.Navigate(typeof(Login_Page));
+		bool success = await ViewModel.RegisterAsync(LoginBox.Text, PhoneNumberBox.Text, PasswordBox.Password, ConfirmPasswordBox.Password);
+
+		if (success)
+			Frame.Navigate(typeof(Login_Page));
 	}
 
 	private void OnBackToLoginClicked(object sender, RoutedEventArgs e)

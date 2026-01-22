@@ -362,6 +362,9 @@
     <value>Incorrect login or password.</value>
   </data>
   <data name="Error_AccountDisabled" xml:space="preserve">
-    <value>Your account has been disabled. Contact the administrator.</value>
+    <value>Your account has been disabled. Please contact the administrator.</value>
+  </data>
+  <data name="Shell_Logout.Content" xml:space="preserve">
+    <value>Logout</value>
   </data>
 </root>

@@ -175,7 +175,7 @@ public partial class App : Application
 				services.AddTransient<Settings_Page>();
 
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
-				services.AddTransient<IAuthService, AuthService>();
+				services.AddSingleton<IAuthService, AuthService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
 
 				#endregion Views & ViewModels

@@ -362,6 +362,9 @@
     <value>Login ou mot de passe incorrect.</value>
   </data>
   <data name="Error_AccountDisabled" xml:space="preserve">
-    <value>Votre compte est désactivé. Contactez l'administrateur.</value>
+    <value>Votre compte est désactivé. Veuillez contacter l'administrateur.</value>
+  </data>
+  <data name="Shell_Logout.Content" xml:space="preserve">
+    <value>Se déconnecter</value>
   </data>
 </root>
