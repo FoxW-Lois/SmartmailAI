@@ -95,10 +95,17 @@
 
     <ItemGroup>
         <None Remove="NativeMethods.txt" />
+        <None Remove="SmartmailServerDB.db" />
     </ItemGroup>
 
     <ItemGroup>
         <AdditionalFiles Include="NativeMethods.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="SmartmailServerDB.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

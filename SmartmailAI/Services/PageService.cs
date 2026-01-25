@@ -17,9 +17,13 @@ internal class PageService : IPageService
 		// Main Window Pages
 		Configure<Home_ViewModel, Home_Page>();
 		Configure<Settings_ViewModel, Settings_Page>();
+		Configure<DetailsList_ViewModel, DetailsList_Page>();
 
 		// Main Window Subpages
-		Configure<DetailsList_ViewModel, DetailsList_Page>();
+		Configure<Login_ViewModel, Login_Page>();
+		Configure<Register_ViewModel, Register_Page>();
+		Configure<TwoFactor_ViewModel, TwoFactor_Page>();
+		Configure<SettingsTwoFactor_ViewModel, SettingsTwoFactor_Page>();
 	}
 
 	public Type GetPageType(string viewModel)

@@ -310,4 +310,88 @@
   <data name="AddFilterTextBlock.Text" xml:space="preserve">
     <value>Ajouter un filtre</value>
   </data>
+  <data name="Shell_Login.Content" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Shell_Register.Content" xml:space="preserve">
+    <value>S'inscrire</value>
+  </data>
+  <data name="Account_Password.Header" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="Account_ConfirmPassword.Header" xml:space="preserve">
+    <value>Confirmer le mot de passe</value>
+  </data>
+  <data name="Account_Cellphone_Number.Header" xml:space="preserve">
+    <value>Numéro de téléphone</value>
+  </data>
+  <data name="Account_Login.Header" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Account_SignUp.Text" xml:space="preserve">
+    <value>Inscription</value>
+  </data>
+  <data name="Account_Create.Content" xml:space="preserve">
+    <value>Créer un compte</value>
+  </data>
+  <data name="Account_Alreadyhave.Content" xml:space="preserve">
+    <value>Déjà un compte ?</value>
+  </data>
+  <data name="Account_LogOn.Content" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Account_SignIn.Text" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="Error_LoginRequired" xml:space="preserve">
+    <value>Vous devez définir un login.</value>
+  </data>
+  <data name="Error_PhoneNumberRequired" xml:space="preserve">
+    <value>Vous devez définir un numéro de téléphone.</value>
+  </data>
+  <data name="Error_PhoneNumberInvalid" xml:space="preserve">
+    <value>Le numéro de téléphone n'est pas valide.</value>
+  </data>
+  <data name="Error_PasswordInvalid" xml:space="preserve">
+    <value>Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial</value>
+  </data>
+  <data name="Error_ConfirmPasswordInvalid" xml:space="preserve">
+    <value>Les mots de passe ne correspondent pas.</value>
+  </data>
+  <data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
+    <value>Login ou mot de passe incorrect.</value>
+  </data>
+  <data name="Error_AccountDisabled" xml:space="preserve">
+    <value>Votre compte est désactivé. Veuillez contacter l'administrateur.</value>
+  </data>
+  <data name="Shell_Logout.Content" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="Account_SecurityCode.Header" xml:space="preserve">
+    <value>Code de sécurité</value>
+  </data>
+  <data name="Account_Validate.Content" xml:space="preserve">
+    <value>Valider</value>
+  </data>
+  <data name="Settings_EnableDisable_TwoFactor.Description" xml:space="preserve">
+    <value>Activation d'un deuxième facteur d'authentification exploitant l'application mobile Google Authenticator</value>
+  </data>
+  <data name="Settings_EnableDisable_TwoFactor.Header" xml:space="preserve">
+    <value>Activer l'authentification à double facteur</value>
+  </data>
+  <data name="Settings_Account.Text" xml:space="preserve">
+    <value>Compte SmartmailAI</value>
+  </data>
+  <data name="Settings_NoAccountLoggedIn.Header" xml:space="preserve">
+    <value>Quand vous serez authentifié, l'ensemble des paramètres du compte SmartmailAI s'afficheront ici.</value>
+  </data>
+  <data name="Account_Confirm.Content" xml:space="preserve">
+    <value>Confirmer</value>
+  </data>
+  <data name="Account_DoubleFactor.Text" xml:space="preserve">
+    <value>Consultez votre application Google Authenticator</value>
+  </data>
+  <data name="Error_SecondFactorInvalid" xml:space="preserve">
+    <value>Code Authenticator invalide. Veuillez réessayer.</value>
+  </data>
 </root>

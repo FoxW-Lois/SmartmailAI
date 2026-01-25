@@ -106,6 +106,22 @@
 					</ComboBox>
 				</controls:SettingsCard>
 
+				<!--  Smartmail Account settings  -->
+				<TextBlock x:Uid="Settings_Account" Style="{ThemeResource SettingsSectionHeaderTextBlockStyle}" />
+				<controls:SettingsCard x:Uid="Settings_NoAccountLoggedIn" Visibility="{Binding NoAccountLoggedInVisibility, Mode=OneWay}">
+					<controls:SettingsCard.HeaderIcon>
+						<FontIcon Glyph="&#xE77B;" />
+					</controls:SettingsCard.HeaderIcon>
+				</controls:SettingsCard>
+
+				<!--  Enable/Disable Two factor authentication  -->
+				<controls:SettingsCard x:Uid="Settings_EnableDisable_TwoFactor" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+					<controls:SettingsCard.HeaderIcon>
+						<FontIcon Glyph="&#xE72E;" />
+					</controls:SettingsCard.HeaderIcon>
+					<ToggleSwitch IsOn="{x:Bind ViewModel.EnableDisableTwoFactor, Mode=TwoWay}" />
+				</controls:SettingsCard>
+
 				<!--  About  -->
 				<TextBlock x:Uid="Settings_About" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 

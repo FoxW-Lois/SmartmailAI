@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 #if !DISABLE_XAML_GENERATED_MAIN
 using Microsoft.Extensions.Configuration;
@@ -11,6 +11,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
+using SmartmailAI.Core.Data;
+using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Repository;
 
 namespace SmartmailAI;
 
@@ -163,12 +166,56 @@ public partial class App : Application
 				services.AddTransient<DetailsList_ViewModel>();
 				services.AddTransient<DetailsList_Page>();
 
+				#region Authentication/Register Pages
+
+				services.AddTransient<Login_ViewModel>();
+				services.AddTransient<Login_Page>();
+
+				services.AddTransient<TwoFactor_ViewModel>();
+				services.AddTransient<TwoFactor_Page>();
+
+				services.AddTransient<Register_ViewModel>();
+				services.AddTransient<Register_Page>();
+
+				#endregion Authentication/Register Pages
+
+				#region Settings Pages
+
 				services.AddTransient<Settings_ViewModel>();
 				services.AddTransient<Settings_Page>();
 
+				services.AddTransient<SettingsTwoFactor_ViewModel>();
+				services.AddTransient<SettingsTwoFactor_Page>();
+
+				#endregion Settings Pages
+
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
+				services.AddTransient<IAccountRepository, AccountRepository>();
+
+				#region Services instantiation
+
+				services.AddSingleton<IAuthService, AuthService>();
+				services.AddSingleton<ICryptoService, CryptoService>();
+				services.AddSingleton<IQrCodeService, QrCodeService>();
+				services.AddSingleton<ITotpService, TotpService>();
+				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
+
+				#endregion Services instantiation
 
 				#endregion Views & ViewModels
+
+				#region DbContext
+
+				//BDD gérant les comptes d'accès à l'application
+
+				var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailServerDB.db");
+
+				services.AddDbContextFactory<AppDbContext_Account>(options =>
+				{
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
+				#endregion DbContext
 			})
 			.Build();
 		Ioc.Default.ConfigureServices(host.Services);
@@ -215,6 +262,8 @@ public partial class App : Application
 		{
 			// Get AppActivationArguments
 			var appActivationArguments = AppInstance.GetCurrent().GetActivatedEventArgs();
+
+			await CheckDatabase.EnsureDatabaseAsync();
 
 			// Initialize the window
 			MainWindow = new MainWindow();

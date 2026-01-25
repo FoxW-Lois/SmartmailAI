@@ -42,20 +42,59 @@
 			IsBackButtonVisible="Visible"
 			IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
 			IsSettingsVisible="True"
+			ItemInvoked="NavigationView_ItemInvoked"
 			OpenPaneLength="200"
 			SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
 			<NavigationView.MenuItems>
-				<NavigationViewItem x:Uid="Shell_Home" helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Home_ViewModel">
+
+				<NavigationViewItem
+					x:Uid="Shell_Login"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Login_ViewModel"
+					Visibility="{Binding IsNotLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE77B;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
+
+				<NavigationViewItem
+					x:Uid="Shell_Logout"
+					SelectsOnInvoked="False"
+					Tag="Logout"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
+
+				<NavigationViewItem
+					x:Uid="Shell_Register"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Register_ViewModel"
+					Visibility="{Binding IsNotLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FA;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
+
+				<NavigationViewItem
+					x:Uid="Shell_Home"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Home_ViewModel"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
 					</NavigationViewItem.Icon>
 				</NavigationViewItem>
-				<NavigationViewItem x:Uid="Shell_DetailsList" helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.DetailsList_ViewModel">
+
+				<NavigationViewItem
+					x:Uid="Shell_DetailsList"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.DetailsList_ViewModel"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;" />
 					</NavigationViewItem.Icon>
 				</NavigationViewItem>
+
 			</NavigationView.MenuItems>
+
 			<NavigationView.HeaderTemplate>
 				<DataTemplate>
 					<Grid>
@@ -63,6 +102,7 @@
 					</Grid>
 				</DataTemplate>
 			</NavigationView.HeaderTemplate>
+
 			<i:Interaction.Behaviors>
 				<behaviors:NavigationViewHeaderBehavior DefaultHeader="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
 					<behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>

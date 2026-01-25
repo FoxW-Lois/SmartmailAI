@@ -15,11 +15,23 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public INavigationViewService NavigationViewService { get; }
 
-	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService)
+	public IAuthService _authService { get; }
+
+	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
 		NavigationService.Navigated += OnNavigated;
+		_authService = authService;
+
+		IsLogged = _authService.IsAuthenticated;
+
+		_authService.AuthenticationStateChanged += (_, isLogged) =>
+		{
+			// Debug en console du changement de IsAuthenticated
+			//Console.WriteLine($"============ Auth changed: {isLogged}");
+			IsLogged = isLogged;
+		};
 	}
 
 	private void OnNavigated(object sender, NavigationEventArgs e)
@@ -33,5 +45,30 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		{
 			Selected = selectedItem;
 		}
+	}
+
+	#region Changement d'état concernant l'authentification de l'utilisateur
+
+	public bool _isLogged = false;
+
+	public bool IsLogged
+	{
+		get => _isLogged;
+		set
+		{
+			if (SetProperty(ref _isLogged, value))
+			{
+				OnPropertyChanged(nameof(IsNotLogged));
+			}
+		}
+	}
+
+	public bool IsNotLogged => !IsLogged;
+
+	#endregion Changement d'état concernant l'authentification de l'utilisateur
+
+	public void Logout()
+	{
+		_authService.Logout();
 	}
 }

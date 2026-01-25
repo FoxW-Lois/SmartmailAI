@@ -9,6 +9,5 @@ public partial class Home_ViewModel : ObservableRecipient
 
 	public Home_ViewModel()
 	{
-
 	}
 }

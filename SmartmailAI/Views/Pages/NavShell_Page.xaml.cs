@@ -58,4 +58,17 @@ public sealed partial class NavShell_Page : Page
 			Bottom = AppTitleBar.Margin.Bottom
 		};
 	}
+
+	private void NavigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+	{
+		if (args.InvokedItemContainer?.Tag?.ToString() == "Logout")
+		{
+			ViewModel.Logout();
+
+			NavigationFrame.Navigate(typeof(Login_Page));
+
+			// Nettoie l'historique de navigation
+			NavigationFrame.BackStack.Clear();
+		}
+	}
 }
