@@ -19,7 +19,7 @@
         <Description>Projet de Boîte mail incluant des outils d'IA pour le module Startup&amp;IT en E5 ; avec WinUI 3 et .NET 9.</Description>
         <Company>$(Title) Team</Company>
         <Authors>$(Company). FoxW-Lois, Sariarii.</Authors>
-        <Copyright>Copyright © 2023-2025 $(Company)</Copyright>
+        <Copyright>Copyright © 2025-2026 $(Company)</Copyright>
         <!-- Package Properties -->
         <PackageIcon Condition="'$(Configuration)'=='Debug'">Assets\Debug\PackageIcon.png</PackageIcon>
         <PackageIcon Condition="'$(Configuration)'=='Release'">Assets\Release\PackageIcon.png</PackageIcon>
@@ -30,8 +30,8 @@
         <!-- Target Settings -->
         <Platforms>x86;x64;arm64</Platforms>
         <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
-        <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
-        <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion>10.0.22621.0</TargetPlatformMinVersion>
         <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <!-- WinUI Properties -->
@@ -51,6 +51,15 @@
         <DefineConstants>TRAY_ICON;$(DefineConstants)</DefineConstants><!-- Tray Icon -->
         <DefineConstants>SPLASH_SCREEN;$(DefineConstants)</DefineConstants><!-- Splash Screen -->
         <DefaultLanguage>fr-FR</DefaultLanguage>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <PackageCertificateKeyFile>SmartmailAI_TemporaryKey.pfx</PackageCertificateKeyFile>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppxBundle>Never</AppxBundle>
+        <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+        <UserSecretsId>1b801b3c-776e-403d-8eba-881067437401</UserSecretsId>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(BuildingInsideVisualStudio)'!='True'">
