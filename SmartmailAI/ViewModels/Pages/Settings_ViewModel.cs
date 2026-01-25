@@ -87,6 +87,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 		var account = await _accountRepository.GetByLoginAsync(_authService.CurrentAccountLogin);
 		if (account != null)
+		{
 			var stateTwoFactor = account.TwoFactorEnabled;
 			EnableDisableTwoFactor = stateTwoFactor;
 		}
