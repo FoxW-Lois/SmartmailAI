@@ -20,7 +20,7 @@ public interface IAuthService
 
 	void Logout();
 
-	Task Enable_Disable_TwoFactorAsync(string login, bool setEnable);
+	Task Update_EnableDisable_TwoFactorAsync(string login, bool setEnable);
 
 	Task<bool> ValidateSecondFactorAsync(string login, string code);
 }

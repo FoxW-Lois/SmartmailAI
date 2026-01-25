@@ -109,7 +109,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 		IsAuthenticated = false;
 	}
 
-	public async Task Enable_Disable_TwoFactorAsync(string login, bool setEnable)
+	public async Task Update_EnableDisable_TwoFactorAsync(string login, bool setEnable)
 	{
 		var user = await _accountRepository.GetByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
 

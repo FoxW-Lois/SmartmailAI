@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
+using SmartmailAI.Core.IRepository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -56,17 +57,20 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	private readonly IThemeSelectorService _themeSelectorService;
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
+	private readonly IAccountRepository _accountRepository;
 
 	private bool _isInitialized;
 
 	public Settings_ViewModel(IAppSettingsService appSettingsService, IBackdropSelectorService backdropSelectorService,
-		IThemeSelectorService themeSelectorService, IAuthService authService, INavigationService navigationService)
+		IThemeSelectorService themeSelectorService, IAuthService authService, INavigationService navigationService,
+		IAccountRepository accountRepository)
 	{
 		_appSettingsService = appSettingsService;
 		_backdropSelectorService = backdropSelectorService;
 		_themeSelectorService = themeSelectorService;
 		_authService = authService;
 		_navigationService = navigationService;
+		_accountRepository = accountRepository;
 
 		// Abonnement à l’événement
 		_authService.AuthenticationStateChanged += OnAuthenticationStateChanged;
@@ -76,10 +80,16 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		InitializeSettings();
 	}
 
-	private void InitializeSettings()
+	private async void InitializeSettings()
 	{
 		ThemeIndex = (int)_themeSelectorService.Theme;
 		BackdropTypeIndex = (int)_appSettingsService.BackdropType;
+
+		var account = await _accountRepository.GetByLoginAsync(_authService.CurrentAccountLogin);
+		if (account != null)
+			var stateTwoFactor = account.TwoFactorEnabled;
+			EnableDisableTwoFactor = stateTwoFactor;
+		}
 
 		_isInitialized = true;
 	}
@@ -191,16 +201,16 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 	async partial void OnEnableDisableTwoFactorChanged(bool value)
 	{
-		await Task.Delay(3000); // Attente de 3 secondes
-
 		if (!_isInitialized || !_authService.IsAuthenticated)
 			return;
+
+		await Task.Delay(3000); // Attente de 3 secondes
 
 		var targetViewModel = value ? typeof(SettingsTwoFactor_ViewModel) : typeof(Home_ViewModel);
 
 		_navigationService.NavigateTo(targetViewModel.FullName!);
 
-		await _authService.Enable_Disable_TwoFactorAsync(_authService.CurrentAccountLogin, value); // Value : true = activer, false = désactiver
+		await _authService.Update_EnableDisable_TwoFactorAsync(_authService.CurrentAccountLogin, value); // Value : true = activer, false = désactiver
 	}
 
 	partial void OnThemeIndexChanged(int value)
