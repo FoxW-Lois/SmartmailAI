@@ -15,6 +15,11 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public Visibility LogonTaskExpanderVisibility = RuntimeHelper.IsMSIX ? Visibility.Collapsed : Visibility.Visible;
 
 	[ObservableProperty]
+	public Visibility noAccountLoggedInVisibility = Visibility.Visible;
+	[ObservableProperty]
+	public Visibility accountLoggedInVisibility = Visibility.Collapsed;
+
+	[ObservableProperty]
 	public partial int LanguageIndex { get; set; }
 
 	[ObservableProperty]
@@ -33,6 +38,9 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public partial int BackdropTypeIndex { get; set; }
 
 	[ObservableProperty]
+	public partial bool EnableDisableTwoFactor { get; set; }
+
+	[ObservableProperty]
 	public partial string AppDisplayName { get; set; } = ConstantHelper.AppDisplayName;
 
 	[ObservableProperty]
@@ -46,14 +54,24 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	private readonly IAppSettingsService _appSettingsService;
 	private readonly IBackdropSelectorService _backdropSelectorService;
 	private readonly IThemeSelectorService _themeSelectorService;
+	private readonly IAuthService _authService;
+	private readonly INavigationService _navigationService;
 
 	private bool _isInitialized;
 
-	public Settings_ViewModel(IAppSettingsService appSettingsService, IBackdropSelectorService backdropSelectorService, IThemeSelectorService themeSelectorService)
+	public Settings_ViewModel(IAppSettingsService appSettingsService, IBackdropSelectorService backdropSelectorService,
+		IThemeSelectorService themeSelectorService, IAuthService authService, INavigationService navigationService)
 	{
 		_appSettingsService = appSettingsService;
 		_backdropSelectorService = backdropSelectorService;
 		_themeSelectorService = themeSelectorService;
+		_authService = authService;
+		_navigationService = navigationService;
+
+		// Abonnement à l’événement
+		_authService.AuthenticationStateChanged += OnAuthenticationStateChanged;
+		// Initialisation de l’état
+		UpdateVisibilyProperties(_authService.IsAuthenticated);
 
 		InitializeSettings();
 	}
@@ -65,6 +83,22 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 		_isInitialized = true;
 	}
+
+	#region UI Elements Update
+
+	private void OnAuthenticationStateChanged(object? sender, bool isAuthenticated)
+	{
+		UpdateVisibilyProperties(isAuthenticated);
+	}
+
+	public void UpdateVisibilyProperties(bool isAuthenticated)
+	{
+		AccountLoggedInVisibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
+
+		NoAccountLoggedInVisibility = isAuthenticated ? Visibility.Collapsed : Visibility.Visible;
+	}
+
+	#endregion
 
 	#region INavigationAware
 
@@ -153,6 +187,20 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 				_ = StartupHelper.SetStartupAsync(true, logon: value);
 			}
 		}
+	}
+
+	async partial void OnEnableDisableTwoFactorChanged(bool value)
+	{
+		await Task.Delay(3000); // Attente de 3 secondes
+
+		if (!_isInitialized || !_authService.IsAuthenticated)
+			return;
+
+		var targetViewModel = value ? typeof(SettingsTwoFactor_ViewModel) : typeof(Home_ViewModel);
+
+		_navigationService.NavigateTo(targetViewModel.FullName!);
+
+		await _authService.Enable_Disable_TwoFactorAsync(_authService.CurrentAccountLogin, value); // Value : true = activer, false = désactiver
 	}
 
 	partial void OnThemeIndexChanged(int value)

@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using SmartmailAI.Core.Contracts.Services;
+using SmartmailAI.Core.Contracts.Services.Authentication;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.IRepository;
 using SmartmailAI.Core.Models;
 
-namespace SmartmailAI.Core.Services;
+namespace SmartmailAI.Core.Services.Authentication;
 
-public class AuthService(IAccountRepository accountRepository) : IAuthService
+public class AuthService(IAccountRepository accountRepository, IAccountSecretStore secretStore, ITotpService totpService,
+	ICryptoService cryptoService) : IAuthService
 {
 	private readonly IAccountRepository _accountRepository = accountRepository;
+	private readonly IAccountSecretStore _secretStore = secretStore;
+	private readonly ITotpService _totpService = totpService;
+	private readonly ICryptoService _cryptoService = cryptoService;
 
 	#region Notification du changement d'état concernant l'authentification de l'utilisateur
 
@@ -32,6 +36,9 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 	}
 
 	#endregion Notification du changement d'état concernant l'authentification de l'utilisateur
+
+	// Exposition du login de l'instance en cours
+	public string CurrentAccountLogin { get; private set; } = "";
 
 	public async Task<bool> TryRestoreSessionAsync()
 	{
@@ -55,7 +62,11 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 		if (!validPassword)
 			return (false, null);
 
+		if (account.TwoFactorEnabled)
+			return (false, "Need_TwoFactor");
+
 		IsAuthenticated = true;
+		CurrentAccountLogin = login;
 		return (true, null);
 	}
 
@@ -82,6 +93,7 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 			PhoneNumber = phoneNumber,
 			Password = hash,
 			Salt = salt,
+			TwoFactorEnabled = false,
 			//TODO: mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
 			Enabled = true
 		};
@@ -95,5 +107,54 @@ public class AuthService(IAccountRepository accountRepository) : IAuthService
 	public void Logout()
 	{
 		IsAuthenticated = false;
+	}
+
+	public async Task Enable_Disable_TwoFactorAsync(string login, bool setEnable)
+	{
+		var user = await _accountRepository.GetByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
+
+		if (setEnable) // Activation
+		{
+			// Génération de la clé secrète
+			var secret = _totpService.GenerateSecret();
+			// Chiffrement de la clé
+			var encryptedSecret = _cryptoService.Encrypt(secret.Base32);
+			// Stockage de la clé
+			await _secretStore.SaveSecretAsync(login, encryptedSecret);
+
+			user.TwoFactorEnabled = true;
+		}
+		else // Désactivation
+		{
+			await _secretStore.DeleteSecretAsync(login);
+
+			user.TwoFactorEnabled = false;
+		}
+	}
+
+	public async Task<bool> ValidateSecondFactorAsync(string login, string code)
+	{
+		var user = await _accountRepository.GetByLoginAsync(login);
+
+		if (user is null || !user.TwoFactorEnabled)
+			return false;
+
+		var encryptedSecret = await _secretStore.GetSecretAsync(login);
+
+		if (string.IsNullOrWhiteSpace(encryptedSecret))
+			return false;
+
+		// Déchiffrement de la clé
+		var secret = _cryptoService.Decrypt(encryptedSecret);
+
+		// Validation TOTP
+		bool codeValidation = _totpService.ValidateCode(secret, code);
+
+		if (codeValidation)
+			IsAuthenticated = true;
+		else
+			IsAuthenticated = false;
+
+		return codeValidation;
 	}
 }

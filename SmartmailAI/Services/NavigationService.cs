@@ -84,6 +84,12 @@ internal class NavigationService(INavigationViewService navigationViewService, I
 				{
 					navigationAware.OnNavigatedFrom();
 				}
+
+				var vmAfterNavigation = _frame.GetPageViewModel();
+				if (vmAfterNavigation is INavigationAware newVm)
+				{
+					newVm.OnNavigatedTo(parameter!);
+				}
 			}
 
 			return navigated;

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+
 #if !DISABLE_XAML_GENERATED_MAIN
 using Microsoft.Extensions.Configuration;
 #endif
@@ -162,21 +163,44 @@ public partial class App : Application
 				services.AddTransient<Home_ViewModel>();
 				services.AddTransient<Home_Page>();
 
+				services.AddTransient<DetailsList_ViewModel>();
+				services.AddTransient<DetailsList_Page>();
+
+				#region Authentication/Register Pages
+
 				services.AddTransient<Login_ViewModel>();
 				services.AddTransient<Login_Page>();
+
+				services.AddTransient<TwoFactor_ViewModel>();
+				services.AddTransient<TwoFactor_Page>();
 
 				services.AddTransient<Register_ViewModel>();
 				services.AddTransient<Register_Page>();
 
-				services.AddTransient<DetailsList_ViewModel>();
-				services.AddTransient<DetailsList_Page>();
+				#endregion Authentication/Register Pages
+
+				#region Settings Pages
 
 				services.AddTransient<Settings_ViewModel>();
 				services.AddTransient<Settings_Page>();
 
+				services.AddTransient<SettingsTwoFactor_ViewModel>();
+				services.AddTransient<SettingsTwoFactor_Page>();
+
+				#endregion Settings Pages
+
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
-				services.AddSingleton<IAuthService, AuthService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
+
+				#region Services instantiation
+
+				services.AddSingleton<IAuthService, AuthService>();
+				services.AddSingleton<ICryptoService, CryptoService>();
+				services.AddSingleton<IQrCodeService, QrCodeService>();
+				services.AddSingleton<ITotpService, TotpService>();
+				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
+
+				#endregion Services instantiation
 
 				#endregion Views & ViewModels
 

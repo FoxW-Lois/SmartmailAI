@@ -30,24 +30,27 @@ public partial class Login_ViewModel(IAuthService authService) : ObservableRecip
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public async Task<bool> LoginAsync(string password)
+	public async Task<(bool success, bool twoFactorValidation, string?)> LoginAsync(string password)
 	{
 		ErrorMessage = string.Empty;
 
 		(bool success, string? specificError) = await _authService.LoginAsync(Login, password);
 
+		if (!success && specificError == "Need_TwoFactor")
+			return (false, true, Login);
+
 		if (!success && specificError != null)
 		{
 			ErrorMessage = resourceLoader.GetString(specificError);
-			return false;
+			return (false, false, null);
 		}
 
 		if (!success)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_LoginOrPasswordInvalid");
-			return false;
+			return (false, false, null);
 		}
 
-		return true;
+		return (true, false, null);
 	}
 }

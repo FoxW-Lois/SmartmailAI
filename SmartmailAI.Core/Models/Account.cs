@@ -11,5 +11,7 @@ public class Account
 	[Column("PhoneNumber")][MaxLength(15)] public required string PhoneNumber { get; set; }
 	[Column("Password")][MaxLength(255)] public required string Password { get; set; }
 	[Column("Salt")][MaxLength(32)] public required string Salt { get; set; }
+	[Column("EncryptedTotpSecret")] public string? EncryptedTotpSecret { get; set; }
+	[Column("TwoFactorEnabled")] public required bool TwoFactorEnabled { get; set; }
 	[Column("Enabled")] public required bool Enabled { get; set; }
 }

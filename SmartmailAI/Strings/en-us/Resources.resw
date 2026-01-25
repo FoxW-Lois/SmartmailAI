@@ -367,4 +367,31 @@
   <data name="Shell_Logout.Content" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="Account_SecurityCode.Header" xml:space="preserve">
+    <value>Security code</value>
+  </data>
+  <data name="Account_Validate.Content" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="Settings_EnableDisable_TwoFactor.Description" xml:space="preserve">
+    <value>Enabling a second authentication factor using the Google Authenticator mobile app</value>
+  </data>
+  <data name="Settings_EnableDisable_TwoFactor.Header" xml:space="preserve">
+    <value>Enable two-factor authentication</value>
+  </data>
+  <data name="Settings_Account.Text" xml:space="preserve">
+    <value>SmartmailAI account</value>
+  </data>
+  <data name="Settings_NoAccountLoggedIn.Header" xml:space="preserve">
+    <value>Once you are logged in, all of your SmartmailAI account settings will be displayed here.</value>
+  </data>
+  <data name="Account_Confirm.Content" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Account_DoubleFactor.Text" xml:space="preserve">
+    <value>Check your Google Authenticator app</value>
+  </data>
+  <data name="Error_SecondFactorInvalid" xml:space="preserve">
+    <value>Invalid Authenticator code. Please try again.</value>
+  </data>
 </root>

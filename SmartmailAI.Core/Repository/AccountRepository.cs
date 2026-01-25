@@ -33,4 +33,20 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory) 
 		_context.Account.Add(account);
 		await _context.SaveChangesAsync();
 	}
+
+	public async Task UpdateAsync(Account account)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		_context.Account.Update(account);
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task DeleteAsync(Account account)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		_context.Account.Remove(account);
+		await _context.SaveChangesAsync();
+	}
 }
