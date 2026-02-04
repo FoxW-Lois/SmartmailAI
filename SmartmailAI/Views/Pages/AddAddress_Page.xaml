@@ -1,0 +1,77 @@
+﻿<Page
+	x:Class="SmartmailAI.Views.Pages.AddAddress_Page"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:behaviors="using:SmartmailAI.Behaviors"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:viewmodels="using:SmartmailAI.ViewModels.Pages"
+	behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
+	d:DataContext="{d:DesignInstance Type=viewmodels:AddAddress_ViewModel}"
+	NavigationCacheMode="Required"
+	mc:Ignorable="d">
+
+	<Grid
+		x:Name="ContentArea"
+		Width="360"
+		HorizontalAlignment="Center"
+		VerticalAlignment="Center">
+		<StackPanel Spacing="32">
+			<TextBlock x:Uid="AddAddress_New" Style="{ThemeResource TitleTextBlockStyle}" />
+
+			<Grid HorizontalAlignment="Center" ColumnSpacing="16">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+				<Button
+					Grid.Column="0"
+					Width="60"
+					Height="60"
+					Click="OnAddOAuth2Clicked">
+					<Image
+						Width="36"
+						Height="36"
+						Source="ms-appx:///Assets/Content/Gmail-icon-48.png" />
+				</Button>
+				<Button
+					Grid.Column="1"
+					Width="60"
+					Height="60"
+					Click="OnAddOutlookClicked">
+					<Image
+						Width="36"
+						Height="36"
+						Source="ms-appx:///Assets/Content/Outlook-icon-48.png" />
+				</Button>
+				<Button
+					Grid.Column="2"
+					Width="60"
+					Height="60"
+					Click="OnOtherChoiceClicked">
+					<Image
+						Width="36"
+						Height="36"
+						Source="ms-appx:///Assets/Content/IMAP-SMTP-icon-48.png" />
+				</Button>
+			</Grid>
+
+			<StackPanel Spacing="16" Visibility="{Binding IsOtherChoice, Converter={StaticResource BoolToVisibilityConverter}}">
+				<TextBlock x:Uid="AddAddress_OtherChoice" Style="{ThemeResource SubtitleTextBlockStyle}" />
+
+				<TextBox x:Uid="AddAddress_Email" Text="{x:Bind ViewModel.Email, Mode=TwoWay}" />
+				<PasswordBox x:Name="PasswordBox" x:Uid="Account_Password" />
+
+				<TextBlock
+					Foreground="Red"
+					Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+					TextWrapping="Wrap"
+					Visibility="{Binding ErrorVisibility}" />
+
+				<Button x:Uid="AddAddress_Add" Click="OnAddClicked" />
+			</StackPanel>
+		</StackPanel>
+	</Grid>
+</Page>

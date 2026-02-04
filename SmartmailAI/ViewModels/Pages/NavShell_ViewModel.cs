@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Navigation;
+using SmartmailAI.Core.IRepository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -11,6 +12,8 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	[ObservableProperty]
 	public partial object? Selected { get; set; }
 
+	#region Interfaces declaration
+
 	public INavigationService NavigationService { get; }
 
 	public INavigationViewService NavigationViewService { get; }
@@ -18,6 +21,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	public IAuthService _authService { get; }
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService)
+	#endregion Interfaces declaration
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;

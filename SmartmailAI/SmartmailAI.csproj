@@ -92,7 +92,7 @@
             <SubType>Designer</SubType>
         </AppxManifest>
     </ItemGroup>
-
+	
     <ItemGroup>
         <None Remove="NativeMethods.txt" />
         <None Remove="SmartmailServerDB.db" />
@@ -103,9 +103,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="SmartmailServerDB.db">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+			<Content Include="SmartmailServerDB.db">
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			</Content>
     </ItemGroup>
 
     <ItemGroup>
@@ -122,6 +124,7 @@
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
         <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.2" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.12" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.2" />
         <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.269">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -93,6 +93,23 @@
 					</NavigationViewItem.Icon>
 				</NavigationViewItem>
 
+				<NavigationViewItem
+					x:Uid="Shell_AddAddress"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddAddress_ViewModel"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
+
+				<NavigationViewItem
+					x:Uid="Shell_AddressManagement"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddressManagement_ViewModel"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE715;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
 			</NavigationView.MenuItems>
 
 			<NavigationView.HeaderTemplate>
