@@ -21,6 +21,16 @@ public class AddressesService(IAddressesRepository addressRepository, IOAuthGmai
 	private readonly IGmailApiService _gmailApiService = gmailApiService;
 	private readonly IGmailLogoutService _gmailLogoutService = gmailLogoutService;
 
+	public bool HasAny { get; private set; }
+
+	public event EventHandler<bool>? AddressesListChanged;
+	public async Task RefreshAddressesListAsync()
+	{
+		var newValue = await _addressRepository.GetAllAddressAsync();
+		HasAny = newValue.Count > 0;
+		AddressesListChanged?.Invoke(this, HasAny);
+	}
+
 	public async Task<(AccountGmail, bool)> AddGmailAccountAsync()
 	{
 		var userKey = Guid.NewGuid().ToString();

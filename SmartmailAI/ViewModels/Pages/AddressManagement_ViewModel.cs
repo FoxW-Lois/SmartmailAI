@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.IRepository;
 
@@ -10,6 +11,7 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 {
 	private readonly IAddressesRepository _addressRepository;
 	private readonly IAddressesService _addressesService;
+	private readonly INavigationService _navigationService;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
@@ -28,10 +30,11 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public AddressManagement_ViewModel(IAddressesRepository addressRepository, IAddressesService addressesService)
+	public AddressManagement_ViewModel(IAddressesRepository addressRepository, IAddressesService addressesService, INavigationService navigationService)
 	{
 		_addressRepository = addressRepository;
 		_addressesService = addressesService;
+		_navigationService = navigationService;
 	}
 
 	public async Task LoadAddressesAsync()
@@ -53,6 +56,10 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 		}
 
 		AccountsGmail.Remove(accountGmail);
+		await _addressesService.RefreshAddressesListAsync();
+
+		// Le 3ème paramètre (true) nettoie l'historique de navigation
+		_navigationService.NavigateTo(typeof(AddAddress_ViewModel).FullName!, null, true);
 		return;
 	}
 }

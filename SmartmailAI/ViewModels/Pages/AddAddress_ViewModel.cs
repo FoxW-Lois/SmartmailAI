@@ -4,20 +4,15 @@ using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddAddress_ViewModel : ObservableRecipient
+public partial class AddAddress_ViewModel(IAddressesService addressesService) : ObservableRecipient
 {
 	[ObservableProperty]
 	public partial bool IsOtherChoice { get; set; }
 
-	private readonly IAddressesService _addressesService;
+	private readonly IAddressesService _addressesService = addressesService;
 	private string _email = string.Empty;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
-
-	public AddAddress_ViewModel(IAddressesService emailService)
-	{
-		_addressesService = emailService;
-	}
 
 	public string Email
 	{
@@ -49,6 +44,7 @@ public partial class AddAddress_ViewModel : ObservableRecipient
 			return false;
 		}
 
+		await _addressesService.RefreshAddressesListAsync();
 		return true;
 	}
 
@@ -64,6 +60,7 @@ public partial class AddAddress_ViewModel : ObservableRecipient
 			return false;
 		}
 
+		await _addressesService.RefreshAddressesListAsync();
 		return true;
 	}
 
@@ -79,6 +76,7 @@ public partial class AddAddress_ViewModel : ObservableRecipient
 			return false;
 		}
 
+		await _addressesService.RefreshAddressesListAsync();
 		return true;
 	}
 }

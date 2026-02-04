@@ -105,7 +105,7 @@
 				<NavigationViewItem
 					x:Uid="Shell_AddressManagement"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddressManagement_ViewModel"
-					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{Binding CanShowAddressManagement, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE715;" />
 					</NavigationViewItem.Icon>
