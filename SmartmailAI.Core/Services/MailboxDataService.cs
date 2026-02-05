@@ -22,6 +22,8 @@ public class MailboxDataService : IMailboxDataService
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
 		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
+		ApplyPhishingDetection(_AllEmails);
+
 
 		var categories = new List<MailboxCategory>
 		{
@@ -101,6 +103,8 @@ public class MailboxDataService : IMailboxDataService
 		await Task.CompletedTask;
 		return categories;
 	}
+
+
 
 	private static IEnumerable<Email> AllEmails()
 	{
@@ -355,6 +359,18 @@ public class MailboxDataService : IMailboxDataService
 				IsRead = false
 			},
 			new Email
+{
+	SenderName = "Orange Sécurité",
+	SenderEmail = "support@lorange.fr",
+	ReceiverEmail = "jean.dupont@exemple.com",
+	Subject = "Problème de sécurité",
+	Content = "Veuillez vérifier votre compte immédiatement.",
+	DateSent = DateTime.Now,
+	MailboxType = MailboxType.Inbox,
+	IsRead = false
+			},
+
+			new Email
 			{
 				SenderName = "Livraison Express",
 				SenderEmail = "contact@livraison-suivi.co",
@@ -368,8 +384,13 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.PhishingSpam,
 				IsRead = false
 			}
+
+
 		];
+
 	}
+
+
 
 	#endregion Données de test
 
@@ -378,6 +399,8 @@ public class MailboxDataService : IMailboxDataService
 	public async Task<IEnumerable<Email>> GetAllEmailsAsync()
 	{
 		_AllEmails ??= [.. AllEmails()];
+		ApplyPhishingDetection(_AllEmails);
+
 
 		await Task.CompletedTask;
 		return _AllEmails;
@@ -393,7 +416,7 @@ public class MailboxDataService : IMailboxDataService
 		else if (mailboxType == MailboxType.Unread)
 			emails = _AllEmails.Where(e => e.IsRead == false);
 		else
-			emails = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam);
+			emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
 
 		await Task.CompletedTask;
 		return emails;
@@ -469,4 +492,96 @@ public class MailboxDataService : IMailboxDataService
 	}
 
 	#endregion CRUD Emails
+	private void ApplyPhishingDetection(IEnumerable<Email> emails)
+	{
+		foreach (var email in emails)
+		{
+			// On ne touche pas aux mails déjà en spam/phishing ou corbeille
+			if (email.MailboxType == MailboxType.PhishingSpam || email.MailboxType == MailboxType.Trash)
+				continue;
+
+			if (IsSuspiciousEmail(email.SenderEmail))
+			{
+				email.PreviousMailboxType = email.MailboxType;
+				email.MailboxType = MailboxType.PhishingSpam;
+			}
+		}
+	}
+
+	private bool IsSuspiciousEmail(string senderEmail)
+	{
+		if (string.IsNullOrWhiteSpace(senderEmail) || !senderEmail.Contains("@"))
+			return false;
+
+		var domain = senderEmail.Split('@')[1].ToLowerInvariant();
+
+		// Domaines connus "légitimes"
+		var legitDomains = new[]
+		{
+		"orange.fr",
+		"gmail.com",
+		"outlook.com",
+		"entreprise.com",
+		"exemple.com"
+	};
+
+		// si le domaine est exact => OK
+		if (legitDomains.Contains(domain))
+			return false;
+
+		// si le domaine ressemble fortement à un domaine connu => suspect
+		foreach (var legit in legitDomains)
+		{
+			if (AreDomainsSimilar(domain, legit))
+				return true;
+		}
+
+		return false;
+	}
+	private bool AreDomainsSimilar(string a, string b)
+	{
+		a = a.ToLowerInvariant();
+		b = b.ToLowerInvariant();
+
+		// Trop différent en longueur -> pas comparable
+		if (Math.Abs(a.Length - b.Length) > 3)
+			return false;
+
+		int distance = LevenshteinDistance(a, b);
+
+		// Seuil : 1 ou 2 selon ton exigence (2 est bien pour lorange/orange)
+		return distance <= 2;
+	}
+
+	private int LevenshteinDistance(string s, string t)
+	{
+		if (string.IsNullOrEmpty(s)) return t?.Length ?? 0;
+		if (string.IsNullOrEmpty(t)) return s.Length;
+
+		int n = s.Length;
+		int m = t.Length;
+		var d = new int[n + 1, m + 1];
+
+		for (int i = 0; i <= n; i++) d[i, 0] = i;
+		for (int j = 0; j <= m; j++) d[0, j] = j;
+
+		for (int i = 1; i <= n; i++)
+		{
+			for (int j = 1; j <= m; j++)
+			{
+				int cost = (s[i - 1] == t[j - 1]) ? 0 : 1;
+
+				d[i, j] = Math.Min(
+					Math.Min(d[i - 1, j] + 1,      // suppression
+							 d[i, j - 1] + 1),     // insertion
+					d[i - 1, j - 1] + cost         // substitution
+				);
+			}
+		}
+
+		return d[n, m];
+	}
+
+
 }
+
