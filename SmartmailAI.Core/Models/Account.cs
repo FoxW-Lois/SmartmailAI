@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartmailAI.Core.Models;
@@ -14,4 +15,5 @@ public class Account
 	[Column("EncryptedTotpSecret")] public string? EncryptedTotpSecret { get; set; }
 	[Column("TwoFactorEnabled")] public required bool TwoFactorEnabled { get; set; }
 	[Column("Enabled")] public required bool Enabled { get; set; }
+	[Column("LastConnection")] public DateTime? LastConnection { get; set; }
 }

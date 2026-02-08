@@ -210,9 +210,11 @@ public partial class App : Application
 				services.AddSingleton<IAddressesRepository, AddressesRepository>();
 				services.AddSingleton<IAddressesService, AddressesService>();
 				services.AddSingleton<IGmailApiService, GmailApiService>();
-				services.AddSingleton<IOAuthGmailService, OAuthGmailService>();
+				services.AddSingleton<IGmailCredentialService, GmailCredentialService>();
 				services.AddSingleton<IGmailLogoutService, GmailLogoutService>();
 				services.AddSingleton<ITokenStore, GmailTokenStore>();
+				services.AddSingleton<IMailReaderService, MailReaderService>();
+				services.AddSingleton<IEmailRepository, EmailRepository>();
 				services.AddHttpClient();
 
 				#endregion (Email) Addresses Service
@@ -241,6 +243,11 @@ public partial class App : Application
 				});
 
 				services.AddDbContextFactory<AppDbContext_Account>(options =>
+				{
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
+				services.AddDbContextFactory<AppDbContext_Email>(options =>
 				{
 					options.UseSqlite($"Data Source={dbPath}");
 				});

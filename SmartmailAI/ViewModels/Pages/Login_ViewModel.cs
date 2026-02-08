@@ -1,12 +1,19 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.IRepository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class Login_ViewModel(IAuthService authService) : ObservableRecipient
+public partial class Login_ViewModel(IAuthService authService, IMailReaderService mailReaderService, IEmailRepository emailRepository,
+	IAddressesService addressesService) : ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
+	private readonly IMailReaderService _mailReaderService = mailReaderService;
+	private readonly IEmailRepository _emailRepository = emailRepository;
+	private readonly IAddressesService _addressesService = addressesService;
 
 	private string _login = string.Empty;
 	private string _errorMessage = string.Empty;
@@ -51,6 +58,25 @@ public partial class Login_ViewModel(IAuthService authService) : ObservableRecip
 			return (false, false, null);
 		}
 
+		var listAccountsLinked = await _addressesService.GetListAccountsLinkedAsync();
+
+		foreach (var account in listAccountsLinked)
+			await LoadMessagesAsync(account);
+
 		return (true, false, null);
+	}
+
+	public ObservableCollection<EmailGmail> Messages { get; } = [];
+
+	public async Task LoadMessagesAsync(AccountGmail accountGmail)
+	{
+		Messages.Clear();
+
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail);
+
+		foreach (var email in mails)
+			await _emailRepository.AddAsync(email);
+
+		await _authService.UpdateLastConnection();
 	}
 }

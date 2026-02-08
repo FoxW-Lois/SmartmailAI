@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Contracts.Services.Authentication;
 
@@ -19,6 +20,8 @@ public interface IAuthService
 	Task<(bool Success, string Error)> RegisterAsync(string login, string phoneNumber, string password);
 
 	void Logout();
+
+	Task UpdateLastConnection();
 
 	Task Update_EnableDisable_TwoFactorAsync(string login, bool setEnable);
 

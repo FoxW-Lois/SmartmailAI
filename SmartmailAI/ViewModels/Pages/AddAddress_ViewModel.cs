@@ -1,15 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.IRepository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddAddress_ViewModel(IAddressesService addressesService) : ObservableRecipient
+public partial class AddAddress_ViewModel(IAddressesService addressesService, IMailReaderService railReaderService,
+	IEmailRepository emailRepository, IAuthService authService) : ObservableRecipient
 {
 	[ObservableProperty]
 	public partial bool IsOtherChoice { get; set; }
 
 	private readonly IAddressesService _addressesService = addressesService;
+	private readonly IMailReaderService _mailReaderService = railReaderService;
+	private readonly IEmailRepository _emailRepository = emailRepository;
+	private readonly IAuthService _authService = authService;
 	private string _email = string.Empty;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
@@ -32,21 +39,21 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService) : 
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public async Task<bool> AddOtherAddressAsync(string password)
+	public ObservableCollection<EmailGmail> Messages { get; } = [];
+
+	public async Task LoadMessagesAsync()
 	{
-		ErrorMessage = string.Empty;
+		Messages.Clear();
 
-		bool success = await _addressesService.AddOtherAddressAsync();
+		var mails = await _mailReaderService.GetLastMessagesFromFirstAccountAsync();
 
-		if (!success)
-		{
-			ErrorMessage = resourceLoader.GetString("Error_EmailOrPasswordInvalid");
-			return false;
-		}
+		foreach (var email in mails)
+			await _emailRepository.AddAsync(email);
 
-		await _addressesService.RefreshAddressesListAsync();
-		return true;
+		await _authService.UpdateLastConnection();
 	}
+
+	#region Add methods for diffrent Addresses type/domain/source
 
 	public async Task<bool> AddOAuth2Async()
 	{
@@ -61,6 +68,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService) : 
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
+		await LoadMessagesAsync();
 		return true;
 	}
 
@@ -79,4 +87,22 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService) : 
 		await _addressesService.RefreshAddressesListAsync();
 		return true;
 	}
+
+	public async Task<bool> AddOtherAddressAsync(string password)
+	{
+		ErrorMessage = string.Empty;
+
+		bool success = await _addressesService.AddOtherAddressAsync();
+
+		if (!success)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_EmailOrPasswordInvalid");
+			return false;
+		}
+
+		await _addressesService.RefreshAddressesListAsync();
+		return true;
+	}
+
+	#endregion Add methods for diffrent Addresses type/domain/source
 }

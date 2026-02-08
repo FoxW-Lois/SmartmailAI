@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Authentication;
@@ -95,7 +96,8 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			Salt = salt,
 			TwoFactorEnabled = false,
 			//TODO: mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
-			Enabled = true
+			Enabled = true,
+			LastConnection = DateTime.Now
 		};
 
 		await _accountRepository.AddAsync(account);
@@ -107,6 +109,27 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	public void Logout()
 	{
 		IsAuthenticated = false;
+	}
+
+	public async Task UpdateLastConnection()
+	{
+		string currentAccountLogin = CurrentAccountLogin;
+		var currentAccount = await _accountRepository.GetByLoginAsync(currentAccountLogin);
+		if (currentAccount == null) return;
+
+		currentAccount = new Account
+		{
+			Id = currentAccount.Id,
+			Login = currentAccount.Login,
+			PhoneNumber = currentAccount.PhoneNumber,
+			Password = currentAccount.Password,
+			Salt = currentAccount.Salt,
+			TwoFactorEnabled = currentAccount.TwoFactorEnabled,
+			Enabled = currentAccount.Enabled,
+			LastConnection = DateTime.Now
+		};
+
+		await _accountRepository.UpdateAsync(currentAccount);
 	}
 
 	public async Task Update_EnableDisable_TwoFactorAsync(string login, bool setEnable)
