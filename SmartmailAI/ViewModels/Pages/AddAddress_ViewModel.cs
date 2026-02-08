@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -59,10 +59,14 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	{
 		ErrorMessage = string.Empty;
 
-		(_, bool success) = await _addressesService.AddGmailAccountAsync();
+		(bool success, string? specificError) = await _addressesService.AddGmailAccountAsync();
 
-		if (!success)
+		if (!success && specificError == "Email_AlreadyExist")
 		{
+			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
+			return false;
+		}
+		else if (!success) {
 			ErrorMessage = resourceLoader.GetString("Error_RecoveryEmailOAuth2Invalid");
 			return false;
 		}

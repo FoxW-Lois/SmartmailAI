@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Navigation;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 
 namespace SmartmailAI.ViewModels.Pages;
 

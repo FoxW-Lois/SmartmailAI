@@ -13,7 +13,7 @@ public interface IAddressesService
 
 	Task RefreshAddressesListAsync();
 
-	Task<(AccountGmail, bool)> AddGmailAccountAsync();
+	Task<(bool, string?)> AddGmailAccountAsync();
 
 	Task<bool> AddOutlookAsync();
 

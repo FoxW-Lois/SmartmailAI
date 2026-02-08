@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Contracts.Services.Authentication;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;

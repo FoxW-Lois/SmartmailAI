@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using SmartmailAI.Core.Models;
 
-namespace SmartmailAI.Core.IRepository;
+namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IEmailRepository
 {
@@ -11,4 +11,6 @@ public interface IEmailRepository
 	Task AddAsync(EmailGmail emailGmail);
 
 	Task DeleteAsync(EmailGmail emailGmail);
+
+	Task DeleteAllEmailsAsync(AccountGmail accountGmail);
 }

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Authentication;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Authentication;

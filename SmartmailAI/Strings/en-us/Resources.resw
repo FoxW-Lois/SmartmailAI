@@ -430,4 +430,7 @@
   <data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
     <value>Address connected on:</value>
   </data>
+  <data name="Error_Email_AlreadyExist" xml:space="preserve">
+    <value>The email address you are trying to add already exists.</value>
+  </data>
 </root>

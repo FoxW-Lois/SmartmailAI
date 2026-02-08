@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Authentication;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 
 namespace SmartmailAI.Core.Services.Authentication;
 

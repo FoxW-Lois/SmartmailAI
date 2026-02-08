@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SmartmailAI.Core.Models;
 
-namespace SmartmailAI.Core.IRepository;
+namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IAccountRepository
 {

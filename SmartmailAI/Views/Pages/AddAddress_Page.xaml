@@ -58,17 +58,17 @@
 				</Button>
 			</Grid>
 
+			<TextBlock
+				Foreground="Red"
+				Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+				TextWrapping="Wrap"
+				Visibility="{Binding ErrorVisibility}" />
+
 			<StackPanel Spacing="16" Visibility="{Binding IsOtherChoice, Converter={StaticResource BoolToVisibilityConverter}}">
 				<TextBlock x:Uid="AddAddress_OtherChoice" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
 				<TextBox x:Uid="AddAddress_Email" Text="{x:Bind ViewModel.Email, Mode=TwoWay}" />
 				<PasswordBox x:Name="PasswordBox" x:Uid="Account_Password" />
-
-				<TextBlock
-					Foreground="Red"
-					Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-					TextWrapping="Wrap"
-					Visibility="{Binding ErrorVisibility}" />
 
 				<Button x:Uid="AddAddress_Add" Click="OnAddClicked" />
 			</StackPanel>

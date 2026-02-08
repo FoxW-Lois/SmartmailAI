@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SmartmailAI.Core.AppDbContext;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Repository;
@@ -32,6 +33,18 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 		using var _context = _factory.CreateDbContext();
 
 		_context.EmailGmail.Remove(emailGmail);
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task DeleteAllEmailsAsync(AccountGmail accountGmail)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		var emailsToDelete = await _context.EmailGmail
+			.Where(e => e.Owner == accountGmail.Email)
+			.ToListAsync();
+
+		_context.EmailGmail.RemoveRange(emailsToDelete);
 		await _context.SaveChangesAsync();
 	}
 }

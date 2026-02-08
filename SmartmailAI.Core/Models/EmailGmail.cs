@@ -8,8 +8,8 @@ public class EmailGmail
 {
 	[Key][Column("Id")] public string Id { get; init; } = default!;
 
-	[Column("From")] public string? From { get; init; } = default!;
-	[Column("To")] public string? To { get; init; } = default!;
+	[Column("From")] public string? From { get; init; }
+	[Column("To")] public string? To { get; init; }
 	[Column("Subject")] public string Subject { get; init; } = default!;
 	[Column("Body")] public string Body { get; init; } = default!;
 	[Column("Date")] public DateTime? Date { get; init; }
