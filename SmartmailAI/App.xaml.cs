@@ -14,7 +14,7 @@ using Serilog;
 using SmartmailAI.Core.AppDbContext;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Repository;
 using SmartmailAI.Core.Services.Addresses;
 
@@ -215,6 +215,7 @@ public partial class App : Application
 				services.AddSingleton<ITokenStore, GmailTokenStore>();
 				services.AddSingleton<IMailReaderService, MailReaderService>();
 				services.AddSingleton<IEmailRepository, EmailRepository>();
+				services.AddSingleton<IEmailsSyncService, EmailsSyncService>();
 				services.AddHttpClient();
 
 				#endregion (Email) Addresses Service

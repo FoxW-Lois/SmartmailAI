@@ -19,6 +19,14 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 		return await _context.AccountGmail.ToListAsync();
 	}
 
+	public async Task<AccountGmail?> GetByEmailAsync(string email)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		return await _context.AccountGmail
+			.FirstOrDefaultAsync(a => a.Email == email);
+	}
+
 	public async Task AddAsync(AccountGmail accountGmail)
 	{
 		using var _context = _factory.CreateDbContext();

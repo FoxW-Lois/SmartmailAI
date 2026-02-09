@@ -24,21 +24,21 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public IAuthService _authService { get; }
 
-	public IAddressesRepository _addressesRepository { get; }
-
 	public IAddressesService _addressesService { get; }
+
+	public IEmailsSyncService _emailsSyncService { get; }
 
 	#endregion Interfaces declaration
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
-		IAddressesRepository addressesRepository, IAddressesService addressesService)
+		IAddressesService addressesService, IEmailsSyncService emailsSyncService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
 		NavigationService.Navigated += OnNavigated;
 		_authService = authService;
-		_addressesRepository = addressesRepository;
 		_addressesService = addressesService;
+		_emailsSyncService = emailsSyncService;
 
 		IsLogged = _authService.IsAuthenticated;
 		HasLinkedAddresses = _addressesService.HasAny;
@@ -55,6 +55,12 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		{
 			HasLinkedAddresses = hasAny;
 			UpdateVisibility();
+
+			// TODO: Ajouter si StartAsync() déjà lancé alors ne pas lancer à nouveau, et inversement pour Stop()
+			if (_addressesService.HasAny == true)
+				_ = _emailsSyncService.StartAsync();
+			else
+				_emailsSyncService.Stop();
 		};
 
 		UpdateVisibility();
@@ -112,6 +118,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public void Logout()
 	{
+		_emailsSyncService.Stop();
 		_authService.Logout();
 	}
 }

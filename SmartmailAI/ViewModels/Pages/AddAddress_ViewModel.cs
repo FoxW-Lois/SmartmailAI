@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Net.Mail;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
-using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services.Addresses;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -41,11 +42,12 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 
 	public ObservableCollection<EmailGmail> Messages { get; } = [];
 
-	public async Task LoadMessagesAsync()
+	public async Task LoadMessagesAsync(AccountGmail accountGmail)
 	{
 		Messages.Clear();
 
-		var mails = await _mailReaderService.GetLastMessagesFromFirstAccountAsync();
+		//var mails = await _mailReaderService.GetLastMessagesFromFirstAccountAsync();
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail);
 
 		foreach (var email in mails)
 			await _emailRepository.AddAsync(email);
@@ -59,7 +61,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	{
 		ErrorMessage = string.Empty;
 
-		(bool success, string? specificError) = await _addressesService.AddGmailAccountAsync();
+		(bool success, AccountGmail? accountGmail, string? specificError) = await _addressesService.AddGmailAccountAsync();
 
 		if (!success && specificError == "Email_AlreadyExist")
 		{
@@ -71,8 +73,14 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 			return false;
 		}
 
+		if (accountGmail == null)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_RecoveryEmailOAuth2Invalid");
+			return false;
+		}
+
 		await _addressesService.RefreshAddressesListAsync();
-		await LoadMessagesAsync();
+		await LoadMessagesAsync(accountGmail);
 		return true;
 	}
 

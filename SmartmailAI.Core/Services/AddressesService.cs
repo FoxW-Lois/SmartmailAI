@@ -28,7 +28,7 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 		AddressesListChanged?.Invoke(this, HasAny);
 	}
 
-	public async Task<(bool, string?)> AddGmailAccountAsync()
+	public async Task<(bool, AccountGmail?, string?)> AddGmailAccountAsync()
 	{
 		var userKey = Guid.NewGuid().ToString();
 
@@ -36,7 +36,7 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 		var email = await _gmailApiService.GetEmailAddressAsync(credential);
 
 		if (await CheckIfGmailAccountExist(email))
-			return (false, "Email_AlreadyExist");
+			return (false, null, "Email_AlreadyExist");
 
 		var account = new AccountGmail
 		{
@@ -47,7 +47,7 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 		};
 
 		await _addressRepository.AddAsync(account);
-		return (true, null);
+		return (true, account, null);
 	}
 
 	public async Task<bool> AddOutlookAsync()
