@@ -18,25 +18,7 @@ public class MailReaderService(IAddressesRepository repository, IGmailCredential
 	private readonly IAuthService _authService = authService;
 	private readonly IAccountRepository _accountRepository = accountRepository;
 
-	public async Task<IReadOnlyList<EmailGmail>> GetLastMessagesFromFirstAccountAsync()
-	{
-		var account = (await _addressesRepository.GetAllAddressAsync()).FirstOrDefault();
-		if (account == null)
-			return [];
-
-		var credential = await _gmailCredentialService.GetCredentialAsync(account);
-		if (credential == null)
-			return [];
-
-		int numMails = 10;
-
-		var emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", numMails);
-		emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", numMails));
-
-		return emailsList;
-	}
-
-	public async Task<IReadOnlyList<EmailGmail>> GetLastMessagesFromAccountAsync(AccountGmail accountGmail)
+	public async Task<IReadOnlyList<EmailGmail>> GetLastMessagesFromAccountAsync(AccountGmail accountGmail, bool isAddingNewAddress)
 	{
 		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
 		if (credential == null)
@@ -52,13 +34,13 @@ public class MailReaderService(IAddressesRepository repository, IGmailCredential
 		if (currentAccount != null)
 		{
 			lastConnection = currentAccount.LastConnection;
-			emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", numMails, lastConnection);
-			emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", numMails));
+			emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails, lastConnection);
+			emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails, lastConnection));
 		}
 		else
 		{
-			emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", numMails);
-			emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", numMails));
+			emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails);
+			emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails));
 		}
 
 		return emailsList;

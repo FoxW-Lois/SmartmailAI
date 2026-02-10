@@ -26,7 +26,8 @@ public class GmailApiService : IGmailApiService
 		return profile.EmailAddress;
 	}
 
-	public async Task<List<EmailGmail>> GetLastMessagesAsync(UserCredential credential, string MailboxType, int? maxResults = 50, DateTime? lastConnection = null)
+	public async Task<List<EmailGmail>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress, int? maxResults = 50,
+		DateTime? lastConnection = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer
 		{
@@ -39,7 +40,7 @@ public class GmailApiService : IGmailApiService
 		request.LabelIds = MailboxType.ToUpper();
 		request.IncludeSpamTrash = false;
 
-		if (lastConnection is not null)
+		if (lastConnection is not null && !isAddingNewAddress)
 		{
 			var unixSeconds = ToUnixSeconds(lastConnection.Value);
 			request.Q = $"after:{unixSeconds}";
@@ -57,32 +58,17 @@ public class GmailApiService : IGmailApiService
 		{
 			var full = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
 
-			if (MailboxType == "Inbox")
+			result.Add(new EmailGmail
 			{
-				result.Add(new EmailGmail
-				{
-					Id = msg.Id,
-					From = GetHeader(full, "From"),
-					Subject = GetHeader(full, "Subject"),
-					Body = GetMessageBody(full),
-					Date = GetMessageDate(full),
-					Owner = emailAddressOwner,
-					MailboxType = MailboxType
-				});
-			}
-			else if (MailboxType == "Sent")
-			{
-				result.Add(new EmailGmail
-				{
-					Id = msg.Id,
-					To = GetHeader(full, "To"),
-					Subject = GetHeader(full, "Subject"),
-					Body = GetMessageBody(full),
-					Date = GetMessageDate(full),
-					Owner = emailAddressOwner,
-					MailboxType = MailboxType
-				});
-			}
+				Guid = msg.Id,
+				From = GetHeader(full, "From"),
+				To = GetHeader(full, "To"),
+				Subject = GetHeader(full, "Subject"),
+				Body = GetMessageBody(full),
+				Date = GetMessageDate(full),
+				Owner = emailAddressOwner,
+				MailboxType = MailboxType
+			});
 		}
 
 		return result;

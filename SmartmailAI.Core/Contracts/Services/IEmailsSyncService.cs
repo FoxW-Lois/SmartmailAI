@@ -8,6 +8,7 @@ public interface IEmailsSyncService
 {
 	Task StartAsync();
 
+	Task RunAsync();
 
 	Task SyncNewEmailsAsync(AccountGmail accountGmail);
 

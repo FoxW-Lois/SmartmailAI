@@ -6,7 +6,9 @@ namespace SmartmailAI.Core.Models;
 
 public class EmailGmail
 {
-	[Key][Column("Id")] public string Id { get; init; } = default!;
+	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
+
+	[Column("Guid")] public string Guid { get; init; } = default!;
 
 	[Column("From")] public string? From { get; init; }
 	[Column("To")] public string? To { get; init; }

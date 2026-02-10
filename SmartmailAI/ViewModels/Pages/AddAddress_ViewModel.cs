@@ -46,8 +46,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	{
 		Messages.Clear();
 
-		//var mails = await _mailReaderService.GetLastMessagesFromFirstAccountAsync();
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail);
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail, true);
 
 		foreach (var email in mails)
 			await _emailRepository.AddAsync(email);
@@ -68,7 +67,8 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
 			return false;
 		}
-		else if (!success) {
+		else if (!success)
+		{
 			ErrorMessage = resourceLoader.GetString("Error_RecoveryEmailOAuth2Invalid");
 			return false;
 		}

@@ -56,9 +56,11 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			HasLinkedAddresses = hasAny;
 			UpdateVisibility();
 
-			// TODO: Ajouter si StartAsync() déjà lancé alors ne pas lancer à nouveau, et inversement pour Stop()
 			if (_addressesService.HasAny == true)
-				_ = _emailsSyncService.StartAsync();
+			{
+				_emailsSyncService.Stop();
+				_emailsSyncService.StartAsync();
+			}
 			else
 				_emailsSyncService.Stop();
 		};
@@ -100,6 +102,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	#endregion Changement d'état concernant l'authentification de l'utilisateur
 
 	#region Changement d'état concernant la présence d'adresses email connectées
+
 	private bool _hasLinkedAddresses;
 
 	public bool HasLinkedAddresses
@@ -107,6 +110,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		get => _hasLinkedAddresses;
 		set => SetProperty(ref _hasLinkedAddresses, value);
 	}
+
 	public bool CanShowAddressManagement => IsLogged && HasLinkedAddresses;
 
 	private void UpdateVisibility()

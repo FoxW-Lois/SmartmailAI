@@ -72,7 +72,7 @@ public partial class Login_ViewModel(IAuthService authService, IMailReaderServic
 	{
 		Messages.Clear();
 
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail);
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail, false);
 
 		foreach (var email in mails)
 			await _emailRepository.AddAsync(email);
