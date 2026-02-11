@@ -5,13 +5,13 @@ namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IAccountRepository
 {
-	Task<Account?> GetByLoginAsync(string login);
+	Task<Account?> GetAccountByLoginAsync(string login);
 
 	Task<bool> LoginExistsAsync(string login);
 
-	Task AddAsync(Account account);
+	Task AddAccountAsync(Account account);
 
-	Task UpdateAsync(Account account);
+	Task UpdateAccountAsync(Account account);
 
-	Task DeleteAsync(Account account);
+	Task DeleteAccountAsync(Account account);
 }

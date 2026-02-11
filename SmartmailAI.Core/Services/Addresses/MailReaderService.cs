@@ -25,7 +25,7 @@ public class MailReaderService(IAddressesRepository repository, IGmailCredential
 			return [];
 
 		string currentAccountLogin = _authService.CurrentAccountLogin;
-		var currentAccount = await _accountRepository.GetByLoginAsync(currentAccountLogin);
+		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
 
 		DateTime? lastConnection;
 		List<EmailGmail> emailsList;

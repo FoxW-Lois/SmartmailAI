@@ -85,7 +85,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		ThemeIndex = (int)_themeSelectorService.Theme;
 		BackdropTypeIndex = (int)_appSettingsService.BackdropType;
 
-		var account = await _accountRepository.GetByLoginAsync(_authService.CurrentAccountLogin);
+		var account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
 		if (account != null)
 		{
 			var stateTwoFactor = account.TwoFactorEnabled;

@@ -23,7 +23,7 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 
 	public async Task RefreshAddressesListAsync()
 	{
-		var newValue = await _addressRepository.GetAllAddressAsync();
+		var newValue = await _addressRepository.GetAllAddressesAsync();
 		HasAny = newValue.Count > 0;
 		AddressesListChanged?.Invoke(this, HasAny);
 	}
@@ -46,7 +46,7 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 			TokenStorageKey = userKey
 		};
 
-		await _addressRepository.AddAsync(account);
+		await _addressRepository.AddAddressAsync(account);
 		return (true, account, null);
 	}
 
@@ -65,20 +65,20 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 	{
 		await _gmailLogoutService.LogoutAsync(account);
 		await _emailRepository.DeleteAllEmailsAsync(account);
-		await _addressRepository.DeleteAsync(account);
+		await _addressRepository.DeleteAddressAsync(account);
 
 		return true;
 	}
 
 	public async Task<List<AccountGmail>> GetListAccountsLinkedAsync()
 	{
-		var accounts = await _addressRepository.GetAllAddressAsync();
+		var accounts = await _addressRepository.GetAllAddressesAsync();
 		return accounts;
 	}
 
 	public async Task<bool> CheckIfGmailAccountExist(string addresseGmail)
 	{
-		var accountsGmailList = await _addressRepository.GetAllAddressAsync();
+		var accountsGmailList = await _addressRepository.GetAllAddressesAsync();
 
 		foreach (var account in accountsGmailList)
 		{

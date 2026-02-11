@@ -4,7 +4,7 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Contracts.Services;
 
-public interface IMailboxDataService
+public interface IEmailsService
 {
 	Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync();
 

@@ -49,7 +49,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail, true);
 
 		foreach (var email in mails)
-			await _emailRepository.AddAsync(email);
+			await _emailRepository.AddEmailAsync(email);
 
 		await _authService.UpdateLastConnection();
 	}

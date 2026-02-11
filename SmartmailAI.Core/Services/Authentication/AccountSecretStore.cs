@@ -11,27 +11,27 @@ public class AccountSecretStore(IAccountRepository accountRepository) : IAccount
 
 	public async Task SaveSecretAsync(string login, string encryptedSecret)
 	{
-		var account = await _accountRepository.GetByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
+		var account = await _accountRepository.GetAccountByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
 
 		account.EncryptedTotpSecret = encryptedSecret;
 		account.TwoFactorEnabled = true;
 
-		await _accountRepository.UpdateAsync(account);
+		await _accountRepository.UpdateAccountAsync(account);
 	}
 
 	public async Task<string?> GetSecretAsync(string login)
 	{
-		var account = await _accountRepository.GetByLoginAsync(login);
+		var account = await _accountRepository.GetAccountByLoginAsync(login);
 		return account?.EncryptedTotpSecret;
 	}
 
 	public async Task DeleteSecretAsync(string login)
 	{
-		var account = await _accountRepository.GetByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
+		var account = await _accountRepository.GetAccountByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
 
 		account.EncryptedTotpSecret = null;
 		account.TwoFactorEnabled = false;
 
-		await _accountRepository.UpdateAsync(account);
+		await _accountRepository.UpdateAccountAsync(account);
 	}
 }

@@ -13,14 +13,14 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 {
 	private readonly IDbContextFactory<AppDbContext_Email> _factory = factory;
 
-	public async Task<List<EmailGmail>> GetAllAddressAsync()
+	public async Task<List<EmailGmail>> GetAllEmailsAsync()
 	{
 		using var _context = _factory.CreateDbContext();
 
 		return await _context.EmailGmail.ToListAsync();
 	}
 
-	public async Task AddAsync(EmailGmail emailGmail)
+	public async Task AddEmailAsync(EmailGmail emailGmail)
 	{
 		using var _context = _factory.CreateDbContext();
 
@@ -28,7 +28,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task DeleteAsync(EmailGmail emailGmail)
+	public async Task DeleteEmailAsync(EmailGmail emailGmail)
 	{
 		using var _context = _factory.CreateDbContext();
 

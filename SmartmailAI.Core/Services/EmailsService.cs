@@ -3,21 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
 
-public class MailboxDataService : IEmailsService
+public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 {
+	private readonly IEmailRepository _emailRepository = emailRepository;
 	private List<Email> _AllEmails;
 	private static readonly ResourceLoader _resources = new();
-
-	public MailboxDataService()
-	{
-	}
-
-	#region Données de test
 
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
@@ -371,10 +367,6 @@ public class MailboxDataService : IEmailsService
 		];
 	}
 
-	#endregion Données de test
-
-	#region CRUD Emails
-
 	public async Task<IEnumerable<Email>> GetAllEmailsAsync()
 	{
 		_AllEmails ??= [.. AllEmails()];
@@ -467,6 +459,4 @@ public class MailboxDataService : IEmailsService
 		email.MailboxType = MailboxType.Trash;
 		return Task.CompletedTask;
 	}
-
-	#endregion CRUD Emails
 }

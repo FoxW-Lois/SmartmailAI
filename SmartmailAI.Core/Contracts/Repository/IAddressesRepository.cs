@@ -6,11 +6,11 @@ namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IAddressesRepository
 {
-	Task<List<AccountGmail>> GetAllAddressAsync();
+	Task<List<AccountGmail>> GetAllAddressesAsync();
 
-	Task<AccountGmail?> GetByEmailAsync(string email);
+	Task<AccountGmail?> GetAddressByEmailAsync(string email);
 
-	Task AddAsync(AccountGmail accountGmail);
+	Task AddAddressAsync(AccountGmail accountGmail);
 
-	Task<bool> DeleteAsync(AccountGmail accountGmail);
+	Task<bool> DeleteAddressAsync(AccountGmail accountGmail);
 }

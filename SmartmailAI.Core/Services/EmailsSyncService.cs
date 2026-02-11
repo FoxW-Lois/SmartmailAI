@@ -61,7 +61,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 			// Ne JAMAIS casser le while
 			while (await _timer.WaitForNextTickAsync(_cts.Token))
 			{
-				var addressRefreshList = await _addressesRepository.GetAllAddressAsync();
+				var addressRefreshList = await _addressesRepository.GetAllAddressesAsync();
 
 				if (addressRefreshList is null || addressRefreshList.Count == 0) continue;
 
@@ -93,7 +93,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail, false);
 
 		foreach (var email in mails)
-			await _emailRepository.AddAsync(email);
+			await _emailRepository.AddEmailAsync(email);
 	}
 
 	public void Stop()

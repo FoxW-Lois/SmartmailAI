@@ -39,7 +39,7 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 
 	public async Task LoadAddressesAsync()
 	{
-		var result = await _addressRepository.GetAllAddressAsync();
+		var result = await _addressRepository.GetAllAddressesAsync();
 		AccountsGmail = new ObservableCollection<AccountGmail>(result);
 	}
 

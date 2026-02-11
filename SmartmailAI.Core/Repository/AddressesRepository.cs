@@ -12,14 +12,14 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 {
 	private readonly IDbContextFactory<AppDbContext_Address> _factory = factory;
 
-	public async Task<List<AccountGmail>> GetAllAddressAsync()
+	public async Task<List<AccountGmail>> GetAllAddressesAsync()
 	{
 		using var _context = _factory.CreateDbContext();
 
 		return await _context.AccountGmail.ToListAsync();
 	}
 
-	public async Task<AccountGmail?> GetByEmailAsync(string email)
+	public async Task<AccountGmail?> GetAddressByEmailAsync(string email)
 	{
 		using var _context = _factory.CreateDbContext();
 
@@ -27,7 +27,7 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 			.FirstOrDefaultAsync(a => a.Email == email);
 	}
 
-	public async Task AddAsync(AccountGmail accountGmail)
+	public async Task AddAddressAsync(AccountGmail accountGmail)
 	{
 		using var _context = _factory.CreateDbContext();
 
@@ -35,7 +35,7 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<bool> DeleteAsync(AccountGmail accountGmail)
+	public async Task<bool> DeleteAddressAsync(AccountGmail accountGmail)
 	{
 		using var _context = _factory.CreateDbContext();
 

@@ -51,7 +51,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	// Connexion
 	public async Task<(bool Success, string? SpecificError)> LoginAsync(string login, string password)
 	{
-		var account = await _accountRepository.GetByLoginAsync(login);
+		var account = await _accountRepository.GetAccountByLoginAsync(login);
 		if (account is null)
 			return (false, null);
 
@@ -100,7 +100,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			LastConnection = DateTime.Now
 		};
 
-		await _accountRepository.AddAsync(account);
+		await _accountRepository.AddAccountAsync(account);
 
 		return (true, string.Empty);
 	}
@@ -114,7 +114,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	public async Task UpdateLastConnection()
 	{
 		string currentAccountLogin = CurrentAccountLogin;
-		var currentAccount = await _accountRepository.GetByLoginAsync(currentAccountLogin);
+		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
 		if (currentAccount == null) return;
 
 		currentAccount = new Account
@@ -129,12 +129,12 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			LastConnection = DateTime.Now
 		};
 
-		await _accountRepository.UpdateAsync(currentAccount);
+		await _accountRepository.UpdateAccountAsync(currentAccount);
 	}
 
 	public async Task Update_EnableDisable_TwoFactorAsync(string login, bool setEnable)
 	{
-		var user = await _accountRepository.GetByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
+		var user = await _accountRepository.GetAccountByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
 
 		if (setEnable) // Activation
 		{
@@ -157,7 +157,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 
 	public async Task<bool> ValidateSecondFactorAsync(string login, string code)
 	{
-		var user = await _accountRepository.GetByLoginAsync(login);
+		var user = await _accountRepository.GetAccountByLoginAsync(login);
 
 		if (user is null || !user.TwoFactorEnabled)
 			return false;

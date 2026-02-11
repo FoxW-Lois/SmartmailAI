@@ -6,7 +6,7 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAware
 {
-	private readonly IMailboxDataService _mailboxDataService;
+	private readonly IEmailsService _emailsService;
 
 	[ObservableProperty]
 	private MailboxCategory? selectedCategory;
@@ -19,16 +19,16 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
 
-	public DetailsList_ViewModel(IMailboxDataService mailboxDataService)
+	public DetailsList_ViewModel(IEmailsService emailsService)
 	{
-		_mailboxDataService = mailboxDataService;
+		_emailsService = emailsService;
 	}
 
 	public async Task OnNavigatedTo(object parameter)
 	{
 		Categories.Clear();
 
-		var categories = await _mailboxDataService.GetAllCategoriesAsync();
+		var categories = await _emailsService.GetAllCategoriesAsync();
 
 		foreach (var category in categories)
 		{
@@ -91,7 +91,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			return;
 
 		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsStarredAsync(email);
+		await _emailsService.MarkEmailAsStarredAsync(email);
 
 		var newMailboxType = MailboxType.Starred;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
@@ -101,7 +101,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private async Task MarkAsReadAsync(Email email)
 	{
 		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsReadAsync(email);
+		await _emailsService.MarkEmailAsReadAsync(email);
 
 		var newMailboxType = MailboxType.Unread;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
@@ -113,7 +113,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private async Task MarkAsUnreadAsync(Email email)
 	{
 		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsUnreadAsync(email);
+		await _emailsService.MarkEmailAsUnreadAsync(email);
 
 		var newMailboxType = MailboxType.Unread;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
@@ -128,7 +128,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			return;
 
 		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.MarkEmailAsArchivedAsync(email);
+		await _emailsService.MarkEmailAsArchivedAsync(email);
 
 		var newMailboxType = email.MailboxType;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
@@ -138,7 +138,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private async Task RestoreMailAsync(Email email)
 	{
 		var previousMailboxType = email.MailboxType;
-		await _mailboxDataService.RestoreEmailAsync(email);
+		await _emailsService.RestoreEmailAsync(email);
 
 		var newMailboxType = email.MailboxType;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
@@ -155,9 +155,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var previousMailboxType = email.MailboxType;
 
 		if (email.MailboxType != MailboxType.Trash)
-			await _mailboxDataService.MarkEmailAsTrashedAsync(email);
+			await _emailsService.MarkEmailAsTrashedAsync(email);
 		else
-			await _mailboxDataService.DeleteEmailAsync(email);
+			await _emailsService.DeleteEmailAsync(email);
 
 		var newMailboxType = email.MailboxType;
 		RefreshSelectedCategory(previousMailboxType, newMailboxType);
@@ -177,7 +177,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var previousCategory = SelectedCategory;
 
 		// Recharge les mails depuis le service
-		var previousRefreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(previousMailboxType);
+		var previousRefreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(previousMailboxType);
 
 		// Refresh UI
 		previousCategory.ItemsCollection.Clear();
@@ -187,7 +187,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		// --- Refresh de l'onglet devenant le nouvel emplacement du mail ---
 		var newCategory = Categories.FirstOrDefault(c => c.MailboxType == newMailboxType);
 
-		var newRefreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(newMailboxType);
+		var newRefreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(newMailboxType);
 
 		newCategory.ItemsCollection.Clear();
 		foreach (var email in newRefreshedEmails)
@@ -200,7 +200,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		if (SelectedCategory is null)
 			return;
 
-		var refreshedEmails = await _mailboxDataService.GetEmailsByMailboxTypeAsync(SelectedCategory.MailboxType);
+		var refreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(SelectedCategory.MailboxType);
 
 		// Recharge les données sans casser le binding
 		SelectedCategory.ReplaceAllItems(refreshedEmails);
