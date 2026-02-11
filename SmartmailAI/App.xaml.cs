@@ -202,7 +202,8 @@ public partial class App : Application
 
 				#endregion Settings Pages
 
-				services.AddTransient<IMailboxDataService, MailboxDataService>();
+				services.AddTransient<IEmailsService, MailboxDataService>();
+				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
 
 				#region (Email) Addresses Service
