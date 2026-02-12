@@ -10,6 +10,8 @@ public interface IEmailRepository
 
 	Task AddEmailAsync(Email email);
 
+	Task UpdateEmailAsync(Email email);
+
 	Task DeleteEmailAsync(Email email);
 
 	Task DeleteAllEmailsAsync(AccountGmail accountGmail);

@@ -28,6 +28,14 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 		await _context.SaveChangesAsync();
 	}
 
+	public async Task UpdateEmailAsync(Email email)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		_context.Email.Update(email);
+		await _context.SaveChangesAsync();
+	}
+
 	public async Task DeleteEmailAsync(Email email)
 	{
 		using var _context = _factory.CreateDbContext();

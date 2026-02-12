@@ -387,10 +387,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 		if (email is null)
 			return Task.CompletedTask;
 
-		if (!email.IsStarred)
-			email.IsStarred = true;
-		else
-			email.IsStarred = false;
+		email.IsStarred = !email.IsStarred;
+		_emailRepository.UpdateEmailAsync(email);
 
 		return Task.CompletedTask;
 	}
@@ -401,6 +399,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 			return Task.CompletedTask;
 
 		email.IsRead = true;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -410,6 +410,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 			return Task.CompletedTask;
 
 		email.IsRead = false;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -420,6 +422,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Archives;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -429,6 +433,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 			return Task.CompletedTask;
 
 		email.MailboxType = (MailboxType)email.PreviousMailboxType;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -438,6 +444,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 			return Task.CompletedTask;
 
 		_AllEmails.Remove(email);
+		_emailRepository.DeleteEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -448,6 +456,8 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Trash;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 }
