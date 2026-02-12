@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Contracts.Services.Authentication;
-using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
-public class MailReaderService(IAddressesRepository repository, IGmailCredentialService credentialService, IGmailApiService gmailApi,
-	IAuthService authService, IAccountRepository accountRepository) : IMailReaderService
+public class MailReaderService(IGmailCredentialService credentialService, IGmailApiService gmailApi, IAuthService authService, 
+	IAccountRepository accountRepository, IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
 {
-	private readonly IAddressesRepository _addressesRepository = repository;
 	private readonly IGmailCredentialService _gmailCredentialService = credentialService;
 	private readonly IGmailApiService _gmailApiService = gmailApi;
 	private readonly IAuthService _authService = authService;
 	private readonly IAccountRepository _accountRepository = accountRepository;
+	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
-	public async Task<IReadOnlyList<EmailGmail>> GetLastMessagesFromAccountAsync(AccountGmail accountGmail, bool isAddingNewAddress)
+	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(AccountGmail accountGmail, bool isAddingNewAddress)
 	{
 		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
 		if (credential == null)
@@ -28,20 +28,22 @@ public class MailReaderService(IAddressesRepository repository, IGmailCredential
 		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
 
 		DateTime? lastConnection;
-		List<EmailGmail> emailsList;
+		List<EmailGmail> rawEmailsList;
 		int numMails = 10;
 
 		if (currentAccount != null)
 		{
 			lastConnection = currentAccount.LastConnection;
-			emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails, lastConnection);
-			emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails, lastConnection));
+			rawEmailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails, lastConnection);
+			rawEmailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails, lastConnection));
 		}
 		else
 		{
-			emailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails);
-			emailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails));
+			rawEmailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails);
+			rawEmailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails));
 		}
+
+		List<Email> emailsList = await _mappersToEmailDTOService.MapEmailGmailToEmail_List(rawEmailsList);
 
 		return emailsList;
 	}

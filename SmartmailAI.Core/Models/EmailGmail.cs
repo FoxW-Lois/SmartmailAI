@@ -10,8 +10,11 @@ public class EmailGmail
 
 	[Column("Guid")] public string Guid { get; init; } = default!;
 
-	[Column("From")] public string? From { get; init; }
-	[Column("To")] public string? To { get; init; }
+	[Column("FromEmail")] public string FromEmail { get; init; } = default!;
+	[Column("FromName")] public string? FromName { get; init; }
+	[Column("ToEmail")] public string ToEmail { get; init; } = default!;
+	[Column("ToName")] public string? ToName { get; init; }
+
 	[Column("Subject")] public string Subject { get; init; } = default!;
 	[Column("Body")] public string Body { get; init; } = default!;
 	[Column("Date")] public DateTime? Date { get; init; }

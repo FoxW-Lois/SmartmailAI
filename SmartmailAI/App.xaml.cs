@@ -202,9 +202,9 @@ public partial class App : Application
 
 				#endregion Settings Pages
 
-				services.AddTransient<IEmailsService, MailboxDataService>();
 				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
+				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
 
 				#region (Email) Addresses Service
 

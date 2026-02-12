@@ -6,11 +6,11 @@ namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IEmailRepository
 {
-	Task<List<EmailGmail>> GetAllEmailsAsync();
+	Task<List<Email>> GetAllEmailsAsync();
 
-	Task AddEmailAsync(EmailGmail emailGmail);
+	Task AddEmailAsync(Email email);
 
-	Task DeleteEmailAsync(EmailGmail emailGmail);
+	Task DeleteEmailAsync(Email email);
 
 	Task DeleteAllEmailsAsync(AccountGmail accountGmail);
 }

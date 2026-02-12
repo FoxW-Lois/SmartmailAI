@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
@@ -58,11 +59,16 @@ public class GmailApiService : IGmailApiService
 		{
 			var full = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
 
+			var (fromName, fromEmail) = ParseEmailAddress(GetHeader(full, "From"));
+			var (toName, toEmail) = ParseEmailAddress(GetHeader(full, "To"));
+
 			result.Add(new EmailGmail
 			{
 				Guid = msg.Id,
-				From = GetHeader(full, "From"),
-				To = GetHeader(full, "To"),
+				FromEmail = fromEmail,
+				FromName = fromName,
+				ToEmail = toEmail,
+				ToName = toName,
 				Subject = GetHeader(full, "Subject"),
 				Body = GetMessageBody(full),
 				Date = GetMessageDate(full),
@@ -114,5 +120,22 @@ public class GmailApiService : IGmailApiService
 	private static long ToUnixSeconds(DateTime dateTime)
 	{
 		return new DateTimeOffset(dateTime).ToUnixTimeSeconds();
+	}
+
+	private static (string? DisplayName, string Email) ParseEmailAddress(string? rawHeader)
+	{
+		if (string.IsNullOrWhiteSpace(rawHeader))
+			return (null, string.Empty);
+
+		try
+		{
+			var address = new MailAddress(rawHeader);
+			return (string.IsNullOrWhiteSpace(address.DisplayName) ? null : address.DisplayName, address.Address);
+		}
+		catch
+		{
+			// Fallback si format non standard
+			return (null, rawHeader);
+		}
 	}
 }

@@ -13,26 +13,26 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 {
 	private readonly IDbContextFactory<AppDbContext_Email> _factory = factory;
 
-	public async Task<List<EmailGmail>> GetAllEmailsAsync()
+	public async Task<List<Email>> GetAllEmailsAsync()
 	{
 		using var _context = _factory.CreateDbContext();
 
-		return await _context.EmailGmail.ToListAsync();
+		return await _context.Email.ToListAsync();
 	}
 
-	public async Task AddEmailAsync(EmailGmail emailGmail)
+	public async Task AddEmailAsync(Email email)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		_context.EmailGmail.Add(emailGmail);
+		_context.Email.Add(email);
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task DeleteEmailAsync(EmailGmail emailGmail)
+	public async Task DeleteEmailAsync(Email email)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		_context.EmailGmail.Remove(emailGmail);
+		_context.Email.Remove(email);
 		await _context.SaveChangesAsync();
 	}
 
@@ -40,11 +40,11 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 	{
 		using var _context = _factory.CreateDbContext();
 
-		var emailsToDelete = await _context.EmailGmail
+		var emailsToDelete = await _context.Email
 			.Where(e => e.Owner == accountGmail.Email)
 			.ToListAsync();
 
-		_context.EmailGmail.RemoveRange(emailsToDelete);
+		_context.Email.RemoveRange(emailsToDelete);
 		await _context.SaveChangesAsync();
 	}
 }
