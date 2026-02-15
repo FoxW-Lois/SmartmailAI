@@ -10,7 +10,9 @@ public sealed partial class NavShell_Page : Page
 
 	public Frame ShellFrame => NavigationFrame;
 
-	public NavShell_Page()
+	private readonly INavigationService _navigationService;
+
+	public NavShell_Page(INavigationService navigationService)
 	{
 		ViewModel = Ioc.Default.GetRequiredService<NavShell_ViewModel>();
 		DataContext = ViewModel;
@@ -35,6 +37,8 @@ public sealed partial class NavShell_Page : Page
 		AppTitleBarText.Text = ConstantHelper.AppDisplayName;
 
 		App.MainWindow.Activated += MainWindow_Activated;
+
+		_navigationService = navigationService;
 	}
 
 	private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -69,6 +73,12 @@ public sealed partial class NavShell_Page : Page
 
 			// Nettoie l'historique de navigation
 			NavigationFrame.BackStack.Clear();
+		}
+
+		if (args.InvokedItemContainer?.DataContext is AccountGmail account)
+		{
+			string addressAccount = account.Email;
+			_navigationService.NavigateTo(typeof(DetailsList_ViewModel).FullName!, addressAccount);
 		}
 	}
 }

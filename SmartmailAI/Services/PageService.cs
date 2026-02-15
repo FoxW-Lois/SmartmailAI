@@ -22,6 +22,8 @@ internal class PageService : IPageService
 		// Main Window Subpages
 		Configure<Login_ViewModel, Login_Page>();
 		Configure<Register_ViewModel, Register_Page>();
+		Configure<AddAddress_ViewModel, AddAddress_Page>();
+		Configure<AddressManagement_ViewModel, AddressManagement_Page>();
 		Configure<TwoFactor_ViewModel, TwoFactor_Page>();
 		Configure<SettingsTwoFactor_ViewModel, SettingsTwoFactor_Page>();
 	}

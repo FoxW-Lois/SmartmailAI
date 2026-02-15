@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Navigation;
+using SmartmailAI.Core.Contracts.Repository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -11,27 +13,63 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	[ObservableProperty]
 	public partial object? Selected { get; set; }
 
+	[ObservableProperty]
+	private ObservableCollection<AccountGmail> accountsGmail = [];
+
+	#region Interfaces declaration
+
 	public INavigationService NavigationService { get; }
 
 	public INavigationViewService NavigationViewService { get; }
 
 	public IAuthService _authService { get; }
 
-	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService)
+	public IAddressesRepository _addressesRepository { get; }
+
+	public IAddressesService _addressesService { get; }
+
+	public IEmailsSyncService _emailsSyncService { get; }
+
+	#endregion Interfaces declaration
+
+	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
+		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
 		NavigationService.Navigated += OnNavigated;
 		_authService = authService;
+		_addressesRepository = addressesRepository;
+		_addressesService = addressesService;
+		_emailsSyncService = emailsSyncService;
 
 		IsLogged = _authService.IsAuthenticated;
+		HasLinkedAddresses = _addressesService.HasAny;
 
 		_authService.AuthenticationStateChanged += (_, isLogged) =>
 		{
 			// Debug en console du changement de IsAuthenticated
 			//Console.WriteLine($"============ Auth changed: {isLogged}");
 			IsLogged = isLogged;
+			UpdateVisibility();
 		};
+
+		_addressesService.AddressesListChanged += (_, hasAny) =>
+		{
+			HasLinkedAddresses = hasAny;
+			_ = LoadAccountsAsync();
+			UpdateVisibility();
+
+			if (_addressesService.HasAny == true)
+			{
+				_emailsSyncService.Stop();
+				_emailsSyncService.StartAsync();
+			}
+			else
+				_emailsSyncService.Stop();
+		};
+
+		UpdateVisibility();
 	}
 
 	private void OnNavigated(object sender, NavigationEventArgs e)
@@ -67,8 +105,38 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	#endregion Changement d'état concernant l'authentification de l'utilisateur
 
+	#region Changement d'état concernant la présence d'adresses email connectées
+
+	private bool _hasLinkedAddresses;
+
+	public bool HasLinkedAddresses
+	{
+		get => _hasLinkedAddresses;
+		set => SetProperty(ref _hasLinkedAddresses, value);
+	}
+
+	public bool CanShowAddressManagement => IsLogged && HasLinkedAddresses;
+
+	private void UpdateVisibility()
+	{
+		OnPropertyChanged(nameof(CanShowAddressManagement));
+	}
+
+	public async Task LoadAccountsAsync()
+	{
+		var accounts = await _addressesRepository.GetAllAddressesAsync();
+
+		AccountsGmail.Clear();
+
+		foreach (var account in accounts)
+			AccountsGmail.Add(account);
+	}
+
+	#endregion Changement d'état concernant la présence d'adresses email connectées
+
 	public void Logout()
 	{
+		_emailsSyncService.Stop();
 		_authService.Logout();
 	}
 }

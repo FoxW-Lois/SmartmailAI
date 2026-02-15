@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Authentication;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Authentication;
@@ -50,7 +51,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	// Connexion
 	public async Task<(bool Success, string? SpecificError)> LoginAsync(string login, string password)
 	{
-		var account = await _accountRepository.GetByLoginAsync(login);
+		var account = await _accountRepository.GetAccountByLoginAsync(login);
 		if (account is null)
 			return (false, null);
 
@@ -95,10 +96,11 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			Salt = salt,
 			TwoFactorEnabled = false,
 			//TODO: mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
-			Enabled = true
+			Enabled = true,
+			LastConnection = DateTime.Now
 		};
 
-		await _accountRepository.AddAsync(account);
+		await _accountRepository.AddAccountAsync(account);
 
 		return (true, string.Empty);
 	}
@@ -109,9 +111,30 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 		IsAuthenticated = false;
 	}
 
+	public async Task UpdateLastConnection()
+	{
+		string currentAccountLogin = CurrentAccountLogin;
+		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
+		if (currentAccount == null) return;
+
+		currentAccount = new Account
+		{
+			Id = currentAccount.Id,
+			Login = currentAccount.Login,
+			PhoneNumber = currentAccount.PhoneNumber,
+			Password = currentAccount.Password,
+			Salt = currentAccount.Salt,
+			TwoFactorEnabled = currentAccount.TwoFactorEnabled,
+			Enabled = currentAccount.Enabled,
+			LastConnection = DateTime.Now
+		};
+
+		await _accountRepository.UpdateAccountAsync(currentAccount);
+	}
+
 	public async Task Update_EnableDisable_TwoFactorAsync(string login, bool setEnable)
 	{
-		var user = await _accountRepository.GetByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
+		var user = await _accountRepository.GetAccountByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
 
 		if (setEnable) // Activation
 		{
@@ -134,7 +157,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 
 	public async Task<bool> ValidateSecondFactorAsync(string login, string code)
 	{
-		var user = await _accountRepository.GetByLoginAsync(login);
+		var user = await _accountRepository.GetAccountByLoginAsync(login);
 
 		if (user is null || !user.TwoFactorEnabled)
 			return false;

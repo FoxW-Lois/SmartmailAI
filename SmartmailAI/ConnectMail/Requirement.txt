@@ -1,6 +1,0 @@
-Il faut installer ces 2 package
-
-dotnet add package Google.Apis.Gmail.v1
-dotnet add package Google.Apis.Auth
-
-Puis il faut mettre son adresse GMAIL pour l'instant dans google cloud platform dans les users test sinon ça refusera de s'y connecter

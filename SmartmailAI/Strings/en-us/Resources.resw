@@ -238,12 +238,6 @@
   <data name="Shell_DetailsList.Content" xml:space="preserve">
     <value>ListDetails</value>
   </data>
-  <data name="Shell_ContentGrid.Content" xml:space="preserve">
-    <value>ContentGrid</value>
-  </data>
-  <data name="Shell_DataGrid.Content" xml:space="preserve">
-    <value>DataGrid</value>
-  </data>
   <data name="Mailbox_Inbox" xml:space="preserve">
     <value>Inbox</value>
   </data>
@@ -358,8 +352,8 @@
   <data name="Error_ConfirmPasswordInvalid" xml:space="preserve">
     <value>The passwords do not match.</value>
   </data>
-  <data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
-    <value>Incorrect login or password.</value>
+  <data name="Error_EmailOrPasswordInvalid" xml:space="preserve">
+    <value>Incorrect email address or password.</value>
   </data>
   <data name="Error_AccountDisabled" xml:space="preserve">
     <value>Your account has been disabled. Please contact the administrator.</value>
@@ -393,5 +387,47 @@
   </data>
   <data name="Error_SecondFactorInvalid" xml:space="preserve">
     <value>Invalid Authenticator code. Please try again.</value>
+  </data>
+  <data name="Shell_AddAddress.Content" xml:space="preserve">
+    <value>Add an address</value>
+  </data>
+  <data name="AddAddress_New.Text" xml:space="preserve">
+    <value>Adding a new email address to the application</value>
+  </data>
+  <data name="AddAddress_Email.Header" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="AddAddress_Add.Content" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
+    <value>Incorrect login or password.</value>
+  </data>
+  <data name="AddAddress_OtherChoice.Text" xml:space="preserve">
+    <value>IMAP/SMTP :</value>
+  </data>
+  <data name="Error_RecoveryEmailOAuth2Invalid" xml:space="preserve">
+    <value>The connection of the Gmail address to the application has failed. Please try again later.</value>
+  </data>
+  <data name="Error_RecoveryEmailOutlookInvalid" xml:space="preserve">
+    <value>The connection of the Outlook address to the application has failed. Please try again later.</value>
+  </data>
+  <data name="Shell_AddressManagement.Content" xml:space="preserve">
+    <value>Manage addresses</value>
+  </data>
+  <data name="Error_DeleteAddress" xml:space="preserve">
+    <value>Deleting the email address from the application failed. Please try again later.</value>
+  </data>
+  <data name="ManagementAddress_Delete.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
+    <value>Address connected on:</value>
+  </data>
+  <data name="Error_Email_AlreadyExist" xml:space="preserve">
+    <value>The email address you are trying to add already exists.</value>
+  </data>
+  <data name="Shell_MailAddresses.Content" xml:space="preserve">
+    <value>Email addresses</value>
   </data>
 </root>

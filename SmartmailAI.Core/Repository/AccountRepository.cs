@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using SmartmailAI.Core.Data;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.AppDbContext;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Repository;
@@ -10,7 +10,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory) 
 {
 	private readonly IDbContextFactory<AppDbContext_Account> _factory = factory;
 
-	public async Task<Account?> GetByLoginAsync(string login)
+	public async Task<Account?> GetAccountByLoginAsync(string login)
 	{
 		using var _context = _factory.CreateDbContext();
 
@@ -26,7 +26,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory) 
 			.AnyAsync(a => a.Login == login);
 	}
 
-	public async Task AddAsync(Account account)
+	public async Task AddAccountAsync(Account account)
 	{
 		using var _context = _factory.CreateDbContext();
 
@@ -34,7 +34,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory) 
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task UpdateAsync(Account account)
+	public async Task UpdateAccountAsync(Account account)
 	{
 		using var _context = _factory.CreateDbContext();
 
@@ -42,7 +42,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory) 
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task DeleteAsync(Account account)
+	public async Task DeleteAccountAsync(Account account)
 	{
 		using var _context = _factory.CreateDbContext();
 

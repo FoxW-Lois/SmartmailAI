@@ -11,9 +11,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
+using SmartmailAI.Core.AppDbContext;
+using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.IRepository;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Repository;
+using SmartmailAI.Core.Services.Addresses;
 
 namespace SmartmailAI;
 
@@ -179,6 +182,16 @@ public partial class App : Application
 
 				#endregion Authentication/Register Pages
 
+				#region Addresses Pages
+
+				services.AddTransient<AddAddress_ViewModel>();
+				services.AddTransient<AddAddress_Page>();
+
+				services.AddTransient<AddressManagement_ViewModel>();
+				services.AddTransient<AddressManagement_Page>();
+
+				#endregion Addresses Pages
+
 				#region Settings Pages
 
 				services.AddTransient<Settings_ViewModel>();
@@ -189,8 +202,24 @@ public partial class App : Application
 
 				#endregion Settings Pages
 
-				services.AddTransient<IMailboxDataService, MailboxDataService>();
+				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
+				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
+
+				#region (Email) Addresses Service
+
+				services.AddSingleton<IAddressesRepository, AddressesRepository>();
+				services.AddSingleton<IAddressesService, AddressesService>();
+				services.AddSingleton<IGmailApiService, GmailApiService>();
+				services.AddSingleton<IGmailCredentialService, GmailCredentialService>();
+				services.AddSingleton<IGmailLogoutService, GmailLogoutService>();
+				services.AddSingleton<ITokenStore, GmailTokenStore>();
+				services.AddSingleton<IMailReaderService, MailReaderService>();
+				services.AddSingleton<IEmailRepository, EmailRepository>();
+				services.AddSingleton<IEmailsSyncService, EmailsSyncService>();
+				services.AddHttpClient();
+
+				#endregion (Email) Addresses Service
 
 				#region Services instantiation
 
@@ -210,7 +239,17 @@ public partial class App : Application
 
 				var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailServerDB.db");
 
+				services.AddDbContextFactory<AppDbContext_Address>(options =>
+				{
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
 				services.AddDbContextFactory<AppDbContext_Account>(options =>
+				{
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
+				services.AddDbContextFactory<AppDbContext_Email>(options =>
 				{
 					options.UseSqlite($"Data Source={dbPath}");
 				});
