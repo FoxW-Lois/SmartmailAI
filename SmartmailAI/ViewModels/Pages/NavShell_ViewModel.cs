@@ -24,6 +24,8 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public IAuthService _authService { get; }
 
+	public IAddressesRepository _addressesRepository { get; }
+
 	public IAddressesService _addressesService { get; }
 
 	public IEmailsSyncService _emailsSyncService { get; }
@@ -31,12 +33,13 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	#endregion Interfaces declaration
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
-		IAddressesService addressesService, IEmailsSyncService emailsSyncService)
+		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
 		NavigationService.Navigated += OnNavigated;
 		_authService = authService;
+		_addressesRepository = addressesRepository;
 		_addressesService = addressesService;
 		_emailsSyncService = emailsSyncService;
 
@@ -54,6 +57,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		_addressesService.AddressesListChanged += (_, hasAny) =>
 		{
 			HasLinkedAddresses = hasAny;
+			_ = LoadAccountsAsync();
 			UpdateVisibility();
 
 			if (_addressesService.HasAny == true)
@@ -116,6 +120,16 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	private void UpdateVisibility()
 	{
 		OnPropertyChanged(nameof(CanShowAddressManagement));
+	}
+
+	public async Task LoadAccountsAsync()
+	{
+		var accounts = await _addressesRepository.GetAllAddressesAsync();
+
+		AccountsGmail.Clear();
+
+		foreach (var account in accounts)
+			AccountsGmail.Add(account);
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées

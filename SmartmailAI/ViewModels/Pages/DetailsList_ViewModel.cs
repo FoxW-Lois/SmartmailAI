@@ -24,13 +24,17 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		_emailsService = emailsService;
 	}
 
-	public async Task OnNavigatedTo(object parameter)
+	public async Task OnNavigatedTo(object? parameter)
 	{
+		// TODO: Si besoin d'utiliser des données statiques, commenter le bloc conditionnel ↓
+		if (parameter is not string addressAccount)
+			return;
+
 		Categories.Clear();
 
-		var categories = await _emailsService.GetAllCategoriesAsync();
+		var categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(/*addressAccount*/);
 
-		foreach (var category in categories)
+		foreach (var category in categoriesWithEmails)
 		{
 			Categories.Add(category);
 		}

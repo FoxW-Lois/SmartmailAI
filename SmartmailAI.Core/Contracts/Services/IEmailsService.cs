@@ -6,7 +6,7 @@ namespace SmartmailAI.Core.Contracts.Services;
 
 public interface IEmailsService
 {
-	Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync();
+	Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null);
 
 	Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType);
 

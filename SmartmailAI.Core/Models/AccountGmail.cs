@@ -12,4 +12,7 @@ public class AccountGmail
 	[Column("GoogleUserId")] public required string GoogleUserId { get; init; }
 	[Column("ConnectedAt")] public required DateTime ConnectedAt { get; init; }
 	[Column("TokenStorageKey")] public required string TokenStorageKey { get; init; }
+
+	// Nécessaire à l'affichage en clair des Emails connectés dans le NavMenu
+	public override string ToString() => Email;
 }

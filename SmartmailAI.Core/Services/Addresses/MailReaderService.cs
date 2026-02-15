@@ -29,7 +29,7 @@ public class MailReaderService(IGmailCredentialService credentialService, IGmail
 
 		DateTime? lastConnection;
 		List<EmailGmail> rawEmailsList;
-		int numMails = 10;
+		int numMails = 2;
 
 		if (currentAccount != null)
 		{

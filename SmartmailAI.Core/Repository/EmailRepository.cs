@@ -17,7 +17,19 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 	{
 		using var _context = _factory.CreateDbContext();
 
-		return await _context.Email.ToListAsync();
+		return await _context.Email
+			.OrderByDescending(e => e.DateSent)
+			.ToListAsync();
+	}
+
+	public async Task<List<Email>> GetAllEmailsByAddressAsync(string ownerAddress)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		return await _context.Email
+			.Where(e => e.Owner == ownerAddress)
+			.OrderByDescending(e => e.DateSent)
+			.ToListAsync();
 	}
 
 	public async Task AddEmailAsync(Email email)
@@ -44,6 +56,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 		await _context.SaveChangesAsync();
 	}
 
+	// TODO: Mettre en paramètres : (AccountGmail? accountGmail, AccountOutlook? accountOutlook, AccountOther? accountOther)
 	public async Task DeleteAllEmailsAsync(AccountGmail accountGmail)
 	{
 		using var _context = _factory.CreateDbContext();

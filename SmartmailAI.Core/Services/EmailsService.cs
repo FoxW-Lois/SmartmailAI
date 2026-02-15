@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Windows.ApplicationModel.Resources;
@@ -15,14 +14,16 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 	private List<Email> _AllEmails = [];
 	private static readonly ResourceLoader _resources = new();
 
-	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
+	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null)
 	{
-		_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		if (addressAccount is null)
+			_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		else
+			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
 
-		// Si besoin de données statiques (donc pas besoin de remplir la bdd pour tester des trucs), commenter la ligne ↑ & décommenter le bloc ↓
-
+		// TODO: Si besoin d'utiliser des données statiques, décommenter le bloc ↓
 		/*_AllEmails = [
-			 ------ Inbox Emails ------
+			 //------ Inbox Emails ------
 			new Email
 			{
 				SenderName = "Marie Martin",
@@ -69,7 +70,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				MailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			 ------ Sent Emails ------
+			 //------ Sent Emails ------
 			new Email
 			{
 				SenderName = "Jean Dupont",
@@ -116,7 +117,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				MailboxType = MailboxType.Sent,
 				IsRead = true
 			},
-			 ------ Snoozed Emails ------
+			 //------ Snoozed Emails ------
 			new Email
 			{
 				SenderName = "Service Comptabilité",
@@ -147,7 +148,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				MailboxType = MailboxType.Snoozed,
 				IsRead = false
 			},
-			 ------ Drafts Emails ------
+			 //------ Drafts Emails ------
 			new Email
 			{
 				SenderName = "Jean Dupont",
@@ -174,7 +175,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				MailboxType = MailboxType.Drafts,
 				IsRead = false
 			},
-			 ------ Trash Emails ------
+			 //------ Trash Emails ------
 			new Email
 			{
 				SenderName = "Newsletter Tech",
@@ -207,7 +208,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			 ------ Archives Emails ------
+			 //------ Archives Emails ------
 			new Email
 			{
 				SenderName = "Ancien Manager",
@@ -240,7 +241,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			 ------ Phishing & Spam Emails ------
+			 //------ Phishing & Spam Emails ------
 			new Email
 			{
 				SenderName = "Sécurité Banque",

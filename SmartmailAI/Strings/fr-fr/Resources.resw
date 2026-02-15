@@ -238,12 +238,6 @@
   <data name="Shell_DetailsList.Content" xml:space="preserve">
     <value>Listes de détails</value>
   </data>
-  <data name="Shell_ContentGrid.Content" xml:space="preserve">
-    <value>Grille de contenu</value>
-  </data>
-  <data name="Shell_DataGrid.Content" xml:space="preserve">
-    <value>Grille de données</value>
-  </data>
   <data name="Mailbox_Inbox" xml:space="preserve">
     <value>Boîte de réception</value>
   </data>
@@ -432,5 +426,8 @@
   </data>
   <data name="Error_Email_AlreadyExist" xml:space="preserve">
     <value>L'adresse email que vous tentez d'ajouter l'est déjà.</value>
+  </data>
+  <data name="Shell_MailAddresses.Content" xml:space="preserve">
+    <value>Adresses mail</value>
   </data>
 </root>

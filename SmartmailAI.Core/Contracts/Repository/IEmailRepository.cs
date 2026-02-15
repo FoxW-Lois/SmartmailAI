@@ -8,11 +8,14 @@ public interface IEmailRepository
 {
 	Task<List<Email>> GetAllEmailsAsync();
 
+	Task<List<Email>> GetAllEmailsByAddressAsync(string ownerAddress);
+
 	Task AddEmailAsync(Email email);
 
 	Task UpdateEmailAsync(Email email);
 
 	Task DeleteEmailAsync(Email email);
 
+	// TODO: Mettre en paramètres : (AccountGmail? accountGmail, AccountOutlook? accountOutlook, AccountOther? accountOther)
 	Task DeleteAllEmailsAsync(AccountGmail accountGmail);
 }
