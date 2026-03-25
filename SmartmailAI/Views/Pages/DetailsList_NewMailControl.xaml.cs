@@ -2,6 +2,8 @@
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 
 namespace SmartmailAI.Views.Pages;
 
@@ -20,5 +22,11 @@ public sealed partial class DetailsList_NewMailControl : UserControl
 	{
 		BodyEditor.Document.GetText(TextGetOptions.UseCrlf, out var text);
 		ViewModel.Body = text;
+	}
+
+	private void OnRemoveAttachmentClick(object sender, RoutedEventArgs e)
+	{
+		if (sender is Button btn && btn.Tag is MailAttachment attachment)
+			ViewModel.RemoveAttachmentCommand.Execute(attachment);
 	}
 }

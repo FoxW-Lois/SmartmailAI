@@ -9,13 +9,13 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 {
 	private readonly IEmailsService _emailsService;
 
-	[ObservableProperty]
-	private MailboxCategory? selectedCategory;
-
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
 	[ObservableProperty]
-	private string searchText;
+	private MailboxCategory? selectedCategory;
+
+	[ObservableProperty]
+	private string? searchText;
 
 	[ObservableProperty]
 	private bool _isComposing;
@@ -56,6 +56,18 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 	}
 
+	public void EnsureItemSelected()
+	{
+		SelectedCategory ??= Categories.FirstOrDefault();
+	}
+
+	// Appelé quand l'utilisateur sélectionne un email normal
+	partial void OnSelectedDetailChanged(object? value)
+	{
+		if (value is not ComposeSentinel)
+			IsComposing = false;
+	}
+
 	[RelayCommand]
 	private async Task OpenNewMailAsync()
 	{
@@ -70,17 +82,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedDetail = null;
 	}
 
-	// Appelé quand l'utilisateur sélectionne un email normal
-	partial void OnSelectedDetailChanged(object? value)
-	{
-		if (value is not ComposeSentinel)
-			IsComposing = false;
-	}
-
-	public void EnsureItemSelected()
-	{
-		SelectedCategory ??= Categories.FirstOrDefault();
-	}
+	#region Commandes de filtrage
 
 	[RelayCommand]
 	private async Task FilterAsync()
@@ -118,6 +120,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			SearchText += " ";
 		SearchText += "Attachment:No";
 	}
+
+	#endregion Commandes de filtrage
 
 	#region Commandes au clic droit
 
