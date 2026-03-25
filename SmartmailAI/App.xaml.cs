@@ -168,6 +168,7 @@ public partial class App : Application
 
 				services.AddTransient<DetailsList_ViewModel>();
 				services.AddTransient<DetailsList_Page>();
+				services.AddTransient<DetailsList_NewMailViewModel>();
 
 				#region Authentication/Register Pages
 

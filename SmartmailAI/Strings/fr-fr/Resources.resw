@@ -430,4 +430,28 @@
   <data name="Shell_MailAddresses.Content" xml:space="preserve">
     <value>Adresses mail</value>
   </data>
+  <data name="NewMessageButton.Text" xml:space="preserve">
+    <value>Nouveau message</value>
+  </data>
+  <data name="ButtonSend.Content" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="ToTextBlock.Text" xml:space="preserve">
+    <value>À</value>
+  </data>
+  <data name="RecipientsTextBox.PlaceholderText" xml:space="preserve">
+    <value>Destinataires</value>
+  </data>
+  <data name="ButtonBcc.Content" xml:space="preserve">
+    <value>Cci</value>
+  </data>
+  <data name="CcTextBlock.Text" xml:space="preserve">
+    <value>Cc</value>
+  </data>
+  <data name="AddSubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>Ajouter un objet</value>
+  </data>
+  <data name="MessageAreaRichEditBox.PlaceholderText" xml:space="preserve">
+    <value>Écrivez votre message...</value>
+  </data>
 </root>

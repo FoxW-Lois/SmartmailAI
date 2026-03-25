@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -16,12 +17,23 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[ObservableProperty]
 	private string searchText;
 
+	[ObservableProperty]
+	private bool _isComposing;
+
+	[ObservableProperty]
+	private object? _selectedDetail;
+
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
 
 	public DetailsList_ViewModel(IEmailsService emailsService)
 	{
 		_emailsService = emailsService;
+
+		WeakReferenceMessenger.Default.Register<CloseComposeMessage>(this, (r, m) =>
+		{
+			IsComposing = false;
+		});
 	}
 
 	public async Task OnNavigatedTo(object? parameter)
@@ -42,6 +54,27 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	public void OnNavigatedFrom()
 	{
+	}
+
+	[RelayCommand]
+	private async Task OpenNewMailAsync()
+	{
+		IsComposing = !IsComposing;
+		SelectedDetail = ComposeSentinel.Instance;
+	}
+
+	[RelayCommand]
+	private async Task CloseNewMailAsync()
+	{
+		IsComposing = false;
+		SelectedDetail = null;
+	}
+
+	// Appelé quand l'utilisateur sélectionne un email normal
+	partial void OnSelectedDetailChanged(object? value)
+	{
+		if (value is not ComposeSentinel)
+			IsComposing = false;
 	}
 
 	public void EnsureItemSelected()

@@ -193,21 +193,37 @@
 
 		<Grid>
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
+			<!--  Bouton d'envoi  -->
+			<Button
+				Grid.Column="0"
+				Width="203"
+				Height="40"
+				Margin="58 8 16 32"
+				Command="{x:Bind ViewModel.OpenNewMailCommand}">
+				<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+					<FontIcon
+						Margin="0 0 8 0"
+						FontFamily="Segoe MDL2 Assets"
+						Glyph="&#xE70F;" />
+					<TextBlock x:Uid="NewMessageButton" />
+				</StackPanel>
+			</Button>
+
 			<!--  Barre de recherche  -->
 			<TextBox
 				x:Uid="SearchbarMailTextBox"
-				Grid.Column="0"
+				Grid.Column="1"
 				Height="40"
-				Margin="58 8 16 32"
+				Margin="0 8 16 32"
 				Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 			<!--  Contenu principal du bouton  -->
 			<SplitButton
-				x:Uid="DetailsList_RefreshButton"
-				Grid.Column="1"
+				Grid.Column="2"
 				Width="200"
 				Height="40"
 				Margin="0 8 16 32"
@@ -247,6 +263,16 @@
 			NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
 			SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay}"
 			ViewStateChanged="OnViewStateChanged" />
+		<Grid
+			x:Name="ComposeOverlay"
+			Grid.Row="1"
+			Width="{Binding ElementName=ListDetailsViewControl, Path=ActualWidth}"
+			MaxWidth="{x:Bind HalfWindowWidth, Mode=OneWay}"
+			HorizontalAlignment="Right"
+			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+			Visibility="{x:Bind ViewModel.IsComposing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+			<views:DetailsList_NewMailControl />
+		</Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState>
