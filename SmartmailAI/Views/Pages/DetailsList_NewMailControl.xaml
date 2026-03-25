@@ -33,6 +33,7 @@
 				x:Uid="ButtonSend"
 				Grid.Column="0"
 				Command="{x:Bind ViewModel.SendCommand}"
+				Foreground="White"
 				Style="{StaticResource AccentButtonStyle}" />
 
 			<!--  Actions secondaires  -->
