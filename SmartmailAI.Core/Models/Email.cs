@@ -5,8 +5,14 @@ using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace SmartmailAI.Core.Models;
 
+
+
 public class Email
 {
+
+	public int PhishingScore { get; set; }
+	public bool IsPhishingDetected { get; set; }
+	public string? SecurityWarning { get; set; }
 	#region Propriétés de base / Composition
 
 	public string SenderName { get; set; }
