@@ -22,83 +22,81 @@ public class MailboxDataService : IMailboxDataService
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
 		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
-		ApplyPhishingDetection(_AllEmails);
-
+		ApplySecurityAnalysis(_AllEmails);
 
 		var categories = new List<MailboxCategory>
+	{
+		new MailboxCategory
 		{
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Inbox"),
-				Icon = "\uE715", // Mail
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
-				MailboxType = MailboxType.Inbox
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Sent"),
-				Icon = "\uE122", // Send
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
-				MailboxType = MailboxType.Sent
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Snoozed"),
-				Icon = "\uE823", // Clock
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
-				MailboxType = MailboxType.Snoozed
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Drafts"),
-				Icon = "\uE7C3", // Document
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
-				MailboxType = MailboxType.Drafts
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Starred"),
-				Icon = "\uE734", // FavoriteStar
-			    Items = _AllEmails.Where(e => e.IsStarred == true),
-				MailboxType = MailboxType.Starred
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Unread"),
-				Icon = "\uE8A8", // MailFill
-				Items = _AllEmails.Where(e => e.IsRead == false),
-				MailboxType = MailboxType.Unread
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Trash"),
-				Icon = "\uE74D", // Delete
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
-				MailboxType = MailboxType.Trash
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_AllMails"),
-				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
-				// ↑ Tous les mails sauf Corbeille & Phishings/Spams
-				MailboxType = MailboxType.AllMails
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Archives"),
-				Icon = "\uE7B8", // Archive
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
-				MailboxType = MailboxType.Archives
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_PhishingSpam"),
-				Icon = "\uE7BA", // Warning
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
-				MailboxType = MailboxType.PhishingSpam
-			}
-		};
+			Title = _resources.GetString("Mailbox_Inbox"),
+			Icon = "\uE715",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
+			MailboxType = MailboxType.Inbox
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Sent"),
+			Icon = "\uE122",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+			MailboxType = MailboxType.Sent
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Snoozed"),
+			Icon = "\uE823",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
+			MailboxType = MailboxType.Snoozed
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Drafts"),
+			Icon = "\uE7C3",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
+			MailboxType = MailboxType.Drafts
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Starred"),
+			Icon = "\uE734",
+			Items = _AllEmails.Where(e => e.IsStarred == true),
+			MailboxType = MailboxType.Starred
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Unread"),
+			Icon = "\uE8A8",
+			Items = _AllEmails.Where(e => e.IsRead == false),
+			MailboxType = MailboxType.Unread
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Trash"),
+			Icon = "\uE74D",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
+			MailboxType = MailboxType.Trash
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_AllMails"),
+			Icon = "\uE8F1",
+			Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash),
+			MailboxType = MailboxType.AllMails
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_Archives"),
+			Icon = "\uE7B8",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
+			MailboxType = MailboxType.Archives
+		},
+		new MailboxCategory
+		{
+			Title = _resources.GetString("Mailbox_PhishingSpam"),
+			Icon = "\uE7BA",
+			Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
+			MailboxType = MailboxType.PhishingSpam
+		}
+	};
 
 		await Task.CompletedTask;
 		return categories;
@@ -358,17 +356,45 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.PhishingSpam,
 				IsRead = false
 			},
-			new Email
+new Email
 {
 	SenderName = "Orange Sécurité",
 	SenderEmail = "support@lorange.fr",
+	ReceiverName = "Jean Dupont",
 	ReceiverEmail = "jean.dupont@exemple.com",
 	Subject = "Problème de sécurité",
 	Content = "Veuillez vérifier votre compte immédiatement.",
-	DateSent = DateTime.Now,
+	DateSent = DateTime.Now.AddMinutes(-5),
+	Attachments = [],
 	MailboxType = MailboxType.Inbox,
 	IsRead = false
-			},
+},
+new Email
+{
+	SenderName = "Microsoft Support",
+	SenderEmail = "support@m1crosoft.com",
+	ReceiverName = "Jean Dupont",
+	ReceiverEmail = "jean.dupont@exemple.com",
+	Subject = "Votre mot de passe expire aujourd’hui",
+	Content = "Cliquez sur le lien pour renouveler votre mot de passe.",
+	DateSent = DateTime.Now.AddMinutes(-10),
+	Attachments = [],
+	MailboxType = MailboxType.Inbox,
+	IsRead = false
+},
+new Email
+{
+	SenderName = "Livraison Express",
+	SenderEmail = "contact@livraison-suivi.com",
+	ReceiverName = "Jean Dupont",
+	ReceiverEmail = "jean.dupont@exemple.com",
+	Subject = "Colis bloqué",
+	Content = "Paiement requis via bit.ly/livraison pour débloquer votre colis.",
+	DateSent = DateTime.Now.AddMinutes(-15),
+	Attachments = [ "facture.zip" ],
+	MailboxType = MailboxType.Inbox,
+	IsRead = false
+},
 
 			new Email
 			{
@@ -398,9 +424,8 @@ public class MailboxDataService : IMailboxDataService
 
 	public async Task<IEnumerable<Email>> GetAllEmailsAsync()
 	{
-		_AllEmails ??= [.. AllEmails()];
-		ApplyPhishingDetection(_AllEmails);
-
+		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
+		ApplySecurityAnalysis(_AllEmails);
 
 		await Task.CompletedTask;
 		return _AllEmails;
@@ -408,13 +433,17 @@ public class MailboxDataService : IMailboxDataService
 
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
 	{
-		_AllEmails ??= [.. AllEmails()];
+		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
+		ApplySecurityAnalysis(_AllEmails);
+
 		IEnumerable<Email> emails;
 
 		if (mailboxType == MailboxType.Starred)
 			emails = _AllEmails.Where(e => e.IsStarred == true);
 		else if (mailboxType == MailboxType.Unread)
 			emails = _AllEmails.Where(e => e.IsRead == false);
+		else if (mailboxType == MailboxType.AllMails)
+			emails = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash);
 		else
 			emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
 
@@ -508,28 +537,85 @@ public class MailboxDataService : IMailboxDataService
 		}
 	}
 
+	private void ApplySecurityAnalysis(IEnumerable<Email> emails)
+	{
+		foreach (var email in emails)
+		{
+			if (email is null)
+				continue;
+
+			if (email.MailboxType == MailboxType.Trash)
+				continue;
+
+			int riskScore = CalculateRiskScore(email);
+
+			email.PhishingScore = riskScore;
+			email.IsPhishingDetected = riskScore >= 50;
+			email.SecurityWarning = GetSecurityWarning(riskScore);
+
+			if (riskScore >= 50 && email.MailboxType != MailboxType.PhishingSpam)
+			{
+				email.PreviousMailboxType = email.MailboxType;
+				email.MailboxType = MailboxType.PhishingSpam;
+
+				System.Diagnostics.Debug.WriteLine(
+	$"{email.Subject} | Score={email.PhishingScore} | Warning={email.SecurityWarning}");
+			}
+		}
+	}
+
+	private string GetSecurityWarning(int score)
+	{
+		if (score >= 50)
+			return "Phishing probable";
+		if (score >= 30)
+			return "Email suspect";
+		return "Email fiable";
+	}
+
+	private int CalculateRiskScore(Email email)
+	{
+		int score = 0;
+
+		if (IsSuspiciousEmail(email.SenderEmail))
+			score += 40;
+
+		if (ContainsSuspiciousLinks(email.Content))
+			score += 30;
+
+		if (HasDangerousAttachment(email.Attachments))
+			score += 20;
+
+		if (ContainsPhishingKeywords(email.Subject, email.Content))
+			score += 10;
+
+		return score;
+	}
+
 	private bool IsSuspiciousEmail(string senderEmail)
 	{
 		if (string.IsNullOrWhiteSpace(senderEmail) || !senderEmail.Contains("@"))
 			return false;
 
-		var domain = senderEmail.Split('@')[1].ToLowerInvariant();
+		var parts = senderEmail.Split('@');
+		if (parts.Length != 2)
+			return false;
 
-		// Domaines connus "légitimes"
+		var domain = parts[1].Trim().ToLowerInvariant();
+
 		var legitDomains = new[]
 		{
 		"orange.fr",
 		"gmail.com",
 		"outlook.com",
 		"entreprise.com",
-		"exemple.com"
+		"exemple.com",
+		"microsoft.com"
 	};
 
-		// si le domaine est exact => OK
 		if (legitDomains.Contains(domain))
 			return false;
 
-		// si le domaine ressemble fortement à un domaine connu => suspect
 		foreach (var legit in legitDomains)
 		{
 			if (AreDomainsSimilar(domain, legit))
@@ -538,48 +624,116 @@ public class MailboxDataService : IMailboxDataService
 
 		return false;
 	}
+
 	private bool AreDomainsSimilar(string a, string b)
 	{
 		a = a.ToLowerInvariant();
 		b = b.ToLowerInvariant();
 
-		// Trop différent en longueur -> pas comparable
 		if (Math.Abs(a.Length - b.Length) > 3)
 			return false;
 
 		int distance = LevenshteinDistance(a, b);
-
-		// Seuil : 1 ou 2 selon ton exigence (2 est bien pour lorange/orange)
 		return distance <= 2;
 	}
 
 	private int LevenshteinDistance(string s, string t)
 	{
-		if (string.IsNullOrEmpty(s)) return t?.Length ?? 0;
-		if (string.IsNullOrEmpty(t)) return s.Length;
+		if (string.IsNullOrEmpty(s))
+			return t?.Length ?? 0;
+
+		if (string.IsNullOrEmpty(t))
+			return s.Length;
 
 		int n = s.Length;
 		int m = t.Length;
 		var d = new int[n + 1, m + 1];
 
-		for (int i = 0; i <= n; i++) d[i, 0] = i;
-		for (int j = 0; j <= m; j++) d[0, j] = j;
+		for (int i = 0; i <= n; i++)
+			d[i, 0] = i;
+
+		for (int j = 0; j <= m; j++)
+			d[0, j] = j;
 
 		for (int i = 1; i <= n; i++)
 		{
 			for (int j = 1; j <= m; j++)
 			{
-				int cost = (s[i - 1] == t[j - 1]) ? 0 : 1;
+				int cost = s[i - 1] == t[j - 1] ? 0 : 1;
 
 				d[i, j] = Math.Min(
-					Math.Min(d[i - 1, j] + 1,      // suppression
-							 d[i, j - 1] + 1),     // insertion
-					d[i - 1, j - 1] + cost         // substitution
+					Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+					d[i - 1, j - 1] + cost
 				);
 			}
 		}
 
 		return d[n, m];
+	}
+
+	private bool ContainsSuspiciousLinks(string content)
+	{
+		if (string.IsNullOrWhiteSpace(content))
+			return false;
+
+		string lowerContent = content.ToLowerInvariant();
+
+		string[] suspiciousDomains =
+		[
+			".xyz",
+		".top",
+		".click",
+		".ru",
+		"bit.ly",
+		"tinyurl.com"
+		];
+
+		return suspiciousDomains.Any(d => lowerContent.Contains(d));
+	}
+
+	private bool HasDangerousAttachment(IList<string>? attachments)
+	{
+		if (attachments is null || attachments.Count == 0)
+			return false;
+
+		string[] dangerousExtensions =
+		[
+			".exe",
+		".scr",
+		".bat",
+		".cmd",
+		".js",
+		".vbs",
+		".zip",
+		".rar",
+		".iso"
+		];
+
+		return attachments.Any(a =>
+			!string.IsNullOrWhiteSpace(a) &&
+			dangerousExtensions.Any(ext => a.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
+	}
+
+	private bool ContainsPhishingKeywords(string? subject, string? content)
+	{
+		string text = $"{subject} {content}".ToLowerInvariant();
+
+		string[] phishingKeywords =
+		[
+			"urgent",
+		"immédiatement",
+		"immediatement",
+		"vérifiez votre compte",
+		"verifiez votre compte",
+		"mot de passe expire",
+		"mot de passe expiré",
+		"compte suspendu",
+		"cliquez sur le lien",
+		"confirmez vos informations",
+		"paiement requis"
+		];
+
+		return phishingKeywords.Any(k => text.Contains(k));
 	}
 
 
