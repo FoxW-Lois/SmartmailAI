@@ -190,6 +190,9 @@ public partial class App : Application
 				// Anti-phishing : liste red.flag.domains (Singleton → cache partagé)
 				services.AddSingleton<IRedFlagDomainService, RedFlagDomainService>();
 
+				// Anti-phishing : vérification DNS SPF/DMARC (Singleton → cache domaines)
+				services.AddSingleton<IDnsSecurityService, DnsSecurityService>();
+
 				// Anti-phishing : analyse pièces jointes via VirusTotal
 				services.AddSingleton<IVirusTotalService>(_ =>
 				{
