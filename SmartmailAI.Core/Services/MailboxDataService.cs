@@ -594,14 +594,21 @@ new Email
 			reasons.Add("Domaine expéditeur suspect ou imitant un domaine connu.");
 		}
 
-		// 2. Liens suspects dans le corps
+		// 2. Usurpation du nom d'affichage
+		if (IsDisplayNameSpoofing(email.SenderName, email.SenderEmail, out var spoofedBrand))
+		{
+			score += 35;
+			reasons.Add($"Usurpation d'identité détectée : le nom '{email.SenderName}' imite '{spoofedBrand}' mais le domaine expéditeur ne correspond pas.");
+		}
+
+		// 3. Liens suspects dans le corps
 		if (ContainsSuspiciousLinks(email.Content, out var suspiciousLinks))
 		{
 			score += 30;
 			reasons.Add($"Lien(s) suspect(s) détecté(s) : {string.Join(", ", suspiciousLinks)}");
 		}
 
-		// 3. Pièces jointes — analyse extension + VirusTotal
+		// 4. Pièces jointes — analyse extension + VirusTotal
 		if (email.Attachments is { Count: > 0 })
 		{
 			if (HasDangerousAttachment(email.Attachments))
@@ -627,6 +634,7 @@ new Email
 
 		// 4. Patterns psychologiques d'urgence (score pondéré 0-20)
 		int keywordScore = ScorePhishingKeywords(email.Subject, email.Content);
+		System.Diagnostics.Debug.WriteLine($"[Keywords] Score={keywordScore} pour sujet='{email.Subject}'");
 		if (keywordScore > 0)
 		{
 			score += keywordScore;
@@ -800,6 +808,93 @@ new Email
 		return text.Any(c => c > 127);
 	}
 
+	/// <summary>
+	/// Détecte l'usurpation du nom d'affichage (Display Name Spoofing).
+	/// Ex : SenderName = "Apple Support" mais SenderEmail = "contact@random-domain.com"
+	/// </summary>
+	private bool IsDisplayNameSpoofing(string? senderName, string? senderEmail, out string spoofedBrand)
+	{
+		spoofedBrand = string.Empty;
+
+		if (string.IsNullOrWhiteSpace(senderName) || string.IsNullOrWhiteSpace(senderEmail))
+			return false;
+
+		if (!senderEmail.Contains('@'))
+			return false;
+
+		var domain = senderEmail.Split('@')[1].Trim().ToLowerInvariant();
+		var name   = senderName.ToLowerInvariant();
+
+		// Dictionnaire : mot-clé dans le nom d'affichage → domaines officiels autorisés
+		var brandMap = new Dictionary<string, string[]>
+		{
+			["apple"]      = ["apple.com", "icloud.com"],
+			["microsoft"]  = ["microsoft.com", "outlook.com", "live.com", "hotmail.com", "office.com"],
+			["google"]     = ["google.com", "gmail.com", "googlemail.com"],
+			["amazon"]     = ["amazon.com", "amazon.fr", "amazon.co.uk", "amazonaws.com"],
+			["paypal"]     = ["paypal.com", "paypal.fr"],
+			["netflix"]    = ["netflix.com"],
+			["orange"]     = ["orange.fr", "orange.com"],
+			["free"]       = ["free.fr", "freebox.fr"],
+			["sfr"]        = ["sfr.fr", "sfr.com"],
+			["bouygues"]   = ["bouyguestelecom.fr", "bbox.fr"],
+			["laposte"]    = ["laposte.net", "laposte.fr"],
+			["impots"]     = ["impots.gouv.fr", "dgfip.finances.gouv.fr"],
+			["ameli"]      = ["ameli.fr", "assurance-maladie.fr"],
+			["caf"]        = ["caf.fr"],
+			["banque"]     = ["credit-agricole.fr", "bnpparibas.fr", "societegenerale.fr", "lcl.fr", "labanquepostale.fr"],
+			["credit agricole"] = ["credit-agricole.fr", "ca-*.fr"],
+			["bnp"]        = ["bnpparibas.fr", "bnpparibas.com"],
+			["société générale"] = ["societegenerale.fr"],
+			["ebay"]       = ["ebay.fr", "ebay.com"],
+			["leboncoin"]  = ["leboncoin.fr"],
+			["facebook"]   = ["facebook.com", "fb.com", "meta.com"],
+			["instagram"]  = ["instagram.com", "fb.com"],
+			["linkedin"]   = ["linkedin.com", "e.linkedin.com"],
+			["twitter"]    = ["twitter.com", "x.com"],
+			["dhl"]        = ["dhl.com", "dhl.fr"],
+			["chronopost"] = ["chronopost.fr"],
+			["colissimo"]  = ["colissimo.fr", "laposte.fr"],
+		};
+
+		foreach (var (keyword, officialDomains) in brandMap)
+		{
+			// Le nom d'affichage contient le mot-clé de la marque
+			if (!name.Contains(keyword))
+				continue;
+
+			System.Diagnostics.Debug.WriteLine($"[DisplayNameSpoofing] 🔍 Keyword '{keyword}' trouvé dans '{senderName}', domaine='{domain}'");
+
+			// Le domaine expéditeur est-il un domaine officiel de cette marque ?
+			bool isOfficial = officialDomains.Any(od =>
+			{
+				// Support du wildcard simple (ex: "ca-*.fr")
+				if (od.Contains('*'))
+				{
+					var prefix = od[..od.IndexOf('*')];
+					var suffix = od[(od.IndexOf('*') + 1)..];
+					return domain.StartsWith(prefix) && domain.EndsWith(suffix);
+				}
+				return domain == od;
+			});
+
+			System.Diagnostics.Debug.WriteLine($"[DisplayNameSpoofing] isOfficial={isOfficial}");
+
+			if (!isOfficial)
+			{
+				// Capitalise proprement le nom de la marque pour le message
+				spoofedBrand = char.ToUpper(keyword[0]) + keyword[1..];
+				System.Diagnostics.Debug.WriteLine($"[DisplayNameSpoofing] ⚠️ '{senderName}' <{senderEmail}> → usurpe '{spoofedBrand}'");
+				return true;
+			}
+
+			// Domaine officiel trouvé → pas d'usurpation
+			return false;
+		}
+
+		return false;
+	}
+
 	private bool HasDangerousAttachment(IList<string>? attachments)
 	{
 		if (attachments is null || attachments.Count == 0)
@@ -833,16 +928,24 @@ new Email
 		[
 			"votre compte sera suspendu",
 			"compte suspendu",
+			"compte bancaire suspendu",
 			"accès bloqué",
 			"acces bloque",
 			"action requise immédiatement",
 			"action requise immediatement",
-			"votre compte a été compromis",
-			"votre compte a ete compromis",
+			"a été compromis",           // matche "votre compte Apple a été compromis"
+			"a ete compromis",
+			"compte compromis",
 			"activité suspecte détectée",
 			"activite suspecte detectee",
+			"activité suspecte",
+			"activite suspecte",
 			"sécurité de votre compte",
 			"securite de votre compte",
+			"suspendu",                  // capture tous les cas de suspension
+			"compromis",                 // capture tous les cas de compromission
+			"bloqué",
+			"bloque",
 		];
 
 		// Niveau 2 — Urgence modérée (+10)
@@ -855,12 +958,17 @@ new Email
 			"mettez a jour vos informations",
 			"mot de passe expiré",
 			"mot de passe expire",
+			"expire aujourd",            // "expire aujourd'hui"
 			"réinitialisez votre mot de passe",
 			"reinitialiser votre mot de passe",
 			"cliquez ici pour confirmer",
 			"cliquez sur le lien",
 			"paiement requis",
+			"paiement en attente",
 			"facture en attente",
+			"colis en attente",
+			"colis bloqué",
+			"colis bloque",
 			"48 heures",
 			"24 heures",
 			"dans les plus brefs délais",
@@ -888,15 +996,22 @@ new Email
 			"connectez-vous maintenant",
 			"vérification nécessaire",
 			"verification necessaire",
+			"problème de sécurité",
+			"probleme de securite",
+			"sécurité",
+			"securite",
 		];
 
 		int score = 0;
 
+		// Scoring cumulatif : chaque niveau peut s'additionner
 		if (criticalPatterns.Any(k => text.Contains(k)))
 			score += 20;
-		else if (highPatterns.Any(k => text.Contains(k)))
+
+		if (highPatterns.Any(k => text.Contains(k)))
 			score += 10;
-		else if (lowPatterns.Any(k => text.Contains(k)))
+
+		if (lowPatterns.Any(k => text.Contains(k)))
 			score += 5;
 
 		return score;
