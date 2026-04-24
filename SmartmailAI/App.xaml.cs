@@ -194,6 +194,14 @@ public partial class App : Application
 				// Anti-phishing : liste red.flag.domains (Singleton → cache partagé)
 				services.AddSingleton<IRedFlagDomainService, RedFlagDomainService>();
 
+				// Anti-phishing : analyse pièces jointes via VirusTotal
+				services.AddSingleton<IVirusTotalService>(provider =>
+				{
+					var config = provider.GetService<IConfiguration>();
+					var apiKey = config?["VirusTotal:ApiKey"];
+					return new VirusTotalService(apiKey);
+				});
+
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
 
