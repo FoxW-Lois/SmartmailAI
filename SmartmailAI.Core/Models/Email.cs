@@ -13,6 +13,8 @@ public class Email
 	public int PhishingScore { get; set; }
 	public bool IsPhishingDetected { get; set; }
 	public string? SecurityWarning { get; set; }
+	public string? SecurityReasons { get; set; }
+	public string? DetectedLinks { get; set; }
 	#region Propriétés de base / Composition
 
 	public string SenderName { get; set; }
