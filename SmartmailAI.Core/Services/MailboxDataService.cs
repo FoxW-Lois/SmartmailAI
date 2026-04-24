@@ -188,6 +188,7 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.Sent,
 				IsRead = true
 			},
+
 			new Email
 			{
 				SenderName = "Jean Dupont",
@@ -411,7 +412,17 @@ new Email
 				Attachments = [ "facture.zip" ],
 				MailboxType = MailboxType.PhishingSpam,
 				IsRead = false
-			}
+			},
+
+			new Email
+{
+	SenderName = "Test Phishing",
+	SenderEmail = "contact@0orange.fr",
+	Subject = "Vérifiez votre compte",
+	Content = "Cliquez ici pour confirmer.",
+	MailboxType = MailboxType.Inbox,
+    // ...
+}
 
 
 		];
