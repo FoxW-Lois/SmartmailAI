@@ -15,6 +15,11 @@ public class Email
 	public string? SecurityWarning { get; set; }
 	public string? SecurityReasons { get; set; }
 	public string? DetectedLinks { get; set; }
+
+	// Résultats DNS (SPF / DMARC)
+	public string? SpfStatus { get; set; }
+	public string? DmarcStatus { get; set; }
+	public string? DnsWarning { get; set; }
 	#region Propriétés de base / Composition
 
 	public string SenderName { get; set; }
