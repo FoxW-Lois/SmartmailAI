@@ -88,19 +88,23 @@ public class DnsSecurityService : IDnsSecurityService, IDisposable
 		SpfStatus spfStatus;
 		if (spfRecord is null)
 		{
-			spfStatus = SpfStatus.None;
+			spfStatus = SpfStatus.None;      // Pas de SPF → suspect
 		}
 		else if (spfRecord.Contains("-all", StringComparison.OrdinalIgnoreCase))
 		{
-			spfStatus = SpfStatus.Fail; // Politique stricte → les faux expéditeurs échouent
+			spfStatus = SpfStatus.Pass;      // Politique stricte → bien configuré
 		}
 		else if (spfRecord.Contains("~all", StringComparison.OrdinalIgnoreCase))
 		{
-			spfStatus = SpfStatus.SoftFail; // Politique permissive → suspect
+			spfStatus = SpfStatus.SoftFail;  // Politique permissive → légèrement suspect
+		}
+		else if (spfRecord.Contains("+all", StringComparison.OrdinalIgnoreCase))
+		{
+			spfStatus = SpfStatus.SoftFail;  // Tout le monde autorisé → très permissif
 		}
 		else
 		{
-			spfStatus = SpfStatus.Pass;
+			spfStatus = SpfStatus.Pass;      // Autre configuration SPF valide
 		}
 
 		// --- Analyse DMARC ---
