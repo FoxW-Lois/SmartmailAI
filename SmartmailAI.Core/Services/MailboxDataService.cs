@@ -400,6 +400,20 @@ new Email
 	IsRead = false
 },
 
+// ------ Email de test Display Name Spoofing ------
+new Email
+{
+	SenderName = "Apple Support",
+	SenderEmail = "support@xn--pple-43d.com",
+	SenderProfileImage = null,
+	Subject = "Votre compte Apple a été compromis",
+	Content = "Cliquez ici immédiatement pour sécuriser votre compte.",
+	DateSent = DateTime.Now.AddMinutes(-5),
+	Attachments = [],
+	MailboxType = MailboxType.Inbox,
+	IsRead = false
+},
+
 			new Email
 			{
 				SenderName = "Livraison Express",
