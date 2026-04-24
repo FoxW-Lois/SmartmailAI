@@ -102,7 +102,11 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 
 		// Sans clé API → analyse locale uniquement (extension dangereuse)
 		if (string.IsNullOrWhiteSpace(_apiKey))
-			return BuildLocalResult(fileName);
+		{
+			var localResult = BuildLocalResult(fileName);
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {localResult.IsMalicious}, Count: {localResult.MaliciousCount} (local, pas de clé API)");
+			return localResult;
+		}
 
 		try
 		{
@@ -123,7 +127,9 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 			if (result is not null)
 				_cache[fileName.ToLowerInvariant()] = result;
 
-			return result ?? BuildLocalResult(fileName);
+			var finalResult = result ?? BuildLocalResult(fileName);
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {finalResult.IsMalicious}, Count: {finalResult.MaliciousCount}/{finalResult.TotalEngines} (API)");
+			return finalResult;
 		}
 		catch (Exception ex)
 		{
