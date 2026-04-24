@@ -12,9 +12,11 @@ public class MailboxDataService : IMailboxDataService
 {
 	private List<Email> _AllEmails;
 	private static readonly ResourceLoader _resources = new();
+	private readonly IRedFlagDomainService _redFlagDomainService;
 
-	public MailboxDataService()
+	public MailboxDataService(IRedFlagDomainService redFlagDomainService)
 	{
+		_redFlagDomainService = redFlagDomainService;
 	}
 
 	#region Données de test
@@ -22,7 +24,7 @@ public class MailboxDataService : IMailboxDataService
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
 		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
-		ApplySecurityAnalysis(_AllEmails);
+		await ApplySecurityAnalysisAsync(_AllEmails);
 
 		var categories = new List<MailboxCategory>
 	{
@@ -425,7 +427,7 @@ new Email
 	public async Task<IEnumerable<Email>> GetAllEmailsAsync()
 	{
 		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
-		ApplySecurityAnalysis(_AllEmails);
+		await ApplySecurityAnalysisAsync(_AllEmails);
 
 		await Task.CompletedTask;
 		return _AllEmails;
@@ -434,7 +436,7 @@ new Email
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
 	{
 		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
-		ApplySecurityAnalysis(_AllEmails);
+		await ApplySecurityAnalysisAsync(_AllEmails);
 
 		IEnumerable<Email> emails;
 
@@ -521,7 +523,7 @@ new Email
 	}
 
 	#endregion CRUD Emails
-	private void ApplyPhishingDetection(IEnumerable<Email> emails)
+	private async Task ApplyPhishingDetectionAsync(IEnumerable<Email> emails)
 	{
 		foreach (var email in emails)
 		{
@@ -529,7 +531,7 @@ new Email
 			if (email.MailboxType == MailboxType.PhishingSpam || email.MailboxType == MailboxType.Trash)
 				continue;
 
-			if (IsSuspiciousEmail(email.SenderEmail))
+			if (await IsSuspiciousEmailAsync(email.SenderEmail))
 			{
 				email.PreviousMailboxType = email.MailboxType;
 				email.MailboxType = MailboxType.PhishingSpam;
@@ -537,7 +539,7 @@ new Email
 		}
 	}
 
-	private void ApplySecurityAnalysis(IEnumerable<Email> emails)
+	private async Task ApplySecurityAnalysisAsync(IEnumerable<Email> emails)
 	{
 		foreach (var email in emails)
 		{
@@ -548,7 +550,7 @@ new Email
 				continue;
 
 			var reasons = new List<string>();
-			int riskScore = CalculateRiskScore(email, reasons);
+			int riskScore = await CalculateRiskScoreAsync(email, reasons);
 
 			email.PhishingScore = riskScore;
 			email.IsPhishingDetected = riskScore >= 50;
@@ -579,11 +581,11 @@ new Email
 		return "Email fiable";
 	}
 
-	private int CalculateRiskScore(Email email, List<string> reasons)
+	private async Task<int> CalculateRiskScoreAsync(Email email, List<string> reasons)
 	{
 		int score = 0;
 
-		if (IsSuspiciousEmail(email.SenderEmail))
+		if (await IsSuspiciousEmailAsync(email.SenderEmail))
 		{
 			score += 40;
 			reasons.Add("Domaine expéditeur suspect ou imitant un domaine connu.");
@@ -610,7 +612,7 @@ new Email
 		return score;
 	}
 
-	private bool IsSuspiciousEmail(string senderEmail)
+	private async Task<bool> IsSuspiciousEmailAsync(string senderEmail)
 	{
 		if (string.IsNullOrWhiteSpace(senderEmail) || !senderEmail.Contains("@"))
 			return false;
@@ -634,6 +636,11 @@ new Email
 		if (legitDomains.Contains(domain))
 			return false;
 
+		// Vérification dans la liste red.flag.domains
+		if (await _redFlagDomainService.IsFlaggedDomainAsync(domain))
+			return true;
+
+		// Détection par similarité (typosquatting)
 		foreach (var legit in legitDomains)
 		{
 			if (AreDomainsSimilar(domain, legit))
