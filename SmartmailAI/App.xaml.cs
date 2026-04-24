@@ -12,8 +12,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
 using SmartmailAI.Core.Data;
+using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.IRepository;
 using SmartmailAI.Core.Repository;
+using SmartmailAI.Core.Services;
 
 namespace SmartmailAI;
 
@@ -188,6 +190,9 @@ public partial class App : Application
 				services.AddTransient<SettingsTwoFactor_Page>();
 
 				#endregion Settings Pages
+
+				// Anti-phishing : liste red.flag.domains (Singleton → cache partagé)
+				services.AddSingleton<IRedFlagDomainService, RedFlagDomainService>();
 
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
