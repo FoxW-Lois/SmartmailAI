@@ -14,11 +14,16 @@ public class MailboxDataService : IMailboxDataService
 	private static readonly ResourceLoader _resources = new();
 	private readonly IRedFlagDomainService _redFlagDomainService;
 	private readonly IVirusTotalService _virusTotalService;
+	private readonly IDnsSecurityService _dnsSecurityService;
 
-	public MailboxDataService(IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService)
+	public MailboxDataService(
+		IRedFlagDomainService redFlagDomainService,
+		IVirusTotalService virusTotalService,
+		IDnsSecurityService dnsSecurityService)
 	{
 		_redFlagDomainService = redFlagDomainService;
-		_virusTotalService = virusTotalService;
+		_virusTotalService    = virusTotalService;
+		_dnsSecurityService   = dnsSecurityService;
 	}
 
 	#region Données de test
@@ -400,20 +405,6 @@ new Email
 	IsRead = false
 },
 
-// ------ Email de test Display Name Spoofing ------
-new Email
-{
-	SenderName = "Apple Support",
-	SenderEmail = "support@xn--pple-43d.com",
-	SenderProfileImage = null,
-	Subject = "Votre compte Apple a été compromis",
-	Content = "Cliquez ici immédiatement pour sécuriser votre compte.",
-	DateSent = DateTime.Now.AddMinutes(-5),
-	Attachments = [],
-	MailboxType = MailboxType.Inbox,
-	IsRead = false
-},
-
 			new Email
 			{
 				SenderName = "Livraison Express",
@@ -654,6 +645,33 @@ new Email
 			score += keywordScore;
 			string intensity = keywordScore >= 20 ? "critiques" : keywordScore >= 10 ? "élevés" : "faibles";
 			reasons.Add($"Formulations d'urgence psychologique détectées (niveau {intensity}).");
+		}
+
+		// 5. Vérification DNS (SPF / DMARC)
+		var dns = await _dnsSecurityService.CheckDomainAsync(email.SenderEmail);
+		email.SpfStatus   = dns.SpfStatus.ToString();
+		email.DmarcStatus = dns.DmarcStatus.ToString();
+		email.DnsWarning  = dns.Warning;
+
+		if (dns.SpfStatus == SpfStatus.None && dns.DmarcStatus == DmarcStatus.None)
+		{
+			score += 25;
+			reasons.Add($"Aucune politique SPF ni DMARC sur '{dns.Domain}' — domaine non authentifié.");
+		}
+		else if (dns.SpfStatus == SpfStatus.None)
+		{
+			score += 15;
+			reasons.Add($"Aucun enregistrement SPF sur '{dns.Domain}'.");
+		}
+		else if (dns.DmarcStatus == DmarcStatus.None)
+		{
+			score += 10;
+			reasons.Add($"Aucune politique DMARC sur '{dns.Domain}'.");
+		}
+		else if (dns.SpfStatus == SpfStatus.SoftFail)
+		{
+			score += 5;
+			reasons.Add($"SPF en mode permissif (~all) sur '{dns.Domain}'.");
 		}
 
 		return score;
