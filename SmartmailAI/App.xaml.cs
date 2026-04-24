@@ -2,10 +2,6 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
-#if !DISABLE_XAML_GENERATED_MAIN
-using Microsoft.Extensions.Configuration;
-#endif
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -195,10 +191,27 @@ public partial class App : Application
 				services.AddSingleton<IRedFlagDomainService, RedFlagDomainService>();
 
 				// Anti-phishing : analyse pièces jointes via VirusTotal
-				services.AddSingleton<IVirusTotalService>(provider =>
+				services.AddSingleton<IVirusTotalService>(_ =>
 				{
-					var config = provider.GetService<IConfiguration>();
-					var apiKey = config?["VirusTotal:ApiKey"];
+					// Lecture directe de appsettings.json sans IConfiguration
+					string? apiKey = null;
+					try
+					{
+						var appDir = AppContext.BaseDirectory;
+						var settingsPath = System.IO.Path.Combine(appDir, "appsettings.json");
+						if (System.IO.File.Exists(settingsPath))
+						{
+							var json = System.IO.File.ReadAllText(settingsPath);
+							using var doc = System.Text.Json.JsonDocument.Parse(json);
+							if (doc.RootElement.TryGetProperty("VirusTotal", out var vt) &&
+								vt.TryGetProperty("ApiKey", out var key))
+							{
+								apiKey = key.GetString();
+							}
+						}
+					}
+					catch { /* non bloquant */ }
+
 					return new VirusTotalService(apiKey);
 				});
 
