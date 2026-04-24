@@ -13,10 +13,12 @@ public class MailboxDataService : IMailboxDataService
 	private List<Email> _AllEmails;
 	private static readonly ResourceLoader _resources = new();
 	private readonly IRedFlagDomainService _redFlagDomainService;
+	private readonly IVirusTotalService _virusTotalService;
 
-	public MailboxDataService(IRedFlagDomainService redFlagDomainService)
+	public MailboxDataService(IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService)
 	{
 		_redFlagDomainService = redFlagDomainService;
+		_virusTotalService = virusTotalService;
 	}
 
 	#region Données de test
@@ -188,7 +190,6 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.Sent,
 				IsRead = true
 			},
-
 			new Email
 			{
 				SenderName = "Jean Dupont",
@@ -412,17 +413,7 @@ new Email
 				Attachments = [ "facture.zip" ],
 				MailboxType = MailboxType.PhishingSpam,
 				IsRead = false
-			},
-
-			new Email
-{
-	SenderName = "Test Phishing",
-	SenderEmail = "contact@0orange.fr",
-	Subject = "Vérifiez votre compte",
-	Content = "Cliquez ici pour confirmer.",
-	MailboxType = MailboxType.Inbox,
-    // ...
-}
+			}
 
 
 		];
@@ -596,28 +587,51 @@ new Email
 	{
 		int score = 0;
 
+		// 1. Domaine expéditeur suspect (red.flag.domains + Levenshtein)
 		if (await IsSuspiciousEmailAsync(email.SenderEmail))
 		{
 			score += 40;
 			reasons.Add("Domaine expéditeur suspect ou imitant un domaine connu.");
 		}
 
+		// 2. Liens suspects dans le corps
 		if (ContainsSuspiciousLinks(email.Content, out var suspiciousLinks))
 		{
 			score += 30;
 			reasons.Add($"Lien(s) suspect(s) détecté(s) : {string.Join(", ", suspiciousLinks)}");
 		}
 
-		if (HasDangerousAttachment(email.Attachments))
+		// 3. Pièces jointes — analyse extension + VirusTotal
+		if (email.Attachments is { Count: > 0 })
 		{
-			score += 20;
-			reasons.Add("Pièce jointe potentiellement dangereuse détectée.");
+			if (HasDangerousAttachment(email.Attachments))
+			{
+				score += 20;
+				reasons.Add("Pièce jointe avec extension potentiellement dangereuse détectée.");
+			}
+
+			var vtResults = await _virusTotalService.AnalyzeAttachmentsAsync(email.Attachments);
+			foreach (var vt in vtResults.Where(r => r.IsMalicious))
+			{
+				// Déjà compté par HasDangerousAttachment → on ajoute seulement si VirusTotal confirme
+				if (vt.MaliciousCount > 0)
+				{
+					score += 15;
+					var detail = vt.MaliciousCount > 0
+						? $"{vt.MaliciousCount}/{vt.TotalEngines} moteurs"
+						: "extension dangereuse connue";
+					reasons.Add($"Pièce jointe '{vt.FileName}' signalée comme malveillante ({detail}).");
+				}
+			}
 		}
 
-		if (ContainsPhishingKeywords(email.Subject, email.Content))
+		// 4. Patterns psychologiques d'urgence (score pondéré 0-20)
+		int keywordScore = ScorePhishingKeywords(email.Subject, email.Content);
+		if (keywordScore > 0)
 		{
-			score += 10;
-			reasons.Add("Formulations typiques du phishing détectées.");
+			score += keywordScore;
+			string intensity = keywordScore >= 20 ? "critiques" : keywordScore >= 10 ? "élevés" : "faibles";
+			reasons.Add($"Formulations d'urgence psychologique détectées (niveau {intensity}).");
 		}
 
 		return score;
@@ -793,15 +807,13 @@ new Email
 
 		string[] dangerousExtensions =
 		[
-			".exe",
-		".scr",
-		".bat",
-		".cmd",
-		".js",
-		".vbs",
-		".zip",
-		".rar",
-		".iso"
+			".exe", ".scr", ".bat", ".cmd", ".com", ".pif",
+			".js",  ".jse", ".vbs", ".vbe", ".wsf", ".wsh",
+			".ps1", ".psm1", ".msi", ".dll", ".sys",
+			".zip", ".rar", ".7z", ".iso", ".img",
+			".docm", ".xlsm", ".pptm",
+			".lnk", ".url",
+			".hta", ".htm", ".html"
 		];
 
 		return attachments.Any(a =>
@@ -809,26 +821,85 @@ new Email
 			dangerousExtensions.Any(ext => a.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
 	}
 
-	private bool ContainsPhishingKeywords(string? subject, string? content)
+	/// <summary>
+	/// Retourne un score de 0 à 20 basé sur l'intensité des patterns psychologiques détectés.
+	/// </summary>
+	private int ScorePhishingKeywords(string? subject, string? content)
 	{
 		string text = $"{subject} {content}".ToLowerInvariant();
 
-		string[] phishingKeywords =
+		// Niveau 3 — Urgence extrême (+20)
+		string[] criticalPatterns =
 		[
-			"urgent",
-		"immédiatement",
-		"immediatement",
-		"vérifiez votre compte",
-		"verifiez votre compte",
-		"mot de passe expire",
-		"mot de passe expiré",
-		"compte suspendu",
-		"cliquez sur le lien",
-		"confirmez vos informations",
-		"paiement requis"
+			"votre compte sera suspendu",
+			"compte suspendu",
+			"accès bloqué",
+			"acces bloque",
+			"action requise immédiatement",
+			"action requise immediatement",
+			"votre compte a été compromis",
+			"votre compte a ete compromis",
+			"activité suspecte détectée",
+			"activite suspecte detectee",
+			"sécurité de votre compte",
+			"securite de votre compte",
 		];
 
-		return phishingKeywords.Any(k => text.Contains(k));
+		// Niveau 2 — Urgence modérée (+10)
+		string[] highPatterns =
+		[
+			"vérifiez votre compte",
+			"verifiez votre compte",
+			"confirmez vos informations",
+			"mettez à jour vos informations",
+			"mettez a jour vos informations",
+			"mot de passe expiré",
+			"mot de passe expire",
+			"réinitialisez votre mot de passe",
+			"reinitialiser votre mot de passe",
+			"cliquez ici pour confirmer",
+			"cliquez sur le lien",
+			"paiement requis",
+			"facture en attente",
+			"48 heures",
+			"24 heures",
+			"dans les plus brefs délais",
+			"dans les plus brefs delais",
+		];
+
+		// Niveau 1 — Signaux faibles (+5)
+		string[] lowPatterns =
+		[
+			"urgent",
+			"immédiatement",
+			"immediatement",
+			"ne pas ignorer",
+			"dernière chance",
+			"derniere chance",
+			"offre limitée",
+			"offre limitee",
+			"gagnant",
+			"félicitations",
+			"felicitations",
+			"vous avez été sélectionné",
+			"vous avez ete selectionne",
+			"gratuit",
+			"cliquez ici",
+			"connectez-vous maintenant",
+			"vérification nécessaire",
+			"verification necessaire",
+		];
+
+		int score = 0;
+
+		if (criticalPatterns.Any(k => text.Contains(k)))
+			score += 20;
+		else if (highPatterns.Any(k => text.Contains(k)))
+			score += 10;
+		else if (lowPatterns.Any(k => text.Contains(k)))
+			score += 5;
+
+		return score;
 	}
 
 
