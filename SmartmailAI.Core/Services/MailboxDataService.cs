@@ -547,19 +547,25 @@ new Email
 			if (email.MailboxType == MailboxType.Trash)
 				continue;
 
-			int riskScore = CalculateRiskScore(email);
+			var reasons = new List<string>();
+			int riskScore = CalculateRiskScore(email, reasons);
 
 			email.PhishingScore = riskScore;
 			email.IsPhishingDetected = riskScore >= 50;
 			email.SecurityWarning = GetSecurityWarning(riskScore);
+			email.SecurityReasons = reasons.Count > 0
+				? string.Join("\n• ", new[] { reasons[0] }.Concat(reasons.Skip(1)))
+				: "Aucun signal suspect détecté.";
+
+			var links = ExtractLinks(email.Content);
+			email.DetectedLinks = links.Count > 0
+				? string.Join("\n", links)
+				: "Aucun lien détecté";
 
 			if (riskScore >= 50 && email.MailboxType != MailboxType.PhishingSpam)
 			{
 				email.PreviousMailboxType = email.MailboxType;
 				email.MailboxType = MailboxType.PhishingSpam;
-
-				System.Diagnostics.Debug.WriteLine(
-	$"{email.Subject} | Score={email.PhishingScore} | Warning={email.SecurityWarning}");
 			}
 		}
 	}
@@ -573,21 +579,33 @@ new Email
 		return "Email fiable";
 	}
 
-	private int CalculateRiskScore(Email email)
+	private int CalculateRiskScore(Email email, List<string> reasons)
 	{
 		int score = 0;
 
 		if (IsSuspiciousEmail(email.SenderEmail))
+		{
 			score += 40;
+			reasons.Add("Domaine expéditeur suspect ou imitant un domaine connu.");
+		}
 
-		if (ContainsSuspiciousLinks(email.Content))
+		if (ContainsSuspiciousLinks(email.Content, out var suspiciousLinks))
+		{
 			score += 30;
+			reasons.Add($"Lien(s) suspect(s) détecté(s) : {string.Join(", ", suspiciousLinks)}");
+		}
 
 		if (HasDangerousAttachment(email.Attachments))
+		{
 			score += 20;
+			reasons.Add("Pièce jointe potentiellement dangereuse détectée.");
+		}
 
 		if (ContainsPhishingKeywords(email.Subject, email.Content))
+		{
 			score += 10;
+			reasons.Add("Formulations typiques du phishing détectées.");
+		}
 
 		return score;
 	}
@@ -671,24 +689,83 @@ new Email
 		return d[n, m];
 	}
 
-	private bool ContainsSuspiciousLinks(string content)
+	private bool ContainsSuspiciousLinks(string? content, out List<string> suspiciousLinks)
 	{
+		suspiciousLinks = new List<string>();
+
 		if (string.IsNullOrWhiteSpace(content))
 			return false;
 
-		string lowerContent = content.ToLowerInvariant();
+		var links = ExtractLinks(content);
 
-		string[] suspiciousDomains =
+		if (links.Count == 0)
+			return false;
+
+		string[] suspiciousIndicators =
 		[
-			".xyz",
+			"http://",
+		"bit.ly",
+		"tinyurl.com",
+		".xyz",
 		".top",
 		".click",
-		".ru",
-		"bit.ly",
-		"tinyurl.com"
+		".ru"
 		];
 
-		return suspiciousDomains.Any(d => lowerContent.Contains(d));
+		foreach (var link in links)
+		{
+			string lowerLink = link.ToLowerInvariant();
+
+			if (suspiciousIndicators.Any(indicator => lowerLink.Contains(indicator)))
+			{
+				suspiciousLinks.Add(link);
+				continue;
+			}
+
+			if (Uri.TryCreate(link, UriKind.Absolute, out var uri))
+			{
+				var host = uri.Host.ToLowerInvariant();
+
+				if (ContainsNonAsciiCharacters(host))
+				{
+					suspiciousLinks.Add(link);
+					continue;
+				}
+			}
+		}
+
+		return suspiciousLinks.Count > 0;
+	}
+
+	private List<string> ExtractLinks(string? content)
+	{
+		var results = new List<string>();
+
+		if (string.IsNullOrWhiteSpace(content))
+			return results;
+
+		var parts = content
+			.Split([' ', '\n', '\r', '\t'], StringSplitOptions.RemoveEmptyEntries)
+			.Select(p => p.Trim(',', '.', ';', '!', '?', '(', ')', '[', ']', '"', '\''));
+
+		foreach (var part in parts)
+		{
+			if (part.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+				part.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
+				part.StartsWith("www.", StringComparison.OrdinalIgnoreCase) ||
+				part.Contains("bit.ly", StringComparison.OrdinalIgnoreCase) ||
+				part.Contains("tinyurl.com", StringComparison.OrdinalIgnoreCase))
+			{
+				results.Add(part);
+			}
+		}
+
+		return results.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+	}
+
+	private bool ContainsNonAsciiCharacters(string text)
+	{
+		return text.Any(c => c > 127);
 	}
 
 	private bool HasDangerousAttachment(IList<string>? attachments)
