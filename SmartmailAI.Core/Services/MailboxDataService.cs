@@ -648,30 +648,39 @@ new Email
 		}
 
 		// 5. Vérification DNS (SPF / DMARC)
-		var dns = await _dnsSecurityService.CheckDomainAsync(email.SenderEmail);
-		email.SpfStatus   = dns.SpfStatus.ToString();
-		email.DmarcStatus = dns.DmarcStatus.ToString();
-		email.DnsWarning  = dns.Warning;
+		// On skip les domaines internes/de test connus pour éviter les faux positifs
+		string[] skipDnsDomains = ["exemple.com", "entreprise.com", "client.com", "ancienne-entreprise.com"];
+		var senderDomain = email.SenderEmail?.Contains('@') == true
+			? email.SenderEmail.Split('@')[1].ToLowerInvariant()
+			: string.Empty;
 
-		if (dns.SpfStatus == SpfStatus.None && dns.DmarcStatus == DmarcStatus.None)
+		if (!skipDnsDomains.Contains(senderDomain))
 		{
-			score += 25;
-			reasons.Add($"Aucune politique SPF ni DMARC sur '{dns.Domain}' — domaine non authentifié.");
-		}
-		else if (dns.SpfStatus == SpfStatus.None)
-		{
-			score += 15;
-			reasons.Add($"Aucun enregistrement SPF sur '{dns.Domain}'.");
-		}
-		else if (dns.DmarcStatus == DmarcStatus.None)
-		{
-			score += 10;
-			reasons.Add($"Aucune politique DMARC sur '{dns.Domain}'.");
-		}
-		else if (dns.SpfStatus == SpfStatus.SoftFail)
-		{
-			score += 5;
-			reasons.Add($"SPF en mode permissif (~all) sur '{dns.Domain}'.");
+			var dns = await _dnsSecurityService.CheckDomainAsync(email.SenderEmail);
+			email.SpfStatus   = dns.SpfStatus.ToString();
+			email.DmarcStatus = dns.DmarcStatus.ToString();
+			email.DnsWarning  = dns.Warning;
+
+			if (dns.SpfStatus == SpfStatus.None && dns.DmarcStatus == DmarcStatus.None)
+			{
+				score += 25;
+				reasons.Add($"Aucune politique SPF ni DMARC sur '{dns.Domain}' — domaine non authentifié.");
+			}
+			else if (dns.SpfStatus == SpfStatus.None)
+			{
+				score += 15;
+				reasons.Add($"Aucun enregistrement SPF sur '{dns.Domain}'.");
+			}
+			else if (dns.DmarcStatus == DmarcStatus.None)
+			{
+				score += 10;
+				reasons.Add($"Aucune politique DMARC sur '{dns.Domain}'.");
+			}
+			else if (dns.SpfStatus == SpfStatus.SoftFail)
+			{
+				score += 5;
+				reasons.Add($"SPF en mode permissif (~all) sur '{dns.Domain}'.");
+			}
 		}
 
 		return score;
