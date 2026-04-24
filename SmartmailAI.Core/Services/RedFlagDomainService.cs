@@ -123,14 +123,17 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 			_domains = parsed;
 			_lastRefresh = DateTime.UtcNow;
 
+			System.Diagnostics.Debug.WriteLine($"[RedFlagDomains] ✅ {_domains.Count} domaines chargés depuis le réseau.");
+
 			// Sauvegarde du cache local (best-effort)
 			await SaveCacheAsync(content);
 
 			return true;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
 			// Réseau indisponible ou erreur HTTP → on laisse le fallback prendre le relais
+			System.Diagnostics.Debug.WriteLine($"[RedFlagDomains] ❌ Échec du chargement réseau : {ex.Message}");
 			return false;
 		}
 	}
@@ -147,6 +150,8 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 
 			var content = await File.ReadAllTextAsync(_cacheFilePath);
 			_domains = ParseDomainList(content);
+
+			System.Diagnostics.Debug.WriteLine($"[RedFlagDomains] ⚠️ {_domains.Count} domaines chargés depuis le cache local (réseau indisponible).");
 
 			// On ne met pas à jour _lastRefresh : le prochain démarrage
 			// tentera à nouveau le réseau.
