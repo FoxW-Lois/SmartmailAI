@@ -54,6 +54,9 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	[RelayCommand]
 	private async Task SendAsync()
 	{
+		if (string.IsNullOrWhiteSpace(To) || string.IsNullOrWhiteSpace(Subject))
+			return;
+
 		var accountGmail = await _addressesService.GetAccountByEmailAsync(_from);
 		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail!);
 
@@ -61,7 +64,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		if (credential is null)
 			return;
 
-		await _gmailApiService.SendEmailAsync(credential, To, Subject, Body);
+		await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
 
 		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
 		Discard();

@@ -82,7 +82,7 @@ public class GmailApiService : IGmailApiService
 		return result;
 	}
 
-	public async Task SendEmailAsync(UserCredential credential, string to, string subject, string body)
+	public async Task SendEmailAsync(UserCredential credential, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer()
 		{
@@ -92,14 +92,11 @@ public class GmailApiService : IGmailApiService
 
 		string emailAddressOwner = await GetEmailAddressAsync(credential);
 
-		var mimeMessage = CreateMimeMessage(emailAddressOwner, to, subject, body);
+		var mimeMessage = CreateMimeMessage(emailAddressOwner, to, subject, body, attachments ?? []);
 
 		var rawMessage = EncodeMessage(mimeMessage);
 
-		var gmailMessage = new Google.Apis.Gmail.v1.Data.Message
-		{
-			Raw = rawMessage
-		};
+		var gmailMessage = new Google.Apis.Gmail.v1.Data.Message { Raw = rawMessage };
 
 		await service.Users.Messages.Send(gmailMessage, "me").ExecuteAsync();
 	}
@@ -181,7 +178,7 @@ public class GmailApiService : IGmailApiService
 			.Replace("=", "");
 	}
 
-	private static MimeMessage CreateMimeMessage(string from, string to, string subject, string body)
+	private static MimeMessage CreateMimeMessage(string from, string to, string subject, string body, IEnumerable<MailAttachment> attachments)
 	{
 		var message = new MimeMessage();
 
@@ -189,11 +186,30 @@ public class GmailApiService : IGmailApiService
 		message.To.Add(MailboxAddress.Parse(to));
 		message.Subject = subject;
 
-		message.Body = new TextPart("plain")
-		{
-			Text = body
-		};
+		var bodyPart = new TextPart("plain") { Text = body };
 
+		if (!attachments.Any())
+		{
+			message.Body = bodyPart;
+			return message;
+		}
+
+		// Multipart si pièces jointes
+		var multipart = new Multipart("mixed") { bodyPart };
+
+		foreach (var attachment in attachments)
+		{
+			var mimePart = new MimePart
+			{
+				Content = new MimeContent(File.OpenRead(attachment.FilePath)),
+				ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+				ContentTransferEncoding = ContentEncoding.Base64,
+				FileName = attachment.FileName
+			};
+			multipart.Add(mimePart);
+		}
+
+		message.Body = multipart;
 		return message;
 	}
 
