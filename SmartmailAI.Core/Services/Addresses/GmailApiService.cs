@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -8,6 +9,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
+using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models;
 
@@ -80,7 +82,30 @@ public class GmailApiService : IGmailApiService
 		return result;
 	}
 
-	// Helpers internes au Service
+	public async Task SendEmailAsync(UserCredential credential, string to, string subject, string body)
+	{
+		var service = new GmailService(new BaseClientService.Initializer()
+		{
+			HttpClientInitializer = credential,
+			ApplicationName = "SmartmailAI"
+		});
+
+		string emailAddressOwner = await GetEmailAddressAsync(credential);
+
+		var mimeMessage = CreateMimeMessage(emailAddressOwner, to, subject, body);
+
+		var rawMessage = EncodeMessage(mimeMessage);
+
+		var gmailMessage = new Google.Apis.Gmail.v1.Data.Message
+		{
+			Raw = rawMessage
+		};
+
+		await service.Users.Messages.Send(gmailMessage, "me").ExecuteAsync();
+	}
+
+	#region Helpers internes au Service (réception des emails)
+
 	private static string GetHeader(Message msg, string name) =>
 		msg.Payload.Headers.FirstOrDefault(h => h.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
 
@@ -138,4 +163,39 @@ public class GmailApiService : IGmailApiService
 			return (null, rawHeader);
 		}
 	}
+
+	#endregion Helpers internes au Service (réception des emails)
+
+	#region Helpers internes au Service (envoi des emails)
+
+	private static string EncodeMessage(MimeMessage message)
+	{
+		using var stream = new MemoryStream();
+		message.WriteTo(stream);
+
+		var bytes = stream.ToArray();
+
+		return Convert.ToBase64String(bytes)
+			.Replace('+', '-')
+			.Replace('/', '_')
+			.Replace("=", "");
+	}
+
+	private static MimeMessage CreateMimeMessage(string from, string to, string subject, string body)
+	{
+		var message = new MimeMessage();
+
+		message.From.Add(MailboxAddress.Parse(from));
+		message.To.Add(MailboxAddress.Parse(to));
+		message.Subject = subject;
+
+		message.Body = new TextPart("plain")
+		{
+			Text = body
+		};
+
+		return message;
+	}
+
+	#endregion Helpers internes au Service (envoi des emails)
 }

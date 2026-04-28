@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SmartmailAI.Core.Models.Composers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -10,6 +11,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private readonly IEmailsService _emailsService;
 
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
+
+	// Stocke l'adresse Email sélectionnée pour la passer en tant qu'expéditeur à la fenêtre de composition
+	private string addressAccount;
 
 	[ObservableProperty]
 	private MailboxCategory? selectedCategory;
@@ -39,12 +43,14 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	public async Task OnNavigatedTo(object? parameter)
 	{
 		// TODO: Si besoin d'utiliser des données statiques, commenter le bloc conditionnel ↓
-		if (parameter is not string addressAccount)
+		if (parameter is not string paramAddressAccount)
 			return;
+
+		addressAccount = paramAddressAccount;
 
 		Categories.Clear();
 
-		var categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(/*addressAccount*/);
+		var categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(addressAccount);
 
 		foreach (var category in categoriesWithEmails)
 		{
@@ -61,7 +67,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedCategory ??= Categories.FirstOrDefault();
 	}
 
-	// Appelé quand l'utilisateur sélectionne un email normal
+	// Appelé quand l'utilisateur sélectionne un email dans la liste (quelque soit sa catégorie de rangement)
 	partial void OnSelectedDetailChanged(object? value)
 	{
 		if (value is not ComposeSentinel)

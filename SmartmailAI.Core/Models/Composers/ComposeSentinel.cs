@@ -1,4 +1,4 @@
-﻿namespace SmartmailAI.Core.Models;
+﻿namespace SmartmailAI.Core.Models.Composers;
 
 public class ComposeSentinel
 {

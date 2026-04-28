@@ -70,13 +70,26 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 		return true;
 	}
 
+	public async Task<AccountGmail?> GetAccountByEmailAsync(string email)
+	{
+		var accounts = await _addressRepository.GetAllAddressesAsync();
+
+		foreach (var account in accounts)
+		{
+			if (account.Email == email)
+				return account;
+		}
+
+		return null;
+	}
+
 	public async Task<List<AccountGmail>> GetListAccountsLinkedAsync()
 	{
 		var accounts = await _addressRepository.GetAllAddressesAsync();
 		return accounts;
 	}
 
-	public async Task<bool> CheckIfGmailAccountExist(string addresseGmail)
+	private async Task<bool> CheckIfGmailAccountExist(string addresseGmail)
 	{
 		var accountsGmailList = await _addressRepository.GetAllAddressesAsync();
 
