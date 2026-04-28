@@ -79,6 +79,10 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		IsComposing = !IsComposing;
 		SelectedDetail = ComposeSentinel.Instance;
+
+		// Passe l'email connecté en tant qu'expéditeur à la fenêtre de composition
+		string senderEmail = addressAccount;
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage { SenderEmail = senderEmail });
 	}
 
 	[RelayCommand]
