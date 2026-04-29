@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
 
@@ -48,7 +47,7 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 		ErrorMessage = string.Empty;
 
 		bool success = await _addressesService.RemoveGmailAccountAsync(accountGmail);
-		
+
 		if (!success)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_DeleteAddress");

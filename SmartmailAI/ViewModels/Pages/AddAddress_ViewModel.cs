@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Net.Mail;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;

@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -8,13 +10,22 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 {
 	private readonly IEmailsService _emailsService;
 
+	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
+
+	// Stocke l'adresse Email sélectionnée pour la passer en tant qu'expéditeur à la fenêtre de composition
+	private string addressAccount = string.Empty;
+
 	[ObservableProperty]
 	private MailboxCategory? selectedCategory;
 
-	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
+	[ObservableProperty]
+	private string? searchText;
 
 	[ObservableProperty]
-	private string searchText;
+	private bool _isComposing;
+
+	[ObservableProperty]
+	private object? _selectedDetail;
 
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
@@ -22,17 +33,27 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	public DetailsList_ViewModel(IEmailsService emailsService)
 	{
 		_emailsService = emailsService;
+
+		WeakReferenceMessenger.Default.Register<CloseComposeMessage>(this, (r, m) => { IsComposing = false; });
+
+		// Quand reçoit une demande (ouverture des détails d'un email), envoi l'email connecté à la fenêtre des détails
+		WeakReferenceMessenger.Default.Register<RequestAddressAccountMessage>(this, (r, m) =>
+		{
+			WeakReferenceMessenger.Default.Send(new ResponseAddressAccountMessage { AddressAccount = addressAccount });
+		});
 	}
 
 	public async Task OnNavigatedTo(object? parameter)
 	{
 		// TODO: Si besoin d'utiliser des données statiques, commenter le bloc conditionnel ↓
-		if (parameter is not string addressAccount)
+		if (parameter is not string paramAddressAccount)
 			return;
+
+		addressAccount = paramAddressAccount;
 
 		Categories.Clear();
 
-		var categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(/*addressAccount*/);
+		var categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(addressAccount);
 
 		foreach (var category in categoriesWithEmails)
 		{
@@ -48,6 +69,32 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		SelectedCategory ??= Categories.FirstOrDefault();
 	}
+
+	// Appelé quand l'utilisateur sélectionne un email dans la liste (quelque soit sa catégorie de rangement)
+	partial void OnSelectedDetailChanged(object? value)
+	{
+		if (value is not ComposeSentinel)
+			IsComposing = false;
+	}
+
+	[RelayCommand]
+	private async Task OpenNewMailAsync()
+	{
+		IsComposing = !IsComposing;
+		SelectedDetail = ComposeSentinel.Instance;
+
+		// Passe l'email connecté en tant qu'expéditeur à la fenêtre de composition
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage { SenderEmail = addressAccount });
+	}
+
+	[RelayCommand]
+	private async Task CloseNewMailAsync()
+	{
+		IsComposing = false;
+		SelectedDetail = null;
+	}
+
+	#region Commandes de filtrage
 
 	[RelayCommand]
 	private async Task FilterAsync()
@@ -85,6 +132,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			SearchText += " ";
 		SearchText += "Attachment:No";
 	}
+
+	#endregion Commandes de filtrage
 
 	#region Commandes au clic droit
 

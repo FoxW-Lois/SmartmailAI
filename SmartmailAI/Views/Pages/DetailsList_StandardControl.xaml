@@ -4,6 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:models="using:SmartmailAI.Core.Models"
 	mc:Ignorable="d">
 
 	<ScrollViewer
@@ -25,36 +26,37 @@
 					Text="{x:Bind DetailsListMenuItem_Email.SenderName, Mode=OneWay}" />
 			</StackPanel>
 			<StackPanel Padding="0 15 0 0">
-				<TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Expéditeur" />
+				<TextBlock x:Uid="Email_Details_Sender" Style="{StaticResource DetailSubTitleStyle}" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
-					<Run Text="De :" />
+					<Run x:Uid="Email_Details_From" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.SenderEmail, Mode=OneWay}" />
 				</TextBlock>
 
 				<TextBlock
+					x:Uid="Email_Details_Receiver"
 					Margin="{StaticResource MediumTopMargin}"
-					Style="{StaticResource DetailSubTitleStyle}"
-					Text="Réceptionnaire" />
+					Style="{StaticResource DetailSubTitleStyle}" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
-					<Run Text="À :" />
+					<Run x:Uid="Email_Details_To" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.ReceiverEmail, Mode=OneWay}" />
 				</TextBlock>
 
 				<TextBlock
+					x:Uid="Email_Details_DateSent"
 					Margin="{StaticResource MediumTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"
 					Text="Date d'envoi" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
-					<Run Text="Le :" />
+					<Run x:Uid="Email_Details_The" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.DaySent, Mode=OneWay}" />
-					<Run Text=" à :" />
+					<Run x:Uid="Email_Details_At" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.TimeSent, Mode=OneWay}" />
 				</TextBlock>
 
 				<TextBlock
+					x:Uid="Email_Details_Subject"
 					Margin="{StaticResource MediumTopMargin}"
-					Style="{StaticResource DetailSubTitleStyle}"
-					Text="Objet" />
+					Style="{StaticResource DetailSubTitleStyle}" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind DetailsListMenuItem_Email.Subject, Mode=OneWay}" />
 
 				<TextBlock
@@ -63,13 +65,31 @@
 					Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}" />
 
 				<TextBlock
+					x:Uid="Email_Details_Attachments"
 					Margin="{StaticResource LargeTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"
-					Text="Pièces jointes" />
-				<TextBlock
+					Visibility="{x:Bind DetailsListMenuItem_Email.HasAttachments, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+				<ItemsRepeater
 					Margin="{StaticResource MediumBottomMargin}"
-					Style="{StaticResource DetailBodyBaseMediumStyle}"
-					Text="{x:Bind DetailsListMenuItem_Email.AttachmentsDisplay, Mode=OneWay}" />
+					ItemsSource="{x:Bind DetailsListMenuItem_Email.Attachments, Mode=OneWay}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.HasAttachments, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+					<ItemsRepeater.Layout>
+						<StackLayout Orientation="Horizontal" Spacing="8" />
+					</ItemsRepeater.Layout>
+					<ItemsRepeater.ItemTemplate>
+						<DataTemplate x:DataType="models:MailAttachment">
+							<Button Click="OnAttachmentClick" Tag="{x:Bind}">
+								<StackPanel Orientation="Horizontal" Spacing="6">
+									<FontIcon
+										FontFamily="Segoe MDL2 Assets"
+										FontSize="14"
+										Glyph="&#xE723;" />
+									<TextBlock VerticalAlignment="Center" Text="{x:Bind FileName}" />
+								</StackPanel>
+							</Button>
+						</DataTemplate>
+					</ItemsRepeater.ItemTemplate>
+				</ItemsRepeater>
 			</StackPanel>
 		</StackPanel>
 	</ScrollViewer>

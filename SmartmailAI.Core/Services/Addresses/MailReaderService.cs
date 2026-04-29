@@ -9,7 +9,7 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
-public class MailReaderService(IGmailCredentialService credentialService, IGmailApiService gmailApi, IAuthService authService, 
+public class MailReaderService(IGmailCredentialService credentialService, IGmailApiService gmailApi, IAuthService authService,
 	IAccountRepository accountRepository, IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
 {
 	private readonly IGmailCredentialService _gmailCredentialService = credentialService;
@@ -46,5 +46,14 @@ public class MailReaderService(IGmailCredentialService credentialService, IGmail
 		List<Email> emailsList = await _mappersToEmailDTOService.MapEmailGmailToEmail_List(rawEmailsList);
 
 		return emailsList;
+	}
+
+	public async Task SaveAttachmentFromEmailAsync(AccountGmail accountGmail, string messageId, MailAttachment attachment, string destinationFolder)
+	{
+		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
+		if (credential == null)
+			return;
+
+		await _gmailApiService.SaveAttachmentAsync(credential, messageId, attachment, destinationFolder);
 	}
 }

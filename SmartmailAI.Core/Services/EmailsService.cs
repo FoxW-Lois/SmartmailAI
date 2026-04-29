@@ -35,7 +35,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				Subject = "Réunion de suivi",
 				Content = "Bonjour Jean,\n\nPeux-tu me confirmer ta disponibilité pour la réunion de suivi prévue demain à 10h ?\n\nCordialement,\nMarie",
 				DateSent = DateTime.Now.AddDays(-2),
-				Attachments = [ "Ordre_du_jour.pdf" ],
+				Attachments = [],
 				MailboxType = MailboxType.Inbox,
 				IsRead = false,
 				IsStarred = true
@@ -129,7 +129,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				Subject = "Note de frais à valider",
 				Content = "Bonjour Jean,\n\nMerci de valider la note de frais du mois dernier avant la fin de semaine.\n\nCordialement,\nComptabilité",
 				DateSent = DateTime.Now.AddDays(-3),
-				Attachments = [ "note_de_frais.pdf" ],
+				Attachments = [],
 				MailboxType = MailboxType.Snoozed,
 				IsRead = false
 			},
@@ -171,7 +171,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				Subject = "Compte-rendu réunion",
 				Content = "Bonjour Marie,\n\nVoici un premier brouillon du compte-rendu de la réunion.",
 				DateSent = DateTime.Now,
-				Attachments = [ "compte_rendu_draft.docx" ],
+				Attachments = [],
 				MailboxType = MailboxType.Drafts,
 				IsRead = false
 			},
@@ -236,7 +236,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				Subject = "Validation formation",
 				Content = "Bonjour Jean,\n\nTa formation a bien été validée.\n\nCordialement,\nService Formation",
 				DateSent = DateTime.Now.AddMonths(-6),
-				Attachments = [ "certificat.pdf" ],
+				Attachments = [],
 				MailboxType = MailboxType.Archives,
 				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
@@ -282,7 +282,7 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 				Subject = "Colis en attente de paiement",
 				Content = "Votre colis est en attente de frais de livraison.\nVeuillez régulariser la situation rapidement.",
 				DateSent = DateTime.Now.AddDays(-3),
-				Attachments = [ "facture.zip" ],
+				Attachments = [],
 				MailboxType = MailboxType.PhishingSpam,
 				IsRead = false
 			}

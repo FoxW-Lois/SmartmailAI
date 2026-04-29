@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -28,12 +29,18 @@ public class Email
 
 	[Column("DateSent")] public DateTime? DateSent { get; set; }
 
-	[Column("Attachments")] public List<string>? Attachments { get; set; }
+	[Column("Attachments")]
+	public string AttachmentsJson
+	{
+		get => JsonSerializer.Serialize(Attachments);
+		set => Attachments = string.IsNullOrEmpty(value)
+			? []
+			: JsonSerializer.Deserialize<List<MailAttachment>>(value) ?? [];
+	}
 
-	[NotMapped]
-	public string AttachmentsDisplay => Attachments != null && Attachments.Count != 0
-		? string.Join(", ", Attachments)
-		: "Aucune pièce jointe";
+	[NotMapped] public List<MailAttachment> Attachments { get; set; } = [];
+
+	[NotMapped] public bool HasAttachments => Attachments is { Count: > 0 };
 
 	#endregion Propriétés de base / Composition
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -8,6 +9,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
+using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models;
 
@@ -73,14 +75,64 @@ public class GmailApiService : IGmailApiService
 				Body = GetMessageBody(full),
 				Date = GetMessageDate(full),
 				Owner = emailAddressOwner,
-				MailboxType = MailboxType
+				MailboxType = MailboxType,
+				Attachments = GetAttachments(full)
 			});
 		}
 
 		return result;
 	}
 
-	// Helpers internes au Service
+	public async Task SaveAttachmentAsync(UserCredential credential, string messageId, MailAttachment attachment, string destinationFolder)
+	{
+		var bytes = await DownloadAttachmentAsync(credential, messageId, attachment.AttachmentId);
+		var path = Path.Combine(destinationFolder, attachment.FileName);
+
+		await File.WriteAllBytesAsync(path, bytes);
+		attachment.FilePath = path; // Met à jour le chemin local
+	}
+
+	private static async Task<byte[]> DownloadAttachmentAsync(UserCredential credential, string messageId, string attachmentId)
+	{
+		var service = new GmailService(new BaseClientService.Initializer
+		{
+			HttpClientInitializer = credential,
+			ApplicationName = "SmartmailAI"
+		});
+
+		var attachment = await service.Users.Messages.Attachments
+			.Get("me", messageId, attachmentId)
+			.ExecuteAsync();
+
+		// Gmail renvoie du Base64 URL-safe — conversion standard
+		var base64 = attachment.Data
+			.Replace('-', '+')
+			.Replace('_', '/');
+
+		return Convert.FromBase64String(base64);
+	}
+
+	public async Task SendEmailAsync(UserCredential credential, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null)
+	{
+		var service = new GmailService(new BaseClientService.Initializer()
+		{
+			HttpClientInitializer = credential,
+			ApplicationName = "SmartmailAI"
+		});
+
+		string emailAddressOwner = await GetEmailAddressAsync(credential);
+
+		var mimeMessage = CreateMimeMessage(emailAddressOwner, to, subject, body, attachments ?? []);
+
+		var rawMessage = EncodeMessage(mimeMessage);
+
+		var gmailMessage = new Google.Apis.Gmail.v1.Data.Message { Raw = rawMessage };
+
+		await service.Users.Messages.Send(gmailMessage, "me").ExecuteAsync();
+	}
+
+	#region Helpers internes au Service (réception des emails)
+
 	private static string GetHeader(Message msg, string name) =>
 		msg.Payload.Headers.FirstOrDefault(h => h.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Value ?? string.Empty;
 
@@ -102,6 +154,31 @@ public class GmailApiService : IGmailApiService
 		}
 
 		return string.Empty;
+	}
+
+	private static List<MailAttachment> GetAttachments(Message message)
+	{
+		var attachments = new List<MailAttachment>();
+
+		if (message.Payload.Parts == null)
+			return attachments;
+
+		foreach (var part in message.Payload.Parts)
+		{
+			// Les pièces joints ont un filename et un attachmendIt
+			if (string.IsNullOrEmpty(part.Filename) || string.IsNullOrEmpty(part.Body.AttachmentId))
+				continue;
+
+			attachments.Add(new MailAttachment
+			{
+				FileName = part.Filename,
+				AttachmentId = part.Body.AttachmentId,
+				MimeType = part.MimeType,
+				FileSize = (ulong)(part.Body.Size ?? 0)
+			});
+		}
+
+		return attachments;
 	}
 
 	private static DateTime? GetMessageDate(Message msg)
@@ -138,4 +215,58 @@ public class GmailApiService : IGmailApiService
 			return (null, rawHeader);
 		}
 	}
+
+	#endregion Helpers internes au Service (réception des emails)
+
+	#region Helpers internes au Service (envoi des emails)
+
+	private static string EncodeMessage(MimeMessage message)
+	{
+		using var stream = new MemoryStream();
+		message.WriteTo(stream);
+
+		var bytes = stream.ToArray();
+
+		return Convert.ToBase64String(bytes)
+			.Replace('+', '-')
+			.Replace('/', '_')
+			.Replace("=", "");
+	}
+
+	private static MimeMessage CreateMimeMessage(string from, string to, string subject, string body, IEnumerable<MailAttachment> attachments)
+	{
+		var message = new MimeMessage();
+
+		message.From.Add(MailboxAddress.Parse(from));
+		message.To.Add(MailboxAddress.Parse(to));
+		message.Subject = subject;
+
+		var bodyPart = new TextPart("plain") { Text = body };
+
+		if (!attachments.Any())
+		{
+			message.Body = bodyPart;
+			return message;
+		}
+
+		// Multipart si pièces jointes
+		var multipart = new Multipart("mixed") { bodyPart };
+
+		foreach (var attachment in attachments)
+		{
+			var mimePart = new MimePart
+			{
+				Content = new MimeContent(File.OpenRead(attachment.FilePath)),
+				ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+				ContentTransferEncoding = ContentEncoding.Base64,
+				FileName = attachment.FileName
+			};
+			multipart.Add(mimePart);
+		}
+
+		message.Body = multipart;
+		return message;
+	}
+
+	#endregion Helpers internes au Service (envoi des emails)
 }

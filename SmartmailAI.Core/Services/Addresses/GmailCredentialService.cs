@@ -19,7 +19,7 @@ public class GmailCredentialService(ITokenStore tokenStore) : IGmailCredentialSe
 			ClientSecret = "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"
 		};
 
-		var scopes = new[] { GmailService.Scope.GmailReadonly };
+		var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
 		return await GoogleWebAuthorizationBroker.AuthorizeAsync(
 			secrets, scopes, userKey, CancellationToken.None
@@ -34,7 +34,7 @@ public class GmailCredentialService(ITokenStore tokenStore) : IGmailCredentialSe
 			ClientSecret = "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"
 		};
 
-		var scopes = new[] { GmailService.Scope.GmailReadonly };
+		var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
 		return await GoogleWebAuthorizationBroker.AuthorizeAsync(
 			secrets, scopes, accountGmail.TokenStorageKey, CancellationToken.None

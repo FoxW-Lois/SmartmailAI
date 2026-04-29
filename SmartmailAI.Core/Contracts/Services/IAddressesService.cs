@@ -21,5 +21,7 @@ public interface IAddressesService
 
 	Task<bool> RemoveGmailAccountAsync(AccountGmail account);
 
+	Task<AccountGmail?> GetAccountByEmailAsync(string email);
+
 	Task<List<AccountGmail>> GetListAccountsLinkedAsync();
 }

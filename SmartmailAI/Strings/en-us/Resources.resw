@@ -430,4 +430,55 @@
   <data name="Shell_MailAddresses.Content" xml:space="preserve">
     <value>Email addresses</value>
   </data>
+  <data name="NewMessageButton.Text" xml:space="preserve">
+    <value>New message</value>
+  </data>
+  <data name="ButtonSend.Content" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="ToTextBlock.Text" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="RecipientsTextBox.PlaceholderText" xml:space="preserve">
+    <value>Recipients</value>
+  </data>
+  <data name="ButtonBcc.Content" xml:space="preserve">
+    <value>Bcc</value>
+  </data>
+  <data name="CcTextBlock.Text" xml:space="preserve">
+    <value>Cc</value>
+  </data>
+  <data name="AddSubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>Add a subject</value>
+  </data>
+  <data name="MessageAreaRichEditBox.PlaceholderText" xml:space="preserve">
+    <value>Write your message...</value>
+  </data>
+  <data name="Email_Details_Attachments.Text" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="Email_Details_Subject.Text" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Email_Details_The.Text" xml:space="preserve">
+    <value>The :</value>
+  </data>
+  <data name="Email_Details_At.Text" xml:space="preserve">
+    <value> at :</value>
+  </data>
+  <data name="Email_Details_DateSent.Text" xml:space="preserve">
+    <value>Sent date</value>
+  </data>
+  <data name="Email_Details_To.Text" xml:space="preserve">
+    <value>To :</value>
+  </data>
+  <data name="Email_Details_Receiver.Text" xml:space="preserve">
+    <value>Receiver</value>
+  </data>
+  <data name="Email_Details_From.Text" xml:space="preserve">
+    <value>From :</value>
+  </data>
+  <data name="Email_Details_Sender.Text" xml:space="preserve">
+    <value>Sender</value>
+  </data>
 </root>
