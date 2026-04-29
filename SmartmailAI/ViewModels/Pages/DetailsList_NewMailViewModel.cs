@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SmartmailAI.Core.Contracts.Services.Addresses;
-using SmartmailAI.Core.Models.Composers;
+using SmartmailAI.Core.Models.Messengers;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;

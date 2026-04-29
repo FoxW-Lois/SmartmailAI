@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using SmartmailAI.Core.Models.Composers;
+using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -13,7 +13,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
 	// Stocke l'adresse Email sélectionnée pour la passer en tant qu'expéditeur à la fenêtre de composition
-	private string addressAccount;
+	private string addressAccount = string.Empty;
 
 	[ObservableProperty]
 	private MailboxCategory? selectedCategory;
@@ -34,9 +34,12 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		_emailsService = emailsService;
 
-		WeakReferenceMessenger.Default.Register<CloseComposeMessage>(this, (r, m) =>
+		WeakReferenceMessenger.Default.Register<CloseComposeMessage>(this, (r, m) => { IsComposing = false; });
+
+		// Quand reçoit une demande (ouverture des détails d'un email), envoi l'email connecté à la fenêtre des détails
+		WeakReferenceMessenger.Default.Register<RequestAddressAccountMessage>(this, (r, m) =>
 		{
-			IsComposing = false;
+			WeakReferenceMessenger.Default.Send(new ResponseAddressAccountMessage { AddressAccount = addressAccount });
 		});
 	}
 
@@ -81,8 +84,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedDetail = ComposeSentinel.Instance;
 
 		// Passe l'email connecté en tant qu'expéditeur à la fenêtre de composition
-		string senderEmail = addressAccount;
-		WeakReferenceMessenger.Default.Send(new OpenComposeMessage { SenderEmail = senderEmail });
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage { SenderEmail = addressAccount });
 	}
 
 	[RelayCommand]

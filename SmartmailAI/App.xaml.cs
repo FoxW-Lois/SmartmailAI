@@ -168,7 +168,10 @@ public partial class App : Application
 
 				services.AddTransient<DetailsList_ViewModel>();
 				services.AddTransient<DetailsList_Page>();
+				// Pas besoin d'instancier en Transient DetailsList_StandardControl et DetailsList_NewMailControl car leur durées de vie sont gérées
+				// par leur page parente : DetailsList_Page
 				services.AddTransient<DetailsList_NewMailViewModel>();
+				services.AddTransient<DetailsList_StandardViewModel>();
 
 				#region Authentication/Register Pages
 
@@ -236,7 +239,7 @@ public partial class App : Application
 
 				#region DbContext
 
-				//BDD gérant les comptes d'accès à l'application
+				// BDD gérant les comptes d'accès à l'application
 
 				var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailServerDB.db");
 

@@ -24,7 +24,7 @@ public class MappersToEmailDTOService : IMappersToEmailDTOService
 			Content = emailGmail.Body,
 			DateSent = emailGmail.Date,
 			Owner = emailGmail.Owner,
-			Attachments = null,
+			Attachments = emailGmail.Attachments,
 			MailboxType = emailGmail.MailboxType switch
 			{
 				"Inbox" => MailboxType.Inbox,

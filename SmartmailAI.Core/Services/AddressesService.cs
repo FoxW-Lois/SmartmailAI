@@ -72,15 +72,8 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 
 	public async Task<AccountGmail?> GetAccountByEmailAsync(string email)
 	{
-		var accounts = await _addressRepository.GetAllAddressesAsync();
-
-		foreach (var account in accounts)
-		{
-			if (account.Email == email)
-				return account;
-		}
-
-		return null;
+		var account = await _addressRepository.GetAddressByEmailAsync(email);
+		return account ?? null;
 	}
 
 	public async Task<List<AccountGmail>> GetListAccountsLinkedAsync()

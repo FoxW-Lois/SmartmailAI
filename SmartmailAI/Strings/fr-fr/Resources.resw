@@ -454,4 +454,31 @@
   <data name="MessageAreaRichEditBox.PlaceholderText" xml:space="preserve">
     <value>Écrivez votre message...</value>
   </data>
+  <data name="Email_Details_Attachments.Text" xml:space="preserve">
+    <value>Pièces jointes</value>
+  </data>
+  <data name="Email_Details_Subject.Text" xml:space="preserve">
+    <value>Objet</value>
+  </data>
+  <data name="Email_Details_The.Text" xml:space="preserve">
+    <value>Le :</value>
+  </data>
+  <data name="Email_Details_At.Text" xml:space="preserve">
+    <value> à :</value>
+  </data>
+  <data name="Email_Details_DateSent.Text" xml:space="preserve">
+    <value>Date d'envoi</value>
+  </data>
+  <data name="Email_Details_To.Text" xml:space="preserve">
+    <value>À :</value>
+  </data>
+  <data name="Email_Details_Receiver.Text" xml:space="preserve">
+    <value>Réceptionnaire</value>
+  </data>
+  <data name="Email_Details_From.Text" xml:space="preserve">
+    <value>De :</value>
+  </data>
+  <data name="Email_Details_Sender.Text" xml:space="preserve">
+    <value>Expéditeur</value>
+  </data>
 </root>

@@ -75,11 +75,41 @@ public class GmailApiService : IGmailApiService
 				Body = GetMessageBody(full),
 				Date = GetMessageDate(full),
 				Owner = emailAddressOwner,
-				MailboxType = MailboxType
+				MailboxType = MailboxType,
+				Attachments = GetAttachments(full)
 			});
 		}
 
 		return result;
+	}
+
+	public async Task SaveAttachmentAsync(UserCredential credential, string messageId, MailAttachment attachment, string destinationFolder)
+	{
+		var bytes = await DownloadAttachmentAsync(credential, messageId, attachment.AttachmentId);
+		var path = Path.Combine(destinationFolder, attachment.FileName);
+
+		await File.WriteAllBytesAsync(path, bytes);
+		attachment.FilePath = path; // Met à jour le chemin local
+	}
+
+	private static async Task<byte[]> DownloadAttachmentAsync(UserCredential credential, string messageId, string attachmentId)
+	{
+		var service = new GmailService(new BaseClientService.Initializer
+		{
+			HttpClientInitializer = credential,
+			ApplicationName = "SmartmailAI"
+		});
+
+		var attachment = await service.Users.Messages.Attachments
+			.Get("me", messageId, attachmentId)
+			.ExecuteAsync();
+
+		// Gmail renvoie du Base64 URL-safe — conversion standard
+		var base64 = attachment.Data
+			.Replace('-', '+')
+			.Replace('_', '/');
+
+		return Convert.FromBase64String(base64);
 	}
 
 	public async Task SendEmailAsync(UserCredential credential, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null)
@@ -124,6 +154,31 @@ public class GmailApiService : IGmailApiService
 		}
 
 		return string.Empty;
+	}
+
+	private static List<MailAttachment> GetAttachments(Message message)
+	{
+		var attachments = new List<MailAttachment>();
+
+		if (message.Payload.Parts == null)
+			return attachments;
+
+		foreach (var part in message.Payload.Parts)
+		{
+			// Les pièces joints ont un filename et un attachmendIt
+			if (string.IsNullOrEmpty(part.Filename) || string.IsNullOrEmpty(part.Body.AttachmentId))
+				continue;
+
+			attachments.Add(new MailAttachment
+			{
+				FileName = part.Filename,
+				AttachmentId = part.Body.AttachmentId,
+				MimeType = part.MimeType,
+				FileSize = (ulong)(part.Body.Size ?? 0)
+			});
+		}
+
+		return attachments;
 	}
 
 	private static DateTime? GetMessageDate(Message msg)
