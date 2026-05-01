@@ -181,7 +181,8 @@
 				DetailsTemplate="{StaticResource DetailsMailsTemplate}"
 				ItemTemplate="{StaticResource MailItemTemplate}"
 				ItemsSource="{x:Bind Items}"
-				SelectedItem="{x:Bind SelectedEmail, Mode=TwoWay}" />
+				SelectedItem="{x:Bind SelectedEmail, Mode=TwoWay}"
+				SelectionChanged="OnInnerListDetailsSelectionChanged" />
 		</DataTemplate>
 	</Page.Resources>
 

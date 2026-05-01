@@ -45,15 +45,19 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	public async Task OnNavigatedTo(object? parameter)
 	{
-		// TODO: Si besoin d'utiliser des données statiques, commenter le bloc conditionnel ↓
-		if (parameter is not string paramAddressAccount)
-			return;
+		IEnumerable<MailboxCategory>? categoriesWithEmails;
 
-		addressAccount = paramAddressAccount;
+		if (parameter is not string paramAddressAccount)
+		{
+			categoriesWithEmails = await _emailsService.GetAllCategoriesAsync();
+		}
+		else
+		{
+			addressAccount = paramAddressAccount;
+			categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(addressAccount);
+		}
 
 		Categories.Clear();
-
-		var categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(addressAccount);
 
 		foreach (var category in categoriesWithEmails)
 		{
@@ -70,7 +74,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedCategory ??= Categories.FirstOrDefault();
 	}
 
-	// Appelé quand l'utilisateur sélectionne un email dans la liste (quelque soit sa catégorie de rangement)
+	// Appelé quand l'utilisateur clique sur le bouton "Nouveau"
 	partial void OnSelectedDetailChanged(object? value)
 	{
 		if (value is not ComposeSentinel)
@@ -147,7 +151,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		await _emailsService.MarkEmailAsStarredAsync(email);
 
 		var newMailboxType = MailboxType.Starred;
-		RefreshSelectedCategory(previousMailboxType, newMailboxType);
+		RefreshSelectedCategory(previousMailboxType, newMailboxType, email);
 	}
 
 	[RelayCommand(CanExecute = nameof(CanMarkAsRead))]
@@ -157,7 +161,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		await _emailsService.MarkEmailAsReadAsync(email);
 
 		var newMailboxType = MailboxType.Unread;
-		RefreshSelectedCategory(previousMailboxType, newMailboxType);
+		RefreshSelectedCategory(previousMailboxType, newMailboxType, email);
 	}
 
 	private static bool CanMarkAsRead(Email? email) => email is not null && !email.IsRead;
@@ -220,11 +224,17 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#region Méthodes de refresh
 
+	// Event écoutant la demande de restauration de la sélection d'un email après le refresh de la liste
+	public event Action<Email>? RestoreSelectionRequested;
+
 	// --- Méthode pour Refresh la liste des emails affichés lors des actions clic droit ---
-	private async void RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType)
+	private async void RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType, Email? emailToRestore = null)
 	{
 		if (SelectedCategory is null)
 			return;
+
+		// Mémorise l'email actuellement sélectionné avant le refresh, si null alors ne restaurera aucun email après refresh de la liste
+		var previouslySelectedEmail = emailToRestore ?? null;
 
 		// --- Refresh de l'onglet actuellement ouvert (ancien emplacement du mail) ---
 		var previousCategory = SelectedCategory;
@@ -239,12 +249,23 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 		// --- Refresh de l'onglet devenant le nouvel emplacement du mail ---
 		var newCategory = Categories.FirstOrDefault(c => c.MailboxType == newMailboxType);
+		if (newCategory is null)
+			return;
 
 		var newRefreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(newMailboxType);
 
 		newCategory.ItemsCollection.Clear();
 		foreach (var email in newRefreshedEmails)
 			newCategory.ItemsCollection.Add(email);
+
+		// Restaure la sélection après le cycle de rendu UI
+		if (previouslySelectedEmail is null) return;
+
+		var emailToRestoreFound = previousCategory.ItemsCollection.FirstOrDefault(e => e.Id_internal == previouslySelectedEmail.Id_internal);
+
+		if (emailToRestoreFound is null) return;
+
+		RestoreSelectionRequested?.Invoke(emailToRestoreFound);
 	}
 
 	// --- Méthode pour Refresh la liste des emails affichés quand la barre de recherches est utilisée ---

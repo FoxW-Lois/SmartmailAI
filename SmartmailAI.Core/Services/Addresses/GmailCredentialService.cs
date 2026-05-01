@@ -21,6 +21,9 @@ public class GmailCredentialService(ITokenStore tokenStore) : IGmailCredentialSe
 
 		var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
+		// TODO: Ajouter gestion d'erreur si l'utilisateur clique sur "Annuler" sur son navigateur
+		// Erreur : Google.Apis.Auth.OAuth2.Responses.TokenResponseException : 'Error:"access_denied", Description:"", Uri:""'
+
 		return await GoogleWebAuthorizationBroker.AuthorizeAsync(
 			secrets, scopes, userKey, CancellationToken.None
 		);
