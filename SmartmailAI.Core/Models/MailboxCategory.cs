@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SmartmailAI.Core.Models;
 
-public class MailboxCategory : ObservableObject
+public partial class MailboxCategory : ObservableObject
 {
 	public string Title { get; set; } = null!;
 	public string Icon { get; set; } = null!;

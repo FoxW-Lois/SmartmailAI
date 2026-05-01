@@ -371,14 +371,20 @@ public class EmailsService(IEmailRepository emailRepository) : IEmailsService
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
 	{
 		_AllEmails = await _emailRepository.GetAllEmailsAsync();
-		IEnumerable<Email> emails;
 
-		if (mailboxType == MailboxType.Starred)
-			emails = _AllEmails.Where(e => e.IsStarred == true);
-		else if (mailboxType == MailboxType.Unread)
-			emails = _AllEmails.Where(e => e.IsRead == false);
-		else
-			emails = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam);
+		var emails = mailboxType switch
+		{
+			MailboxType.Inbox => _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
+			MailboxType.Sent => _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+			MailboxType.Snoozed => _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
+			MailboxType.Drafts => _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
+			MailboxType.Starred => _AllEmails.Where(e => e.IsStarred == true),
+			MailboxType.Unread => _AllEmails.Where(e => e.IsRead == false),
+			MailboxType.Trash => _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
+			MailboxType.Archives => _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
+			MailboxType.PhishingSpam => _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
+			_ => _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
+		};
 
 		await Task.CompletedTask;
 		return emails;
