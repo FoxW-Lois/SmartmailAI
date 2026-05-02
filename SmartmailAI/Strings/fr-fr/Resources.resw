@@ -356,7 +356,7 @@
     <value>Adresse mail ou mot de passe incorrect.</value>
   </data>
   <data name="Error_AccountDisabled" xml:space="preserve">
-    <value>Votre compte est désactivé. Veuillez contacter l'administrateur.</value>
+    <value>Votre compte SmartmailAI est désactivé. Veuillez contacter l'administrateur.</value>
   </data>
   <data name="Shell_Logout.Content" xml:space="preserve">
     <value>Se déconnecter</value>
@@ -424,7 +424,7 @@
   <data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
     <value>Adresse connectée le :</value>
   </data>
-  <data name="Error_Email_AlreadyExist" xml:space="preserve">
+  <data name="Error_EmailAccount_AlreadyExist" xml:space="preserve">
     <value>L'adresse email que vous tentez d'ajouter l'est déjà.</value>
   </data>
   <data name="Shell_MailAddresses.Content" xml:space="preserve">
@@ -480,5 +480,35 @@
   </data>
   <data name="Email_Details_Sender.Text" xml:space="preserve">
     <value>Expéditeur</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="Error_AccountUnfound_Gmail" xml:space="preserve">
+    <value>Compte Gmail introuvable.</value>
+  </data>
+  <data name="Error_AccountUnfound_SMTP_IMAP_POP3" xml:space="preserve">
+    <value>Compte Email (SMTP/IMAP/POP3) introuvable.</value>
+  </data>
+  <data name="Error_AccountUnfound_Outlook" xml:space="preserve">
+    <value>Compte Outlook introuvable.</value>
+  </data>
+  <data name="Error_CredentialsInvalidOrExpired_Gmail" xml:space="preserve">
+    <value>Les identifiants Gmail sont invalides ou expirés.</value>
+  </data>
+  <data name="Error_CredentialsInvalidOrExpired_SMTP_IMAP_POP3" xml:space="preserve">
+    <value>Les identifiants Email (SMTP/IMAP/POP3) sont invalides ou expirés.</value>
+  </data>
+  <data name="Error_CredentialsInvalidOrExpired_Outlook" xml:space="preserve">
+    <value>Les identifiants Outlook sont invalides ou expirés.</value>
+  </data>
+  <data name="Error_OrMessage" xml:space="preserve">
+    <value> ou </value>
+  </data>
+  <data name="Error_SaveAttachmentFailed" xml:space="preserve">
+    <value>Le téléchargement de la pièce jointe a échoué.</value>
+  </data>
+  <data name="Error_EmailSendingFailed" xml:space="preserve">
+    <value>L'envoi de l'email a échoué.</value>
   </data>
 </root>

@@ -43,7 +43,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 
 	public async Task<bool> TryRestoreSessionAsync()
 	{
-		// Exemple : token stocké localement
+		// TODO: à faire avec cookie de session (token stocké localement ?)
 		IsAuthenticated = false;
 		return IsAuthenticated;
 	}

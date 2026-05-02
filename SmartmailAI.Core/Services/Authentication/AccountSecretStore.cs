@@ -21,7 +21,7 @@ public class AccountSecretStore(IAccountRepository accountRepository) : IAccount
 
 	public async Task<string?> GetSecretAsync(string login)
 	{
-		var account = await _accountRepository.GetAccountByLoginAsync(login);
+		var account = await _accountRepository.GetAccountByLoginAsync(login) ?? throw new InvalidOperationException("Utilisateur introuvable");
 		return account?.EncryptedTotpSecret;
 	}
 

@@ -6,7 +6,7 @@ namespace SmartmailAI.Core.Contracts.Services.Addresses;
 
 public interface IGmailCredentialService
 {
-	Task<UserCredential> ConnectAsync(string userKey);
+	Task<UserCredential?> ConnectAsync(string userKey);
 
 	Task<UserCredential?> GetCredentialAsync(AccountGmail accountGmail);
 }

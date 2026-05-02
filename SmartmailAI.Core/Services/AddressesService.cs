@@ -33,10 +33,13 @@ public class AddressesService(IAddressesRepository addressRepository, IGmailCred
 		var userKey = Guid.NewGuid().ToString();
 
 		var credential = await _gmailCredentialService.ConnectAsync(userKey);
+		if (credential == null)
+			return (false, null, null); // null en 3ème position car déjà traité en cas par défaut par l'appelant
+
 		var email = await _gmailApiService.GetEmailAddressAsync(credential);
 
 		if (await CheckIfGmailAccountExist(email))
-			return (false, null, "Email_AlreadyExist");
+			return (false, null, "EmailAccount_AlreadyExist");
 
 		var account = new AccountGmail
 		{

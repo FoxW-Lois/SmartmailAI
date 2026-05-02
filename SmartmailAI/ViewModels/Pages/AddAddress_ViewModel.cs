@@ -83,6 +83,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		return true;
 	}
 
+	// TODO: ajouter méthode de connexion pour Outlook (via Microsoft Graph API ?)
 	public async Task<bool> OnAddOutlookAsync()
 	{
 		ErrorMessage = string.Empty;
@@ -99,6 +100,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		return true;
 	}
 
+	// TODO: ajouter méthode de connexion pour les autres types d'adresses (via IMAP/SMTP/POP3)
 	public async Task<bool> AddOtherAddressAsync(string password)
 	{
 		ErrorMessage = string.Empty;

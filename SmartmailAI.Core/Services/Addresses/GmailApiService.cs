@@ -22,7 +22,7 @@ public class GmailApiService : IGmailApiService
 		var service = new GmailService(new BaseClientService.Initializer
 		{
 			HttpClientInitializer = credential,
-			ApplicationName = "MailOAuthTester"
+			ApplicationName = "SmartmailAI"
 		});
 
 		var profile = await service.Users.GetProfile("me").ExecuteAsync();

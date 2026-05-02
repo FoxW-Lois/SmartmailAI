@@ -19,9 +19,9 @@ public sealed partial class Login_Page : Page
 	{
 		(bool success, bool twoFactorValidation, string? login) = await ViewModel.LoginAsync(PasswordBox.Password);
 
-		// Normalement success est false, mais au cas où on envoie sur la page du 2ème facteur
+		// Normalement twoFactorValidation est false, mais au cas où on envoie sur la page du 2ème facteur
 		// "login" un string nullable mais ici il n'aura jamais null
-		if (twoFactorValidation) 
+		if (twoFactorValidation)
 			Frame.Navigate(typeof(TwoFactor_Page), login);
 
 		if (success)

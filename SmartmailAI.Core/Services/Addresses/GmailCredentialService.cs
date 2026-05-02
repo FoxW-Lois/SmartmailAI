@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
@@ -11,36 +12,49 @@ public class GmailCredentialService(ITokenStore tokenStore) : IGmailCredentialSe
 {
 	private readonly ITokenStore _tokenStore = tokenStore;
 
-	public async Task<UserCredential> ConnectAsync(string userKey)
+	public async Task<UserCredential?> ConnectAsync(string userKey)
 	{
-		var secrets = new ClientSecrets
+		try
 		{
-			ClientId = "687689133134-p1h6di4c2chv5dne4rfi3cfljp0ln9n8.apps.googleusercontent.com",
-			ClientSecret = "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"
-		};
+			var secrets = new ClientSecrets
+			{
+				ClientId = "687689133134-p1h6di4c2chv5dne4rfi3cfljp0ln9n8.apps.googleusercontent.com",
+				ClientSecret = "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"
+			};
 
-		var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
+			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
-		// TODO: Ajouter gestion d'erreur si l'utilisateur clique sur "Annuler" sur son navigateur
-		// Erreur : Google.Apis.Auth.OAuth2.Responses.TokenResponseException : 'Error:"access_denied", Description:"", Uri:""'
-
-		return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-			secrets, scopes, userKey, CancellationToken.None
-		);
+			return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+				secrets, scopes, userKey, CancellationToken.None
+			);
+		}
+		catch (Exception)
+		{
+			// Erreurs déjà gérées dans la méthode appelante
+			return null;
+		}
 	}
 
 	public async Task<UserCredential?> GetCredentialAsync(AccountGmail accountGmail)
 	{
-		var secrets = new ClientSecrets
+		try
 		{
-			ClientId = "687689133134-p1h6di4c2chv5dne4rfi3cfljp0ln9n8.apps.googleusercontent.com",
-			ClientSecret = "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"
-		};
+			var secrets = new ClientSecrets
+			{
+				ClientId = "687689133134-p1h6di4c2chv5dne4rfi3cfljp0ln9n8.apps.googleusercontent.com",
+				ClientSecret = "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"
+			};
 
-		var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
+			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
-		return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-			secrets, scopes, accountGmail.TokenStorageKey, CancellationToken.None
-		);
+			return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+				secrets, scopes, accountGmail.TokenStorageKey, CancellationToken.None
+			);
+		}
+		catch (Exception)
+		{
+			// Erreurs déjà gérées dans les méthodes appelantes
+			return null;
+		}
 	}
 }

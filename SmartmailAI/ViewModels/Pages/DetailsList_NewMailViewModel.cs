@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.Messengers;
+using SmartmailAI.Core.Services.Addresses;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -13,15 +15,19 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IAddressesService _addressesService;
 	private readonly IGmailApiService _gmailApiService;
 	private readonly IGmailCredentialService _gmailCredentialService;
+	private readonly IDialogService _dialogService;
+	private readonly ResourceLoader resourceLoader = new();
 
 	public ObservableCollection<MailAttachment> Attachments { get; } = [];
 	public bool HasAttachments => Attachments.Count > 0;
 
-	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService)
+	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
+		IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
 		_gmailCredentialService = gmailCredentialService;
+		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
 		{
@@ -58,13 +64,33 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 			return;
 
 		var accountGmail = await _addressesService.GetAccountByEmailAsync(_from);
+
+		if (accountGmail is null)
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
+			return;
+		}
+
 		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail!);
 
-		// TODO : Gérer le cas où le compte Gmail/credential sont invalides (afficher un message d'erreur)
 		if (credential is null)
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
 			return;
+		}
 
-		await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+		try
+		{
+			await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+		}
+		catch (Exception)
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_EmailSendingFailed"));
+			return;
+		}
 
 		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
 		Discard();
