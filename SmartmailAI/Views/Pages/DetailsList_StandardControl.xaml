@@ -52,30 +52,26 @@
 				</TextBlock>
 
 				<TextBlock
-	Margin="{StaticResource MediumTopMargin}"
-	Style="{StaticResource DetailSubTitleStyle}"
-	Text="Objet" />
-				<TextBlock
-	Style="{StaticResource DetailBodyBaseMediumStyle}"
-	Text="{x:Bind DetailsListMenuItem_Email.Subject, Mode=OneWay}" />
+					Margin="{StaticResource MediumTopMargin}"
+					Style="{StaticResource DetailSubTitleStyle}"
+					Text="Objet" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind DetailsListMenuItem_Email.Subject, Mode=OneWay}" />
 
 				<TextBlock
-	Margin="{StaticResource MediumTopMargin}"
-	Style="{StaticResource DetailSubTitleStyle}"
-	Text="Sécurité" />
-				<TextBlock
-	Style="{StaticResource DetailBodyBaseMediumStyle}"
-	Text="{x:Bind DetailsListMenuItem_Email.SecurityWarning, Mode=OneWay}" />
+					Margin="{StaticResource MediumTopMargin}"
+					Style="{StaticResource DetailSubTitleStyle}"
+					Text="Sécurité" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind DetailsListMenuItem_Email.SecurityWarning, Mode=OneWay}" />
 				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
-	<Run Text="Score phishing : " />
-	<Run Text="{x:Bind DetailsListMenuItem_Email.PhishingScore, Mode=OneWay}" />
-	<Run Text="/100" />
+					<Run Text="Score phishing : " />
+					<Run Text="{x:Bind DetailsListMenuItem_Email.PhishingScore, Mode=OneWay}" />
+					<Run Text="/100" />
 				</TextBlock>
 
 				<TextBlock
-	Margin="{StaticResource LargeTopMargin}"
-	Style="{StaticResource DetailBodyStyle}"
-	Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}" />
+					Margin="{StaticResource LargeTopMargin}"
+					Style="{StaticResource DetailBodyStyle}"
+					Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}" />
 
 				<TextBlock
 					Margin="{StaticResource LargeTopMargin}"

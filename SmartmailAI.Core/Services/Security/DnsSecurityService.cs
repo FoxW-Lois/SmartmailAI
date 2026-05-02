@@ -1,41 +1,32 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using SmartmailAI.Core.Contracts.Services;
+using SmartmailAI.Core.Contracts.Services.Security;
+using SmartmailAI.Core.Models.Security;
 
 namespace SmartmailAI.Core.Services;
 
-/// <summary>
-/// Vérifie les enregistrements SPF et DMARC d'un domaine via DNS over HTTPS (DoH).
-/// Utilise l'API Cloudflare DoH (1.1.1.1) — pas de dépendance externe, pas de clé API.
-/// 
-/// Pourquoi DoH plutôt que System.Net.Dns ?
-/// → System.Net.Dns ne supporte pas les requêtes TXT en .NET sur Windows packagé (MSIX).
-/// → DoH via HTTPS fonctionne dans tous les contextes, y compris les apps packagées.
-/// </summary>
-public class DnsSecurityService : IDnsSecurityService, IDisposable
+// Vérifie les enregistrements SPF et DMARC d'un domaine via DNS over HTTPS (DoH).
+// Utilise l'API Cloudflare DoH (1.1.1.1) — pas de dépendance externe, pas de clé API.
+// -------------------------------------------------------------------------------------
+// DoH plutôt que System.Net.Dns car :
+// - System.Net.Dns ne supporte pas les requêtes TXT en .NET sur Windows packagé (MSIX).
+// - DoH via HTTPS fonctionne dans tous les contextes, y compris les apps packagées.
+public partial class DnsSecurityService : IDnsSecurityService, IDisposable
 {
-	// -------------------------------------------------------------------------
-	// Constantes
-	// -------------------------------------------------------------------------
-
 	private const string DoHUrl = "https://cloudflare-dns.com/dns-query";
 
-	// -------------------------------------------------------------------------
-	// État interne
-	// -------------------------------------------------------------------------
+	#region État interne
 
 	private readonly HttpClient _http;
 
 	// Cache mémoire pour éviter de re-interroger le DNS pour le même domaine
-	private readonly Dictionary<string, DnsSecurityResult> _cache = new();
+	private readonly Dictionary<string, DnsSecurityResult> _cache = [];
 
-	// -------------------------------------------------------------------------
-	// Constructeur
-	// -------------------------------------------------------------------------
+	#endregion État interne
 
 	public DnsSecurityService()
 	{
@@ -43,9 +34,7 @@ public class DnsSecurityService : IDnsSecurityService, IDisposable
 		_http.DefaultRequestHeaders.Add("Accept", "application/dns-json");
 	}
 
-	// -------------------------------------------------------------------------
-	// Interface publique
-	// -------------------------------------------------------------------------
+	#region Interface publique
 
 	public async Task<DnsSecurityResult> CheckDomainAsync(string senderEmail)
 	{
@@ -66,71 +55,81 @@ public class DnsSecurityService : IDnsSecurityService, IDisposable
 		return result;
 	}
 
-	// -------------------------------------------------------------------------
-	// Logique interne
-	// -------------------------------------------------------------------------
+	#endregion Interface publique
+
+	#region Logique interne
 
 	private async Task<DnsSecurityResult> CheckDomainInternalAsync(string domain)
 	{
 		// Requêtes SPF et DMARC en parallèle
-		var spfTask   = QueryTxtAsync(domain);
+		var spfTask = QueryTxtAsync(domain);
 		var dmarcTask = QueryTxtAsync($"_dmarc.{domain}");
 
 		await Task.WhenAll(spfTask, dmarcTask);
 
-		var spfRecords   = spfTask.Result;
+		var spfRecords = spfTask.Result;
 		var dmarcRecords = dmarcTask.Result;
 
-		// --- Analyse SPF ---
-		var spfRecord = spfRecords.FirstOrDefault(r =>
-			r.StartsWith("v=spf1", StringComparison.OrdinalIgnoreCase));
+		#region Analyse SPF
+
+		var spfRecord = spfRecords.FirstOrDefault(r => r.StartsWith("v=spf1", StringComparison.OrdinalIgnoreCase));
 
 		SpfStatus spfStatus;
 		if (spfRecord is null)
 		{
-			spfStatus = SpfStatus.None;      // Pas de SPF → suspect
+			spfStatus = SpfStatus.None;         // Pas de SPF → suspect
 		}
 		else if (spfRecord.Contains("-all", StringComparison.OrdinalIgnoreCase))
 		{
-			spfStatus = SpfStatus.Pass;      // Politique stricte → bien configuré
+			spfStatus = SpfStatus.Pass;         // Politique stricte → bien configuré
 		}
 		else if (spfRecord.Contains("~all", StringComparison.OrdinalIgnoreCase))
 		{
-			spfStatus = SpfStatus.SoftFail;  // Politique permissive → légèrement suspect
+			spfStatus = SpfStatus.SoftFail;     // Politique permissive → légèrement suspect
 		}
 		else if (spfRecord.Contains("+all", StringComparison.OrdinalIgnoreCase))
 		{
-			spfStatus = SpfStatus.SoftFail;  // Tout le monde autorisé → très permissif
+			spfStatus = SpfStatus.SoftFail;     // Tout le monde autorisé → très permissif
 		}
 		else
 		{
-			spfStatus = SpfStatus.Pass;      // Autre configuration SPF valide
+			spfStatus = SpfStatus.Pass;         // Autre configuration SPF valide
 		}
 
-		// --- Analyse DMARC ---
+		#endregion Analyse SPF
+
+		#region Analyse DMARC
+
 		var dmarcRecord = dmarcRecords.FirstOrDefault(r =>
 			r.StartsWith("v=DMARC1", StringComparison.OrdinalIgnoreCase));
 
 		var dmarcStatus = dmarcRecord is not null ? DmarcStatus.Present : DmarcStatus.None;
 
-		// --- Évaluation globale ---
+		#endregion Analyse DMARC
+
+		#region Évaluation globale
+
 		bool isSuspicious = spfStatus == SpfStatus.None || dmarcStatus == DmarcStatus.None;
-		string? warning   = BuildWarning(spfStatus, dmarcStatus);
+		string? warning = BuildWarning(spfStatus, dmarcStatus);
+
+		#endregion Évaluation globale
 
 		return new DnsSecurityResult(
-			Domain:      domain,
-			SpfStatus:   spfStatus,
-			SpfRecord:   spfRecord,
+			Domain: domain,
+			SpfStatus: spfStatus,
+			SpfRecord: spfRecord,
 			DmarcStatus: dmarcStatus,
 			DmarcRecord: dmarcRecord,
 			IsSuspicious: isSuspicious,
-			Warning:     warning
+			Warning: warning
 		);
 	}
 
-	/// <summary>
-	/// Interroge les enregistrements TXT d'un domaine via Cloudflare DoH.
-	/// </summary>
+	#endregion Logique interne
+
+	#region Méthodes DNS
+
+	// Interroge les enregistrements TXT d'un domaine via Cloudflare DoH.
 	private async Task<List<string>> QueryTxtAsync(string name)
 	{
 		try
@@ -154,7 +153,7 @@ public class DnsSecurityService : IDnsSecurityService, IDisposable
 				if (answer.TryGetProperty("type", out var type) && type.GetInt32() == 16 &&
 					answer.TryGetProperty("data", out var data))
 				{
-					// Cloudflare DoH entoure les valeurs de guillemets → les retirer
+					// Cloudflare DoH entoure les valeurs de guillemets => les retirer
 					var value = data.GetString()?.Trim('"') ?? string.Empty;
 					if (!string.IsNullOrWhiteSpace(value))
 						records.Add(value);
@@ -187,12 +186,15 @@ public class DnsSecurityService : IDnsSecurityService, IDisposable
 			: null;
 	}
 
-	private static DnsSecurityResult BuildUnknownResult(string domain) =>
-		new(domain, SpfStatus.Unknown, null, DmarcStatus.Unknown, null, false, null);
+	private static DnsSecurityResult BuildUnknownResult(string domain)
+	{
+		return new(domain, SpfStatus.Unknown, null, DmarcStatus.Unknown, null, false, null);
+	}
 
-	// -------------------------------------------------------------------------
-	// Dispose
-	// -------------------------------------------------------------------------
+	#endregion Méthodes DNS
 
-	public void Dispose() => _http.Dispose();
+	public void Dispose()
+	{
+		_http.Dispose();
+	}
 }

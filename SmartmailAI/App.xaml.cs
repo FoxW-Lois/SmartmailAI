@@ -1,17 +1,16 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
+using SmartmailAI.Core.Contracts.Services.Security;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.IRepository;
 using SmartmailAI.Core.Repository;
-using SmartmailAI.Core.Services;
+using SmartmailAI.Core.Services.Security;
 
 namespace SmartmailAI;
 
@@ -187,6 +186,8 @@ public partial class App : Application
 
 				#endregion Settings Pages
 
+				#region Services anti-phishing
+
 				// Anti-phishing : liste red.flag.domains (Singleton → cache partagé)
 				services.AddSingleton<IRedFlagDomainService, RedFlagDomainService>();
 
@@ -206,6 +207,7 @@ public partial class App : Application
 						{
 							var json = System.IO.File.ReadAllText(settingsPath);
 							using var doc = System.Text.Json.JsonDocument.Parse(json);
+
 							if (doc.RootElement.TryGetProperty("VirusTotal", out var vt) &&
 								vt.TryGetProperty("ApiKey", out var key))
 							{
@@ -217,6 +219,8 @@ public partial class App : Application
 
 					return new VirusTotalService(apiKey);
 				});
+
+				#endregion Services anti-phishing
 
 				services.AddTransient<IMailboxDataService, MailboxDataService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();

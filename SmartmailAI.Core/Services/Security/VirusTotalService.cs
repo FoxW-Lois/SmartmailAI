@@ -1,26 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using SmartmailAI.Core.Contracts.Services;
+using SmartmailAI.Core.Contracts.Services.Security;
+using SmartmailAI.Core.Models.Security;
 
-namespace SmartmailAI.Core.Services;
+namespace SmartmailAI.Core.Services.Security;
 
-/// <summary>
-/// Vérifie les pièces jointes via l'API VirusTotal v3.
-/// La recherche se fait par nom de fichier normalisé (sans upload du fichier).
-/// Nécessite une clé API VirusTotal (gratuite sur https://www.virustotal.com).
-/// </summary>
-public class VirusTotalService : IVirusTotalService, IDisposable
+// Vérifie les pièces jointes via l'API VirusTotal v3.
+// La recherche se fait par nom de fichier normalisé (sans upload du fichier).
+// Nécessite une clé API VirusTotal (gratuite sur https://www.virustotal.com).
+public partial class VirusTotalService : IVirusTotalService, IDisposable
 {
-	// -------------------------------------------------------------------------
-	// Constantes
-	// -------------------------------------------------------------------------
-
 	private const string BaseUrl = "https://www.virustotal.com/api/v3/";
 
 	// Extensions qui méritent toujours une vérification, même sans API
@@ -30,14 +23,12 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 		".js",  ".jse", ".vbs", ".vbe", ".wsf", ".wsh",
 		".ps1", ".psm1", ".msi", ".dll", ".sys",
 		".zip", ".rar", ".7z", ".iso", ".img",
-		".docm", ".xlsm", ".pptm",           // Office avec macros
-		".lnk", ".url",                        // Raccourcis
-		".hta", ".htm", ".html"               // HTML potentiellement malveillant
+		".docm", ".xlsm", ".pptm",				// Office avec macros
+		".lnk", ".url",							// Raccourcis
+		".hta", ".htm", ".html"					// HTML potentiellement malveillant
 	];
 
-	// -------------------------------------------------------------------------
-	// État interne
-	// -------------------------------------------------------------------------
+	#region État interne
 
 	private readonly HttpClient _http;
 	private readonly string? _apiKey;
@@ -45,9 +36,7 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 	// Cache simple pour éviter de re-interroger VirusTotal pour le même fichier
 	private readonly Dictionary<string, VirusTotalResult> _cache = new();
 
-	// -------------------------------------------------------------------------
-	// Constructeur
-	// -------------------------------------------------------------------------
+	#endregion État interne
 
 	public VirusTotalService(string? apiKey = null)
 	{
@@ -62,9 +51,7 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 			_http.DefaultRequestHeaders.Add("x-apikey", _apiKey);
 	}
 
-	// -------------------------------------------------------------------------
-	// Interface publique
-	// -------------------------------------------------------------------------
+	#region Interface publique
 
 	public async Task<IReadOnlyList<VirusTotalResult>> AnalyzeAttachmentsAsync(IList<string> fileNames)
 	{
@@ -90,9 +77,9 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 		return results;
 	}
 
-	// -------------------------------------------------------------------------
-	// Logique interne
-	// -------------------------------------------------------------------------
+	#endregion Interface publique
+
+	#region Logique interne
 
 	private async Task<VirusTotalResult?> AnalyzeSingleFileAsync(string fileName)
 	{
@@ -104,7 +91,9 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 		if (string.IsNullOrWhiteSpace(_apiKey))
 		{
 			var localResult = BuildLocalResult(fileName);
-			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {localResult.IsMalicious}, Count: {localResult.MaliciousCount} (local, pas de clé API)");
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {localResult.IsMalicious}, " +
+				$"Count: {localResult.MaliciousCount} (local, pas de clé API)");
+
 			return localResult;
 		}
 
@@ -128,19 +117,24 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 				_cache[fileName.ToLowerInvariant()] = result;
 
 			var finalResult = result ?? BuildLocalResult(fileName);
-			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {finalResult.IsMalicious}, Count: {finalResult.MaliciousCount}/{finalResult.TotalEngines} (API)");
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {finalResult.IsMalicious}, " +
+				$"Count: {finalResult.MaliciousCount}/{finalResult.TotalEngines} (API)");
+
 			return finalResult;
 		}
 		catch (Exception ex)
 		{
 			System.Diagnostics.Debug.WriteLine($"[VirusTotal] ❌ Erreur pour '{fileName}' : {ex.Message}");
+
 			return BuildLocalResult(fileName);
 		}
 	}
 
-	/// <summary>
-	/// Parse la réponse JSON de l'API VirusTotal /intelligence/search.
-	/// </summary>
+	#endregion Logique interne
+
+	#region Méthodes utilitaires
+
+	// Parse la réponse JSON de l'API VirusTotal /intelligence/search.
 	private static VirusTotalResult? ParseSearchResponse(string fileName, string json)
 	{
 		try
@@ -155,9 +149,9 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 			var attributes = file.GetProperty("attributes");
 			var stats = attributes.GetProperty("last_analysis_stats");
 
-			int malicious  = stats.TryGetProperty("malicious",  out var m) ? m.GetInt32() : 0;
+			int malicious = stats.TryGetProperty("malicious", out var m) ? m.GetInt32() : 0;
 			int suspicious = stats.TryGetProperty("suspicious", out var s) ? s.GetInt32() : 0;
-			int total      = stats.TryGetProperty("harmless",   out var h) ? h.GetInt32() : 0
+			int total = stats.TryGetProperty("harmless", out var h) ? h.GetInt32() : 0
 				+ malicious + suspicious
 				+ (stats.TryGetProperty("undetected", out var u) ? u.GetInt32() : 0);
 
@@ -166,11 +160,11 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 				: null;
 
 			return new VirusTotalResult(
-				FileName:       fileName,
-				IsMalicious:    malicious + suspicious > 0,
+				FileName: fileName,
+				IsMalicious: malicious + suspicious > 0,
 				MaliciousCount: malicious + suspicious,
-				TotalEngines:   total,
-				Permalink:      permalink
+				TotalEngines: total,
+				Permalink: permalink
 			);
 		}
 		catch (Exception ex)
@@ -180,25 +174,27 @@ public class VirusTotalService : IVirusTotalService, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Résultat local basé uniquement sur l'extension (fallback sans API).
-	/// </summary>
-	private static VirusTotalResult BuildLocalResult(string fileName) =>
-		new(
-			FileName:       fileName,
-			IsMalicious:    true,
+	// Résultat local basé uniquement sur l'extension (fallback sans API).
+	private static VirusTotalResult BuildLocalResult(string fileName)
+	{
+		return new(
+			FileName: fileName,
+			IsMalicious: true,
 			MaliciousCount: -1,       // -1 = analyse locale uniquement
-			TotalEngines:   0,
-			Permalink:      null
+			TotalEngines: 0,
+			Permalink: null
 		);
+	}
 
-	private static bool IsSuspiciousExtension(string fileName) =>
-		_dangerousExtensions.Any(ext =>
-			fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+	private static bool IsSuspiciousExtension(string fileName)
+	{
+		return _dangerousExtensions.Any(ext => fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+	}
 
-	// -------------------------------------------------------------------------
-	// Dispose
-	// -------------------------------------------------------------------------
+	#endregion Méthodes utilitaires
 
-	public void Dispose() => _http.Dispose();
+	public void Dispose()
+	{
+		_http.Dispose();
+	}
 }

@@ -1,32 +1,24 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using SmartmailAI.Core.Contracts.Services;
+using SmartmailAI.Core.Contracts.Services.Security;
 
-namespace SmartmailAI.Core.Services;
+namespace SmartmailAI.Core.Services.Security;
 
-/// <summary>
-/// Télécharge et met en cache la liste de domaines malveillants red.flag.domains.
-/// En cas d'échec réseau, tente un fallback sur un fichier local.
-/// La liste est rafraîchie automatiquement toutes les 24h.
-/// </summary>
-public class RedFlagDomainService : IRedFlagDomainService, IDisposable
+// Télécharge et met en cache la liste de domaines malveillants red.flag.domains.
+// En cas d'échec réseau, tente un fallback sur un fichier local.
+// La liste est rafraîchie automatiquement toutes les 24h.
+public partial class RedFlagDomainService : IRedFlagDomainService, IDisposable
 {
-	// -------------------------------------------------------------------------
-	// Constantes
-	// -------------------------------------------------------------------------
-
 	private const string RemoteUrl = "https://dl.red.flag.domains/red.flag.domains.txt";
 	private const string CacheFileName = "red.flag.domains.cache.txt";
 	private static readonly TimeSpan RefreshInterval = TimeSpan.FromHours(24);
 
-	// -------------------------------------------------------------------------
-	// État interne
-	// -------------------------------------------------------------------------
+	#region État interne
 
 	private readonly HttpClient _http;
 	private readonly string _cacheFilePath;
@@ -35,9 +27,7 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 	private HashSet<string>? _domains;
 	private DateTime _lastRefresh = DateTime.MinValue;
 
-	// -------------------------------------------------------------------------
-	// Constructeur
-	// -------------------------------------------------------------------------
+	#endregion État interne
 
 	public RedFlagDomainService()
 	{
@@ -49,13 +39,12 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 		// Cache local dans le dossier AppData de l'utilisateur
 		var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 		var appFolder = Path.Combine(appData, "SmartmailAI");
+
 		Directory.CreateDirectory(appFolder);
 		_cacheFilePath = Path.Combine(appFolder, CacheFileName);
 	}
 
-	// -------------------------------------------------------------------------
-	// Interface publique
-	// -------------------------------------------------------------------------
+	#region Interface publique
 
 	public async Task<bool> IsFlaggedDomainAsync(string domain)
 	{
@@ -71,9 +60,9 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 		await LoadFromRemoteAsync(force: true);
 	}
 
-	// -------------------------------------------------------------------------
-	// Logique interne
-	// -------------------------------------------------------------------------
+	#endregion Interface publique
+
+	#region Logique interne
 
 	private async Task<HashSet<string>> GetDomainsAsync()
 	{
@@ -89,7 +78,7 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 				return _domains;
 
 			// 1. Essai réseau
-			var loaded = await LoadFromRemoteAsync(force: false);
+			var loaded = await LoadFromRemoteAsync(false);
 
 			// 2. Fallback fichier local si réseau indisponible
 			if (!loaded && _domains is null)
@@ -106,10 +95,11 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Télécharge la liste depuis l'URL distante.
-	/// Sauvegarde en cache local en cas de succès.
-	/// </summary>
+	#endregion Logique interne
+
+	#region Méthodes de chargement
+
+	// Télécharge la liste depuis l'URL distante & Sauvegarde en cache local en cas de succès.
 	private async Task<bool> LoadFromRemoteAsync(bool force)
 	{
 		if (!force && _domains is not null && DateTime.UtcNow - _lastRefresh < RefreshInterval)
@@ -138,9 +128,7 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Charge la liste depuis le fichier de cache local (fallback hors-ligne).
-	/// </summary>
+	// Charge la liste depuis le fichier de cache local (fallback hors-ligne).
 	private async Task LoadFromCacheAsync()
 	{
 		try
@@ -153,8 +141,7 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 
 			System.Diagnostics.Debug.WriteLine($"[RedFlagDomains] ⚠️ {_domains.Count} domaines chargés depuis le cache local (réseau indisponible).");
 
-			// On ne met pas à jour _lastRefresh : le prochain démarrage
-			// tentera à nouveau le réseau.
+			// On ne met pas à jour _lastRefresh : le prochain démarrage tentera à nouveau le réseau.
 		}
 		catch (Exception)
 		{
@@ -162,9 +149,7 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Sauvegarde le contenu brut dans le fichier de cache local.
-	/// </summary>
+	// Sauvegarde le contenu brut dans le fichier de cache local.
 	private async Task SaveCacheAsync(string content)
 	{
 		try
@@ -177,19 +162,14 @@ public class RedFlagDomainService : IRedFlagDomainService, IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Parse le fichier texte : ignore les commentaires (#) et les lignes vides.
-	/// </summary>
+	// Parse le fichier texte : ignore les commentaires (#) et les lignes vides.
 	private static HashSet<string> ParseDomainList(string content) =>
-		content
+		[.. content
 			.Split('\n', StringSplitOptions.RemoveEmptyEntries)
 			.Select(line => line.Trim().ToLowerInvariant())
-			.Where(line => line.Length > 0 && !line.StartsWith('#'))
-			.ToHashSet();
+			.Where(line => line.Length > 0 && !line.StartsWith('#'))];
 
-	// -------------------------------------------------------------------------
-	// Dispose
-	// -------------------------------------------------------------------------
+	#endregion Méthodes de chargement
 
 	public void Dispose()
 	{
