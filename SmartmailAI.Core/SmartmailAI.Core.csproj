@@ -56,4 +56,9 @@
     <ProjectReference Include="..\SmartmailAI.Infrastructure\SmartmailAI.Infrastructure.csproj" />
   </ItemGroup>
   
+  <ItemGroup>
+    <Folder Include="Contracts\Services\Security\" />
+    <Folder Include="Services\Security\" />
+  </ItemGroup>
+  
 </Project>

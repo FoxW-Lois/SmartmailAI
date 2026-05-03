@@ -10,6 +10,22 @@ namespace SmartmailAI.Core.Models;
 
 public class Email
 {
+	#region Propriétés d'analyse de sécurité => Phishing, SPF, DMARC
+
+	public int PhishingScore { get; set; }
+	public bool IsPhishingDetected { get; set; }
+	public string? SecurityWarning { get; set; }
+	public string? SecurityReasons { get; set; }
+	public string? DetectedLinks { get; set; }
+
+	// Résultats DNS (SPF / DMARC)
+	public string? SpfStatus { get; set; }
+
+	public string? DmarcStatus { get; set; }
+	public string? DnsWarning { get; set; }
+
+	#endregion Propriétés d'analyse de sécurité => Phishing, SPF, DMARC
+
 	#region Propriétés de base / Composition
 
 	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;

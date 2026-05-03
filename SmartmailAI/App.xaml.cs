@@ -12,11 +12,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
 using SmartmailAI.Core.AppDbContext;
-using SmartmailAI.Core.Contracts.Services.Addresses;
-using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Contracts.Services.Security;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Repository;
 using SmartmailAI.Core.Services.Addresses;
+using SmartmailAI.Core.Services.Security;
 
 namespace SmartmailAI;
 
@@ -205,6 +207,42 @@ public partial class App : Application
 				services.AddTransient<SettingsTwoFactor_Page>();
 
 				#endregion Settings Pages
+
+				#region Services anti-phishing
+
+				// Anti-phishing : liste red.flag.domains (Singleton → cache partagé)
+				services.AddSingleton<IRedFlagDomainService, RedFlagDomainService>();
+
+				// Anti-phishing : vérification DNS SPF/DMARC (Singleton → cache domaines)
+				services.AddSingleton<IDnsSecurityService, DnsSecurityService>();
+
+				// Anti-phishing : analyse pièces jointes via VirusTotal
+				services.AddSingleton<IVirusTotalService>(_ =>
+				{
+					// Lecture directe de appsettings.json sans IConfiguration
+					string? apiKey = null;
+					try
+					{
+						var appDir = AppContext.BaseDirectory;
+						var settingsPath = System.IO.Path.Combine(appDir, "appsettings.json");
+						if (System.IO.File.Exists(settingsPath))
+						{
+							var json = System.IO.File.ReadAllText(settingsPath);
+							using var doc = System.Text.Json.JsonDocument.Parse(json);
+
+							if (doc.RootElement.TryGetProperty("VirusTotal", out var vt) &&
+								vt.TryGetProperty("ApiKey", out var key))
+							{
+								apiKey = key.GetString();
+							}
+						}
+					}
+					catch { /* non bloquant */ }
+
+					return new VirusTotalService(apiKey);
+				});
+
+				#endregion Services anti-phishing
 
 				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();

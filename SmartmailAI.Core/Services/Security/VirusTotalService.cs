@@ -1,0 +1,200 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+using SmartmailAI.Core.Contracts.Services.Security;
+using SmartmailAI.Core.Models.Security;
+
+namespace SmartmailAI.Core.Services.Security;
+
+// Vérifie les pièces jointes via l'API VirusTotal v3.
+// La recherche se fait par nom de fichier normalisé (sans upload du fichier).
+// Nécessite une clé API VirusTotal (gratuite sur https://www.virustotal.com).
+public partial class VirusTotalService : IVirusTotalService, IDisposable
+{
+	private const string BaseUrl = "https://www.virustotal.com/api/v3/";
+
+	// Extensions qui méritent toujours une vérification, même sans API
+	private static readonly string[] _dangerousExtensions =
+	[
+		".exe", ".scr", ".bat", ".cmd", ".com", ".pif",
+		".js",  ".jse", ".vbs", ".vbe", ".wsf", ".wsh",
+		".ps1", ".psm1", ".msi", ".dll", ".sys",
+		".zip", ".rar", ".7z", ".iso", ".img",
+		".docm", ".xlsm", ".pptm",				// Office avec macros
+		".lnk", ".url",							// Raccourcis
+		".hta", ".htm", ".html"					// HTML potentiellement malveillant
+	];
+
+	#region État interne
+
+	private readonly HttpClient _http;
+	private readonly string? _apiKey;
+
+	// Cache simple pour éviter de re-interroger VirusTotal pour le même fichier
+	private readonly Dictionary<string, VirusTotalResult> _cache = new();
+
+	#endregion État interne
+
+	public VirusTotalService(string? apiKey = null)
+	{
+		_apiKey = apiKey;
+		_http = new HttpClient
+		{
+			BaseAddress = new Uri(BaseUrl),
+			Timeout = TimeSpan.FromSeconds(15)
+		};
+
+		if (!string.IsNullOrWhiteSpace(_apiKey))
+			_http.DefaultRequestHeaders.Add("x-apikey", _apiKey);
+	}
+
+	#region Interface publique
+
+	public async Task<IReadOnlyList<VirusTotalResult>> AnalyzeAttachmentsAsync(List<string> fileNames)
+	{
+		if (fileNames is null || fileNames.Count == 0)
+			return [];
+
+		var results = new List<VirusTotalResult>();
+
+		foreach (var fileName in fileNames)
+		{
+			if (string.IsNullOrWhiteSpace(fileName))
+				continue;
+
+			// Filtre : on n'interroge VirusTotal que pour les extensions suspectes
+			if (!IsSuspiciousExtension(fileName))
+				continue;
+
+			var result = await AnalyzeSingleFileAsync(fileName);
+			if (result is not null)
+				results.Add(result);
+		}
+
+		return results;
+	}
+
+	#endregion Interface publique
+
+	#region Logique interne
+
+	private async Task<VirusTotalResult?> AnalyzeSingleFileAsync(string fileName)
+	{
+		// Cache hit
+		if (_cache.TryGetValue(fileName.ToLowerInvariant(), out var cached))
+			return cached;
+
+		// Sans clé API → analyse locale uniquement (extension dangereuse)
+		if (string.IsNullOrWhiteSpace(_apiKey))
+		{
+			var localResult = BuildLocalResult(fileName);
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {localResult.IsMalicious}, " +
+				$"Count: {localResult.MaliciousCount} (local, pas de clé API)");
+
+			return localResult;
+		}
+
+		try
+		{
+			// Recherche par nom de fichier sur VirusTotal
+			// L'API /files/search permet de chercher par métadonnées sans uploader
+			var query = Uri.EscapeDataString($"name:{fileName}");
+			var response = await _http.GetAsync($"intelligence/search?query={query}&limit=1");
+
+			if (!response.IsSuccessStatusCode)
+			{
+				System.Diagnostics.Debug.WriteLine($"[VirusTotal] ⚠️ Réponse HTTP {response.StatusCode} pour '{fileName}'");
+				return BuildLocalResult(fileName);
+			}
+
+			var json = await response.Content.ReadAsStringAsync();
+			var result = ParseSearchResponse(fileName, json);
+
+			if (result is not null)
+				_cache[fileName.ToLowerInvariant()] = result;
+
+			var finalResult = result ?? BuildLocalResult(fileName);
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] 🔍 '{fileName}' → IsMalicious: {finalResult.IsMalicious}, " +
+				$"Count: {finalResult.MaliciousCount}/{finalResult.TotalEngines} (API)");
+
+			return finalResult;
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] ❌ Erreur pour '{fileName}' : {ex.Message}");
+
+			return BuildLocalResult(fileName);
+		}
+	}
+
+	#endregion Logique interne
+
+	#region Méthodes utilitaires
+
+	// Parse la réponse JSON de l'API VirusTotal /intelligence/search.
+	private static VirusTotalResult? ParseSearchResponse(string fileName, string json)
+	{
+		try
+		{
+			using var doc = JsonDocument.Parse(json);
+			var data = doc.RootElement.GetProperty("data");
+
+			if (data.GetArrayLength() == 0)
+				return null;
+
+			var file = data[0];
+			var attributes = file.GetProperty("attributes");
+			var stats = attributes.GetProperty("last_analysis_stats");
+
+			int malicious = stats.TryGetProperty("malicious", out var m) ? m.GetInt32() : 0;
+			int suspicious = stats.TryGetProperty("suspicious", out var s) ? s.GetInt32() : 0;
+			int total = stats.TryGetProperty("harmless", out var h) ? h.GetInt32() : 0
+				+ malicious + suspicious
+				+ (stats.TryGetProperty("undetected", out var u) ? u.GetInt32() : 0);
+
+			string? permalink = file.TryGetProperty("id", out var id)
+				? $"https://www.virustotal.com/gui/file/{id.GetString()}"
+				: null;
+
+			return new VirusTotalResult(
+				FileName: fileName,
+				IsMalicious: malicious + suspicious > 0,
+				MaliciousCount: malicious + suspicious,
+				TotalEngines: total,
+				Permalink: permalink
+			);
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"[VirusTotal] ❌ Erreur parsing JSON : {ex.Message}");
+			return null;
+		}
+	}
+
+	// Résultat local basé uniquement sur l'extension (fallback sans API).
+	private static VirusTotalResult BuildLocalResult(string fileName)
+	{
+		return new(
+			FileName: fileName,
+			IsMalicious: true,
+			MaliciousCount: -1,       // -1 = analyse locale uniquement
+			TotalEngines: 0,
+			Permalink: null
+		);
+	}
+
+	private static bool IsSuspiciousExtension(string fileName)
+	{
+		return _dangerousExtensions.Any(ext => fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+	}
+
+	#endregion Méthodes utilitaires
+
+	public void Dispose()
+	{
+		_http.Dispose();
+	}
+}
