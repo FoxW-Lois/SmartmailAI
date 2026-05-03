@@ -208,6 +208,8 @@ public partial class App : Application
 
 				#endregion Settings Pages
 
+				#endregion Views & ViewModels
+
 				#region Services anti-phishing
 
 				// Anti-phishing : liste red.flag.domains (Singleton → cache partagé)
@@ -272,8 +274,6 @@ public partial class App : Application
 				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
 
 				#endregion Services instantiation
-
-				#endregion Views & ViewModels
 
 				#region DbContext
 
