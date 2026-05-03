@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Security;
+using SmartmailAI.Core.Models;
 using SmartmailAI.Core.Models.Security;
 
 namespace SmartmailAI.Core.Services.Security;
@@ -53,8 +54,13 @@ public partial class VirusTotalService : IVirusTotalService, IDisposable
 
 	#region Interface publique
 
-	public async Task<IReadOnlyList<VirusTotalResult>> AnalyzeAttachmentsAsync(List<string> fileNames)
+	public async Task<IReadOnlyList<VirusTotalResult>> AnalyzeAttachmentsAsync(List<MailAttachment> attachments)
 	{
+		List<string>? fileNames = attachments?.Select(att => att.FileName)
+			.Where(name => !string.IsNullOrWhiteSpace(name))
+			.Distinct(StringComparer.OrdinalIgnoreCase)
+			.ToList();
+
 		if (fileNames is null || fileNames.Count == 0)
 			return [];
 

@@ -511,4 +511,10 @@
   <data name="Error_EmailSendingFailed" xml:space="preserve">
     <value>L'envoi de l'email a échoué.</value>
   </data>
+  <data name="Email_Details_PhishingScore.Text" xml:space="preserve">
+    <value>Score phishing : </value>
+  </data>
+  <data name="Email_Details_Security.Text" xml:space="preserve">
+    <value>Sécurité</value>
+  </data>
 </root>

@@ -11,13 +11,13 @@ using SmartmailAI.Core.Models.Security;
 
 namespace SmartmailAI.Core.Services;
 
-public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService, 
-IDnsSecurityService dnsSecurityService) : IEmailsService
+public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService,
+	IDnsSecurityService dnsSecurityService) : IEmailsService
 {
 	// Ne surtout pas initialiser cette liste, que soit à la déclaration ou bien dans le constructeur
 	// Elle doit être initialisée uniquement dans les méthodes GetAllEmailsAsync et GetEmailsByMailboxTypeAsync pour garantir que
 	// l'analyse de sécurité est appliquée à tous les emails avant de les retourner
-	private List<Email> _AllEmails;
+	private List<Email>? _AllEmails;
 
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private static readonly ResourceLoader _resources = new();
@@ -25,19 +25,15 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 	private readonly IVirusTotalService _virusTotalService = virusTotalService;
 	private readonly IDnsSecurityService _dnsSecurityService = dnsSecurityService;
 
-	#region Données de test
-
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null)
 	{
-		if (addressAccount is null)
-			_AllEmails = await _emailRepository.GetAllEmailsAsync();
-		else
-			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
-
-		await ApplySecurityAnalysisAsync(_AllEmails);
+		//if (addressAccount is null)
+		//	_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		//else
+		//	_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
 
 		// TODO: Si besoin d'utiliser des données statiques, décommenter le bloc ↓
-		/*_AllEmails = [
+		_AllEmails = [
 			// ------ Inbox Emails ------
 			new Email
 			{
@@ -256,10 +252,10 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			//------ Phishing & Spam Emails ------
+			//------ Phishing & Spam Emails (détectés par ApplySecurityAnalysisAsync(_AllEmails)) ------
 			new Email
 			{
-				SenderName = "Sécurité Banque",
+				SenderName = "BOULE - Sécurité Banque",
 				SenderEmail = "alert@banque-securite.info",
 				SenderProfileImage = new Uri("https://randomuser.me/api/portraits/men/66.jpg"),
 				ReceiverName = "Jean Dupont",
@@ -269,12 +265,12 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 				Content = "Nous avons détecté une activité inhabituelle sur votre compte.\nMerci de confirmer vos informations sous 24h.",
 				DateSent = DateTime.Now.AddHours(-12),
 				Attachments = [],
-				MailboxType = MailboxType.PhishingSpam,
+				MailboxType = MailboxType.Inbox,
 				IsRead = false
 			},
 			new Email
 			{
-				SenderName = "Microsoft Support",
+				SenderName = "BOULE - Microsoft Support",
 				SenderEmail = "support@m1crosoft-verification.com",
 				SenderProfileImage = new Uri("https://randomuser.me/api/portraits/men/77.jpg"),
 				ReceiverName = "Jean Dupont",
@@ -284,12 +280,12 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 				Content = "Votre mot de passe Microsoft arrive à expiration.\nCliquez sur le lien ci-dessous pour le renouveler.",
 				DateSent = DateTime.Now.AddDays(-1),
 				Attachments = [],
-				MailboxType = MailboxType.PhishingSpam,
+				MailboxType = MailboxType.Inbox,
 				IsRead = false
 			},
 			new Email
 			{
-				SenderName = "Livraison Express",
+				SenderName = "BOULE - Livraison Express",
 				SenderEmail = "contact@livraison-suivi.co",
 				SenderProfileImage = new Uri("https://randomuser.me/api/portraits/women/77.jpg"),
 				ReceiverName = "Jean Dupont",
@@ -298,7 +294,7 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 				Content = "Votre colis est en attente de frais de livraison.\nVeuillez régulariser la situation rapidement.",
 				DateSent = DateTime.Now.AddDays(-3),
 				Attachments = [],
-				MailboxType = MailboxType.PhishingSpam,
+				MailboxType = MailboxType.Inbox,
 				IsRead = false
 			},
 			// --- Emails ajoutés via la branche Phishing ---
@@ -355,7 +351,9 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 				MailboxType = MailboxType.Inbox,
 				IsRead = false
 			}
-		];*/
+		];
+
+		await ApplySecurityAnalysisAsync(_AllEmails);
 
 		var categories = new List<MailboxCategory>
 		{
@@ -435,8 +433,6 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 		await Task.CompletedTask;
 		return categories;
 	}
-
-	#endregion Données de test
 
 	#region CRUD Emails
 
@@ -615,16 +611,13 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 		// 4. Pièces jointes - analyse extension + VirusTotal
 		if (email.Attachments is { Count: > 0 })
 		{
-			// TODO: email.Attachments => à modifier pour que ça traite un List<SmartmailAI.Core.Models.MailAttachment> et non une List<string>
-			var attachmentsProvisoryList = new List<string>();
-			if (HasDangerousAttachment(attachmentsProvisoryList))
+			if (HasDangerousAttachment(email.Attachments))
 			{
 				score += 20;
 				reasons.Add("Pièce jointe avec extension potentiellement dangereuse détectée.");
 			}
 
-			// TODO: email.Attachments => à modifier pour que ça traite un List<SmartmailAI.Core.Models.MailAttachment> et non une List<string>
-			var vtResults = await _virusTotalService.AnalyzeAttachmentsAsync(attachmentsProvisoryList);
+			var vtResults = await _virusTotalService.AnalyzeAttachmentsAsync(email.Attachments);
 			foreach (var vt in vtResults.Where(r => r.IsMalicious))
 			{
 				// Déjà compté par HasDangerousAttachment → on ajoute seulement si VirusTotal confirme
@@ -652,7 +645,7 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 		// 5. Vérification DNS (SPF / DMARC)
 		// On skip les domaines internes/de test connus pour éviter les faux positifs
 		string[] skipDnsDomains = ["exemple.com", "entreprise.com", "client.com", "ancienne-entreprise.com"];
-		var senderDomain = email.SenderEmail?.Contains('@') == true
+		var senderDomain = email.SenderEmail.Contains('@') == true
 			? email.SenderEmail.Split('@')[1].ToLowerInvariant()
 			: string.Empty;
 
@@ -936,7 +929,7 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 		return false;
 	}
 
-	private static bool HasDangerousAttachment(List<string>? attachments)
+	private static bool HasDangerousAttachment(List<MailAttachment>? attachments)
 	{
 		if (attachments is null || attachments.Count == 0)
 			return false;
@@ -952,8 +945,8 @@ IDnsSecurityService dnsSecurityService) : IEmailsService
 			".hta", ".htm", ".html"
 		];
 
-		return attachments.Any(a => !string.IsNullOrWhiteSpace(a) &&
-			dangerousExtensions.Any(ext => a.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
+		return attachments.Any(a => !string.IsNullOrWhiteSpace(a?.FileName) &&
+			dangerousExtensions.Any(ext => a.FileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase)));
 	}
 
 	// Retourne un score de 0 à 20 basé sur l'intensité des patterns psychologiques détectés.

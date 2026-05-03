@@ -10,22 +10,6 @@ namespace SmartmailAI.Core.Models;
 
 public class Email
 {
-	#region Propriétés d'analyse de sécurité => Phishing, SPF, DMARC
-
-	public int PhishingScore { get; set; }
-	public bool IsPhishingDetected { get; set; }
-	public string? SecurityWarning { get; set; }
-	public string? SecurityReasons { get; set; }
-	public string? DetectedLinks { get; set; }
-
-	// Résultats DNS (SPF / DMARC)
-	public string? SpfStatus { get; set; }
-
-	public string? DmarcStatus { get; set; }
-	public string? DnsWarning { get; set; }
-
-	#endregion Propriétés d'analyse de sécurité => Phishing, SPF, DMARC
-
 	#region Propriétés de base / Composition
 
 	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
@@ -59,6 +43,22 @@ public class Email
 	[NotMapped] public bool HasAttachments => Attachments is { Count: > 0 };
 
 	#endregion Propriétés de base / Composition
+
+	#region Propriétés d'analyse de sécurité => Phishing, SPF, DMARC
+
+	[Column("PhishingScore")] public int PhishingScore { get; set; }
+	[Column("IsPhishingDetected")] public bool IsPhishingDetected { get; set; }
+	[Column("SecurityWarning")] public string? SecurityWarning { get; set; }
+	[Column("SecurityReasons")] public string? SecurityReasons { get; set; }
+	[Column("DetectedLinks")] public string? DetectedLinks { get; set; }
+
+	// Résultats DNS (SPF / DMARC)
+	[Column("SpfStatus")] public string? SpfStatus { get; set; }
+
+	[Column("DmarcStatus")] public string? DmarcStatus { get; set; }
+	[Column("DnsWarning")] public string? DnsWarning { get; set; }
+
+	#endregion Propriétés d'analyse de sécurité => Phishing, SPF, DMARC
 
 	#region Propriétés de gestion de l'état des mails
 
