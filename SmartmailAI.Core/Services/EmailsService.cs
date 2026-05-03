@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Security;
 using SmartmailAI.Core.Models;
@@ -10,113 +11,33 @@ using SmartmailAI.Core.Models.Security;
 
 namespace SmartmailAI.Core.Services;
 
-public class MailboxDataService : IMailboxDataService
+public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService, 
+IDnsSecurityService dnsSecurityService) : IEmailsService
 {
 	// Ne surtout pas initialiser cette liste, que soit à la déclaration ou bien dans le constructeur
 	// Elle doit être initialisée uniquement dans les méthodes GetAllEmailsAsync et GetEmailsByMailboxTypeAsync pour garantir que
 	// l'analyse de sécurité est appliquée à tous les emails avant de les retourner
 	private List<Email> _AllEmails;
 
+	private readonly IEmailRepository _emailRepository = emailRepository;
 	private static readonly ResourceLoader _resources = new();
-	private readonly IRedFlagDomainService _redFlagDomainService;
-	private readonly IVirusTotalService _virusTotalService;
-	private readonly IDnsSecurityService _dnsSecurityService;
-
-	public MailboxDataService(IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService, IDnsSecurityService dnsSecurityService)
-	{
-		_redFlagDomainService = redFlagDomainService;
-		_virusTotalService = virusTotalService;
-		_dnsSecurityService = dnsSecurityService;
-	}
+	private readonly IRedFlagDomainService _redFlagDomainService = redFlagDomainService;
+	private readonly IVirusTotalService _virusTotalService = virusTotalService;
+	private readonly IDnsSecurityService _dnsSecurityService = dnsSecurityService;
 
 	#region Données de test
 
-	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
+	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null)
 	{
-		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
+		if (addressAccount is null)
+			_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		else
+			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
+
 		await ApplySecurityAnalysisAsync(_AllEmails);
 
-		var categories = new List<MailboxCategory>
-		{
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Inbox"),
-				Icon = "\uE715",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
-				MailboxType = MailboxType.Inbox
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Sent"),
-				Icon = "\uE122",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
-				MailboxType = MailboxType.Sent
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Snoozed"),
-				Icon = "\uE823",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
-				MailboxType = MailboxType.Snoozed
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Drafts"),
-				Icon = "\uE7C3",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
-				MailboxType = MailboxType.Drafts
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Starred"),
-				Icon = "\uE734",
-				Items = _AllEmails.Where(e => e.IsStarred == true),
-				MailboxType = MailboxType.Starred
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Unread"),
-				Icon = "\uE8A8",
-				Items = _AllEmails.Where(e => e.IsRead == false),
-				MailboxType = MailboxType.Unread
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Trash"),
-				Icon = "\uE74D",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
-				MailboxType = MailboxType.Trash
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_AllMails"),
-				Icon = "\uE8F1",
-				Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash),
-				MailboxType = MailboxType.AllMails
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Archives"),
-				Icon = "\uE7B8",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
-				MailboxType = MailboxType.Archives
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_PhishingSpam"),
-				Icon = "\uE7BA",
-				Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
-				MailboxType = MailboxType.PhishingSpam
-			}
-		};
-
-		await Task.CompletedTask;
-		return categories;
-	}
-
-	private static IEnumerable<Email> AllEmails()
-	{
-		return [
+		// TODO: Si besoin d'utiliser des données statiques, décommenter le bloc ↓
+		/*_AllEmails = [
 			// ------ Inbox Emails ------
 			new Email
 			{
@@ -129,7 +50,7 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Réunion de suivi",
 				Content = "Bonjour Jean,\n\nPeux-tu me confirmer ta disponibilité pour la réunion de suivi prévue demain à 10h ?\n\nCordialement,\nMarie",
 				DateSent = DateTime.Now.AddDays(-2),
-				Attachments = [ "Ordre_du_jour.pdf" ],
+				Attachments = [],
 				MailboxType = MailboxType.Inbox,
 				IsRead = false,
 				IsStarred = true
@@ -164,7 +85,7 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			// ------ Sent Emails ------
+			//------ Sent Emails ------
 			new Email
 			{
 				SenderName = "Jean Dupont",
@@ -211,7 +132,7 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.Sent,
 				IsRead = true
 			},
-			// ------ Snoozed Emails ------
+			//------ Snoozed Emails ------
 			new Email
 			{
 				SenderName = "Service Comptabilité",
@@ -223,7 +144,7 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Note de frais à valider",
 				Content = "Bonjour Jean,\n\nMerci de valider la note de frais du mois dernier avant la fin de semaine.\n\nCordialement,\nComptabilité",
 				DateSent = DateTime.Now.AddDays(-3),
-				Attachments = [ "note_de_frais.pdf" ],
+				Attachments = [],
 				MailboxType = MailboxType.Snoozed,
 				IsRead = false
 			},
@@ -242,7 +163,7 @@ public class MailboxDataService : IMailboxDataService
 				MailboxType = MailboxType.Snoozed,
 				IsRead = false
 			},
-			// ------ Drafts Emails ------
+			//------ Drafts Emails ------
 			new Email
 			{
 				SenderName = "Jean Dupont",
@@ -265,11 +186,11 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Compte-rendu réunion",
 				Content = "Bonjour Marie,\n\nVoici un premier brouillon du compte-rendu de la réunion.",
 				DateSent = DateTime.Now,
-				Attachments = [ "compte_rendu_draft.docx" ],
+				Attachments = [],
 				MailboxType = MailboxType.Drafts,
 				IsRead = false
 			},
-			// ------ Trash Emails ------
+			//------ Trash Emails ------
 			new Email
 			{
 				SenderName = "Newsletter Tech",
@@ -302,7 +223,7 @@ public class MailboxDataService : IMailboxDataService
 				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			// ------ Archives Emails ------
+			//------ Archives Emails ------
 			new Email
 			{
 				SenderName = "Ancien Manager",
@@ -330,12 +251,12 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Validation formation",
 				Content = "Bonjour Jean,\n\nTa formation a bien été validée.\n\nCordialement,\nService Formation",
 				DateSent = DateTime.Now.AddMonths(-6),
-				Attachments = [ "certificat.pdf" ],
+				Attachments = [],
 				MailboxType = MailboxType.Archives,
 				PreviousMailboxType = MailboxType.Inbox,
 				IsRead = true
 			},
-			// ------ Phishing & Spam Emails ------
+			//------ Phishing & Spam Emails ------
 			new Email
 			{
 				SenderName = "Sécurité Banque",
@@ -362,6 +283,20 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Votre mot de passe expire aujourd’hui",
 				Content = "Votre mot de passe Microsoft arrive à expiration.\nCliquez sur le lien ci-dessous pour le renouveler.",
 				DateSent = DateTime.Now.AddDays(-1),
+				Attachments = [],
+				MailboxType = MailboxType.PhishingSpam,
+				IsRead = false
+			},
+			new Email
+			{
+				SenderName = "Livraison Express",
+				SenderEmail = "contact@livraison-suivi.co",
+				SenderProfileImage = new Uri("https://randomuser.me/api/portraits/women/77.jpg"),
+				ReceiverName = "Jean Dupont",
+				ReceiverEmail = "jean.dupont@exemple.com",
+				Subject = "Colis en attente de paiement",
+				Content = "Votre colis est en attente de frais de livraison.\nVeuillez régulariser la situation rapidement.",
+				DateSent = DateTime.Now.AddDays(-3),
 				Attachments = [],
 				MailboxType = MailboxType.PhishingSpam,
 				IsRead = false
@@ -402,7 +337,7 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Colis bloqué",
 				Content = "Paiement requis via bit.ly/livraison pour débloquer votre colis.",
 				DateSent = DateTime.Now.AddMinutes(-15),
-				Attachments = [ "facture.zip" ],
+				Attachments = [],
 				MailboxType = MailboxType.Inbox,
 				IsRead = false
 			},
@@ -416,42 +351,112 @@ public class MailboxDataService : IMailboxDataService
 				Subject = "Colis en attente de paiement",
 				Content = "Votre colis est en attente de frais de livraison.\nVeuillez régulariser la situation rapidement.",
 				DateSent = DateTime.Now.AddDays(-3),
-				Attachments = [ "facture.zip" ],
+				Attachments = [],
 				MailboxType = MailboxType.Inbox,
 				IsRead = false
 			}
+		];*/
 
-		];
+		var categories = new List<MailboxCategory>
+		{
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Inbox"),
+				Icon = "\uE715", // Mail
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
+				MailboxType = MailboxType.Inbox
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Sent"),
+				Icon = "\uE122", // Send
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+				MailboxType = MailboxType.Sent
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Snoozed"),
+				Icon = "\uE823", // Clock
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
+				MailboxType = MailboxType.Snoozed
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Drafts"),
+				Icon = "\uE7C3", // Document
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
+				MailboxType = MailboxType.Drafts
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Starred"),
+				Icon = "\uE734", // FavoriteStar
+			    Items = _AllEmails.Where(e => e.IsStarred == true),
+				MailboxType = MailboxType.Starred
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Unread"),
+				Icon = "\uE8A8", // MailFill
+				Items = _AllEmails.Where(e => e.IsRead == false),
+				MailboxType = MailboxType.Unread
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Trash"),
+				Icon = "\uE74D", // Delete
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
+				MailboxType = MailboxType.Trash
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_AllMails"),
+				Icon = "\uE8F1", // AllApps
+			    Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
+				// ↑ Tous les mails sauf Corbeille & Phishings/Spams
+				MailboxType = MailboxType.AllMails
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_Archives"),
+				Icon = "\uE7B8", // Archive
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
+				MailboxType = MailboxType.Archives
+			},
+			new MailboxCategory
+			{
+				Title = _resources.GetString("Mailbox_PhishingSpam"),
+				Icon = "\uE7BA", // Warning
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
+				MailboxType = MailboxType.PhishingSpam
+			}
+		};
+
+		await Task.CompletedTask;
+		return categories;
 	}
 
 	#endregion Données de test
 
 	#region CRUD Emails
 
-	public async Task<IEnumerable<Email>> GetAllEmailsAsync()
-	{
-		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
-		await ApplySecurityAnalysisAsync(_AllEmails);
-
-		await Task.CompletedTask;
-		return _AllEmails;
-	}
-
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
 	{
-		_AllEmails ??= [.. AllEmails().OrderByDescending(e => e.DateSent)];
-		await ApplySecurityAnalysisAsync(_AllEmails);
+		_AllEmails = await _emailRepository.GetAllEmailsAsync();
 
-		IEnumerable<Email> emails;
-
-		if (mailboxType == MailboxType.Starred)
-			emails = _AllEmails.Where(e => e.IsStarred == true);
-		else if (mailboxType == MailboxType.Unread)
-			emails = _AllEmails.Where(e => e.IsRead == false);
-		else if (mailboxType == MailboxType.AllMails)
-			emails = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash);
-		else
-			emails = _AllEmails.Where(e => e.MailboxType == mailboxType);
+		var emails = mailboxType switch
+		{
+			MailboxType.Inbox => _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
+			MailboxType.Sent => _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+			MailboxType.Snoozed => _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
+			MailboxType.Drafts => _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
+			MailboxType.Starred => _AllEmails.Where(e => e.IsStarred == true),
+			MailboxType.Unread => _AllEmails.Where(e => e.IsRead == false),
+			MailboxType.Trash => _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
+			MailboxType.Archives => _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
+			MailboxType.PhishingSpam => _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
+			_ => _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
+		};
 
 		await Task.CompletedTask;
 		return emails;
@@ -462,10 +467,8 @@ public class MailboxDataService : IMailboxDataService
 		if (email is null)
 			return Task.CompletedTask;
 
-		if (!email.IsStarred)
-			email.IsStarred = true;
-		else
-			email.IsStarred = false;
+		email.IsStarred = !email.IsStarred;
+		_emailRepository.UpdateEmailAsync(email);
 
 		return Task.CompletedTask;
 	}
@@ -476,6 +479,8 @@ public class MailboxDataService : IMailboxDataService
 			return Task.CompletedTask;
 
 		email.IsRead = true;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -485,6 +490,8 @@ public class MailboxDataService : IMailboxDataService
 			return Task.CompletedTask;
 
 		email.IsRead = false;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -495,6 +502,8 @@ public class MailboxDataService : IMailboxDataService
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Archives;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -504,6 +513,8 @@ public class MailboxDataService : IMailboxDataService
 			return Task.CompletedTask;
 
 		email.MailboxType = (MailboxType)email.PreviousMailboxType;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -513,6 +524,8 @@ public class MailboxDataService : IMailboxDataService
 			return Task.CompletedTask;
 
 		_AllEmails.Remove(email);
+		_emailRepository.DeleteEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -523,6 +536,8 @@ public class MailboxDataService : IMailboxDataService
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Trash;
+		_emailRepository.UpdateEmailAsync(email);
+
 		return Task.CompletedTask;
 	}
 
@@ -600,13 +615,16 @@ public class MailboxDataService : IMailboxDataService
 		// 4. Pièces jointes - analyse extension + VirusTotal
 		if (email.Attachments is { Count: > 0 })
 		{
-			if (HasDangerousAttachment(email.Attachments))
+			// TODO: email.Attachments => à modifier pour que ça traite un List<SmartmailAI.Core.Models.MailAttachment> et non une List<string>
+			var attachmentsProvisoryList = new List<string>();
+			if (HasDangerousAttachment(attachmentsProvisoryList))
 			{
 				score += 20;
 				reasons.Add("Pièce jointe avec extension potentiellement dangereuse détectée.");
 			}
 
-			var vtResults = await _virusTotalService.AnalyzeAttachmentsAsync(email.Attachments);
+			// TODO: email.Attachments => à modifier pour que ça traite un List<SmartmailAI.Core.Models.MailAttachment> et non une List<string>
+			var vtResults = await _virusTotalService.AnalyzeAttachmentsAsync(attachmentsProvisoryList);
 			foreach (var vt in vtResults.Where(r => r.IsMalicious))
 			{
 				// Déjà compté par HasDangerousAttachment → on ajoute seulement si VirusTotal confirme

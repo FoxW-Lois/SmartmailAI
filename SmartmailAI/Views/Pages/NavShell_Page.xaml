@@ -7,6 +7,7 @@
 	xmlns:helpers="using:SmartmailAI.Helpers.Navigation"
 	xmlns:i="using:Microsoft.Xaml.Interactivity"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:models="using:SmartmailAI.Core.Models"
 	xmlns:viewmodels="using:SmartmailAI.ViewModels.Pages"
 	d:DataContext="{d:DesignInstance Type=viewmodels:NavShell_ViewModel}"
 	Loaded="Page_Loaded"
@@ -84,15 +85,48 @@
 					</NavigationViewItem.Icon>
 				</NavigationViewItem>
 
-				<NavigationViewItem
+				<!--  TODO: Si besoin d'utiliser des données statiques, décommenter l'Item ↓  -->
+				<!--<NavigationViewItem
 					x:Uid="Shell_DetailsList"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.DetailsList_ViewModel"
 					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;" />
 					</NavigationViewItem.Icon>
+				</NavigationViewItem>-->
+
+				<NavigationViewItem
+					x:Uid="Shell_MailAddresses"
+					MenuItemsSource="{Binding AccountsGmail}"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.MenuItems>
+						<DataTemplate x:DataType="models:AccountGmail">
+							<NavigationViewItem Content="{x:Bind Email}" Tag="{x:Bind}" />
+						</DataTemplate>
+					</NavigationViewItem.MenuItems>
+
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE715;" />
+					</NavigationViewItem.Icon>
 				</NavigationViewItem>
 
+				<NavigationViewItem
+					x:Uid="Shell_AddAddress"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddAddress_ViewModel"
+					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
+
+				<NavigationViewItem
+					x:Uid="Shell_AddressManagement"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddressManagement_ViewModel"
+					Visibility="{Binding CanShowAddressManagement, Converter={StaticResource BoolToVisibilityConverter}}">
+					<NavigationViewItem.Icon>
+						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE779;" />
+					</NavigationViewItem.Icon>
+				</NavigationViewItem>
 			</NavigationView.MenuItems>
 
 			<NavigationView.HeaderTemplate>

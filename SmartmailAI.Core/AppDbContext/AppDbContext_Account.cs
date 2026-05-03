@@ -1,7 +1,7 @@
 ﻿using SmartmailAI.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace SmartmailAI.Core.Data;
+namespace SmartmailAI.Core.AppDbContext;
 
 public class AppDbContext_Account(DbContextOptions<AppDbContext_Account> options) : DbContext(options)
 {

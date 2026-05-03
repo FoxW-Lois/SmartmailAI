@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -25,46 +28,58 @@ public class Email
 
 	#region Propriétés de base / Composition
 
-	public string SenderName { get; set; }
-	public string SenderEmail { get; set; }
-	public Uri? SenderProfileImage { get; set; }
+	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
+	[Column("Guid")] public string Guid { get; init; } = default!;
 
-	public string? ReceiverName { get; set; }
-	public string? ReceiverEmail { get; set; }
-	public Uri? ReceiverProfileImage { get; set; }
+	[Column("SenderEmail")] public string SenderEmail { get; set; } = default!;
+	[Column("SenderName")] public string SenderName { get; set; } = default!; // ← Nullable en bdd mais recevra le SenderEmail si null côté UI
+	[NotMapped] public Uri? SenderProfileImage { get; set; }
 
-	public string? Subject { get; set; }
-	public string? Content { get; set; }
+	[Column("ReceiverEmail")] public string? ReceiverEmail { get; set; }
+	[Column("ReceiverName")] public string? ReceiverName { get; set; }
+	[NotMapped] public Uri? ReceiverProfileImage { get; set; }
 
-	public DateTime? DateSent { get; set; }
+	[Column("Subject")] public string? Subject { get; set; }
+	[Column("Content")] public string? Content { get; set; }
+	[Column("Owner")] public string Owner { get; set; } = default!;
 
-	public List<string>? Attachments { get; set; }
+	[Column("DateSent")] public DateTime? DateSent { get; set; }
 
-	public string AttachmentsDisplay => Attachments != null && Attachments.Count != 0
-		? string.Join(", ", Attachments)
-		: "Aucune pièce jointe";
+	[Column("Attachments")]
+	public string AttachmentsJson
+	{
+		get => JsonSerializer.Serialize(Attachments);
+		set => Attachments = string.IsNullOrEmpty(value)
+			? []
+			: JsonSerializer.Deserialize<List<MailAttachment>>(value) ?? [];
+	}
+
+	[NotMapped] public List<MailAttachment> Attachments { get; set; } = [];
+
+	[NotMapped] public bool HasAttachments => Attachments is { Count: > 0 };
 
 	#endregion Propriétés de base / Composition
 
 	#region Propriétés de gestion de l'état des mails
 
 	// Catégorisation/localisation du mail
-	public MailboxType MailboxType { get; set; }
+	[Column("MailboxType")] public MailboxType MailboxType { get; set; }
 
 	// Précédente catégorisation/localisation avant suppression
-	public MailboxType? PreviousMailboxType { get; set; } = null;
+	[Column("PreviousMailboxType")] public MailboxType? PreviousMailboxType { get; set; } = null;
 
 	// Statut de favori
-	public bool IsStarred { get; set; } = false;
+	[Column("IsStarred")] public bool IsStarred { get; set; } = false;
 
 	// Statut de lecture
-	public bool IsRead { get; set; } = false;
+	[Column("IsRead")] public bool IsRead { get; set; } = false;
 
 	#endregion Propriétés de gestion de l'état des mails
 
 	#region Propriétés dédiées à l'affichage
 
 	// Se remplit à partir de SenderProfileImage
+	[NotMapped]
 	public ImageSource SenderProfileImageSource
 	{
 		get
@@ -77,6 +92,7 @@ public class Email
 	}
 
 	// Se remplit à partir de ReceiverProfileImage
+	[NotMapped]
 	public ImageSource ReceiverProfileImageSource
 	{
 		get
@@ -89,6 +105,7 @@ public class Email
 	}
 
 	// Se remplit à partir de Content
+	[NotMapped]
 	public string? PreviewContent
 	{
 		get
@@ -103,12 +120,13 @@ public class Email
 	}
 
 	// Se remplissent à partir de DateSent
-	public DateOnly? DaySent => DateSent is null ? null : DateOnly.FromDateTime(DateSent.Value);
+	[NotMapped] public DateOnly? DaySent => DateSent is null ? null : DateOnly.FromDateTime(DateSent.Value);
 
-	public TimeOnly? TimeSent => DateSent is null ? null : TimeOnly.FromDateTime(DateSent.Value);
+	[NotMapped] public TimeOnly? TimeSent => DateSent is null ? null : TimeOnly.FromDateTime(DateSent.Value);
 
-	public bool IsSameDay => DateSent.HasValue && DateSent.Value.Date == DateTime.Today;
+	[NotMapped] public bool IsSameDay => DateSent.HasValue && DateSent.Value.Date == DateTime.Today;
 
+	[NotMapped]
 	public string DisplayDateSent
 	{
 		get

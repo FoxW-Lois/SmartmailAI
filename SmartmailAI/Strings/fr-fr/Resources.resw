@@ -238,12 +238,6 @@
   <data name="Shell_DetailsList.Content" xml:space="preserve">
     <value>Listes de détails</value>
   </data>
-  <data name="Shell_ContentGrid.Content" xml:space="preserve">
-    <value>Grille de contenu</value>
-  </data>
-  <data name="Shell_DataGrid.Content" xml:space="preserve">
-    <value>Grille de données</value>
-  </data>
   <data name="Mailbox_Inbox" xml:space="preserve">
     <value>Boîte de réception</value>
   </data>
@@ -358,11 +352,11 @@
   <data name="Error_ConfirmPasswordInvalid" xml:space="preserve">
     <value>Les mots de passe ne correspondent pas.</value>
   </data>
-  <data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
-    <value>Login ou mot de passe incorrect.</value>
+  <data name="Error_EmailOrPasswordInvalid" xml:space="preserve">
+    <value>Adresse mail ou mot de passe incorrect.</value>
   </data>
   <data name="Error_AccountDisabled" xml:space="preserve">
-    <value>Votre compte est désactivé. Veuillez contacter l'administrateur.</value>
+    <value>Votre compte SmartmailAI est désactivé. Veuillez contacter l'administrateur.</value>
   </data>
   <data name="Shell_Logout.Content" xml:space="preserve">
     <value>Se déconnecter</value>
@@ -393,5 +387,128 @@
   </data>
   <data name="Error_SecondFactorInvalid" xml:space="preserve">
     <value>Code Authenticator invalide. Veuillez réessayer.</value>
+  </data>
+  <data name="Shell_AddAddress.Content" xml:space="preserve">
+    <value>Ajouter une adresse</value>
+  </data>
+  <data name="AddAddress_New.Text" xml:space="preserve">
+    <value>Ajout d'un nouvel Email à l'application</value>
+  </data>
+  <data name="AddAddress_Email.Header" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="AddAddress_Add.Content" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
+    <value>Login ou mot de passe incorrect.</value>
+  </data>
+  <data name="AddAddress_OtherChoice.Text" xml:space="preserve">
+    <value>IMAP/SMTP :</value>
+  </data>
+  <data name="Error_RecoveryEmailOAuth2Invalid" xml:space="preserve">
+    <value>La connexion de l'adresse Gmail à l'application a échoué. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Error_RecoveryEmailOutlookInvalid" xml:space="preserve">
+    <value>La connexion de l'adresse Outlook à l'application a échoué. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Shell_AddressManagement.Content" xml:space="preserve">
+    <value>Gérer les adresses</value>
+  </data>
+  <data name="Error_DeleteAddress" xml:space="preserve">
+    <value>La suppression de l'adresse mail de l'application a échoué. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="ManagementAddress_Delete.Content" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
+    <value>Adresse connectée le :</value>
+  </data>
+  <data name="Error_EmailAccount_AlreadyExist" xml:space="preserve">
+    <value>L'adresse email que vous tentez d'ajouter l'est déjà.</value>
+  </data>
+  <data name="Shell_MailAddresses.Content" xml:space="preserve">
+    <value>Adresses mail</value>
+  </data>
+  <data name="NewMessageButton.Text" xml:space="preserve">
+    <value>Nouveau message</value>
+  </data>
+  <data name="ButtonSend.Content" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="ToTextBlock.Text" xml:space="preserve">
+    <value>À</value>
+  </data>
+  <data name="RecipientsTextBox.PlaceholderText" xml:space="preserve">
+    <value>Destinataires</value>
+  </data>
+  <data name="ButtonBcc.Content" xml:space="preserve">
+    <value>Cci</value>
+  </data>
+  <data name="CcTextBlock.Text" xml:space="preserve">
+    <value>Cc</value>
+  </data>
+  <data name="AddSubjectTextBox.PlaceholderText" xml:space="preserve">
+    <value>Ajouter un objet</value>
+  </data>
+  <data name="MessageAreaRichEditBox.PlaceholderText" xml:space="preserve">
+    <value>Écrivez votre message...</value>
+  </data>
+  <data name="Email_Details_Attachments.Text" xml:space="preserve">
+    <value>Pièces jointes</value>
+  </data>
+  <data name="Email_Details_Subject.Text" xml:space="preserve">
+    <value>Objet</value>
+  </data>
+  <data name="Email_Details_The.Text" xml:space="preserve">
+    <value>Le :</value>
+  </data>
+  <data name="Email_Details_At.Text" xml:space="preserve">
+    <value> à :</value>
+  </data>
+  <data name="Email_Details_DateSent.Text" xml:space="preserve">
+    <value>Date d'envoi</value>
+  </data>
+  <data name="Email_Details_To.Text" xml:space="preserve">
+    <value>À :</value>
+  </data>
+  <data name="Email_Details_Receiver.Text" xml:space="preserve">
+    <value>Réceptionnaire</value>
+  </data>
+  <data name="Email_Details_From.Text" xml:space="preserve">
+    <value>De :</value>
+  </data>
+  <data name="Email_Details_Sender.Text" xml:space="preserve">
+    <value>Expéditeur</value>
+  </data>
+  <data name="Error_Title" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="Error_AccountUnfound_Gmail" xml:space="preserve">
+    <value>Compte Gmail introuvable.</value>
+  </data>
+  <data name="Error_AccountUnfound_SMTP_IMAP_POP3" xml:space="preserve">
+    <value>Compte Email (SMTP/IMAP/POP3) introuvable.</value>
+  </data>
+  <data name="Error_AccountUnfound_Outlook" xml:space="preserve">
+    <value>Compte Outlook introuvable.</value>
+  </data>
+  <data name="Error_CredentialsInvalidOrExpired_Gmail" xml:space="preserve">
+    <value>Les identifiants Gmail sont invalides ou expirés.</value>
+  </data>
+  <data name="Error_CredentialsInvalidOrExpired_SMTP_IMAP_POP3" xml:space="preserve">
+    <value>Les identifiants Email (SMTP/IMAP/POP3) sont invalides ou expirés.</value>
+  </data>
+  <data name="Error_CredentialsInvalidOrExpired_Outlook" xml:space="preserve">
+    <value>Les identifiants Outlook sont invalides ou expirés.</value>
+  </data>
+  <data name="Error_OrMessage" xml:space="preserve">
+    <value> ou </value>
+  </data>
+  <data name="Error_SaveAttachmentFailed" xml:space="preserve">
+    <value>Le téléchargement de la pièce jointe a échoué.</value>
+  </data>
+  <data name="Error_EmailSendingFailed" xml:space="preserve">
+    <value>L'envoi de l'email a échoué.</value>
   </data>
 </root>

@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SmartmailAI.Core.Models;
 
-public class MailboxCategory : ObservableObject
+public partial class MailboxCategory : ObservableObject
 {
 	public string Title { get; set; } = null!;
 	public string Icon { get; set; } = null!;
@@ -109,9 +109,10 @@ public class MailboxCategory : ObservableObject
 			var lower = searchText.ToLowerInvariant();
 
 			filteredMails = filteredMails.Where(mail =>
-			(mail.SenderName?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
-			(mail.Subject?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
-			(mail.PreviewContent?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false));
+				(mail.SenderName?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
+				(mail.Subject?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
+				(mail.PreviewContent?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false)
+			);
 		}
 
 		ItemsCollection.Clear();

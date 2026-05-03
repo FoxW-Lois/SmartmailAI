@@ -52,6 +52,7 @@
 							x:Uid="ButtonOk"
 							MinWidth="140"
 							Command="{x:Bind ViewModel.RestartApplicationCommand, Mode=OneWay}"
+							Foreground="White"
 							Style="{ThemeResource AccentButtonStyle}" />
 						<Button
 							x:Uid="ButtonCancel"

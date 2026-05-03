@@ -21,6 +21,8 @@ public sealed partial class Register_Page : Page
 
 		if (success)
 			Frame.Navigate(typeof(Login_Page));
+
+		// Pas besoin de gérer le else avec l'affichage d'un message d'erreur, car le ViewModel s'en occupe déjà avec ErrorMessage.
 	}
 
 	private void OnBackToLoginClicked(object sender, RoutedEventArgs e)

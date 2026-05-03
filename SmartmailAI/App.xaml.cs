@@ -1,15 +1,23 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+
+#if !DISABLE_XAML_GENERATED_MAIN
+using Microsoft.Extensions.Configuration;
+#endif
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Serilog;
+using SmartmailAI.Core.AppDbContext;
+using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Contracts.Services.Security;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.IRepository;
 using SmartmailAI.Core.Repository;
+using SmartmailAI.Core.Services.Addresses;
 using SmartmailAI.Core.Services.Security;
 
 namespace SmartmailAI;
@@ -162,6 +170,10 @@ public partial class App : Application
 
 				services.AddTransient<DetailsList_ViewModel>();
 				services.AddTransient<DetailsList_Page>();
+				// Pas besoin d'instancier en Transient DetailsList_StandardControl et DetailsList_NewMailControl car leur durées de vie sont gérées
+				// par leur page parente : DetailsList_Page
+				services.AddTransient<DetailsList_NewMailViewModel>();
+				services.AddTransient<DetailsList_StandardViewModel>();
 
 				#region Authentication/Register Pages
 
@@ -175,6 +187,16 @@ public partial class App : Application
 				services.AddTransient<Register_Page>();
 
 				#endregion Authentication/Register Pages
+
+				#region Addresses Pages
+
+				services.AddTransient<AddAddress_ViewModel>();
+				services.AddTransient<AddAddress_Page>();
+
+				services.AddTransient<AddressManagement_ViewModel>();
+				services.AddTransient<AddressManagement_Page>();
+
+				#endregion Addresses Pages
 
 				#region Settings Pages
 
@@ -222,8 +244,24 @@ public partial class App : Application
 
 				#endregion Services anti-phishing
 
-				services.AddTransient<IMailboxDataService, MailboxDataService>();
+				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
+				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
+
+				#region (Email) Addresses Service
+
+				services.AddSingleton<IAddressesRepository, AddressesRepository>();
+				services.AddSingleton<IAddressesService, AddressesService>();
+				services.AddSingleton<IGmailApiService, GmailApiService>();
+				services.AddSingleton<IGmailCredentialService, GmailCredentialService>();
+				services.AddSingleton<IGmailLogoutService, GmailLogoutService>();
+				services.AddSingleton<ITokenStore, GmailTokenStore>();
+				services.AddSingleton<IMailReaderService, MailReaderService>();
+				services.AddSingleton<IEmailRepository, EmailRepository>();
+				services.AddSingleton<IEmailsSyncService, EmailsSyncService>();
+				services.AddHttpClient();
+
+				#endregion (Email) Addresses Service
 
 				#region Services instantiation
 
@@ -239,11 +277,21 @@ public partial class App : Application
 
 				#region DbContext
 
-				//BDD gérant les comptes d'accès à l'application
+				// BDD gérant les comptes d'accès à l'application
 
 				var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailServerDB.db");
 
+				services.AddDbContextFactory<AppDbContext_Address>(options =>
+				{
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
 				services.AddDbContextFactory<AppDbContext_Account>(options =>
+				{
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
+				services.AddDbContextFactory<AppDbContext_Email>(options =>
 				{
 					options.UseSqlite($"Data Source={dbPath}");
 				});
