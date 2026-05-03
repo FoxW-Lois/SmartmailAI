@@ -53,7 +53,7 @@ public partial class VirusTotalService : IVirusTotalService, IDisposable
 
 	#region Interface publique
 
-	public async Task<IReadOnlyList<VirusTotalResult>> AnalyzeAttachmentsAsync(IList<string> fileNames)
+	public async Task<IReadOnlyList<VirusTotalResult>> AnalyzeAttachmentsAsync(List<string> fileNames)
 	{
 		if (fileNames is null || fileNames.Count == 0)
 			return [];
