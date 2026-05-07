@@ -261,6 +261,12 @@ public partial class App : Application
 				services.AddSingleton<IMailReaderService, MailReaderService>();
 				services.AddSingleton<IEmailRepository, EmailRepository>();
 				services.AddSingleton<IEmailsSyncService, EmailsSyncService>();
+
+				//services.AddSingleton<IOutlookApiService, OutlookApiService>();
+				//services.AddSingleton<IOutlookCredentialService, OutlookCredentialService>();
+				//services.AddSingleton<IOutlookLogoutService, OutlookLogoutService>();
+				//services.AddSingleton<IOutlookTokenStore, OutlookTokenStore>();
+
 				services.AddHttpClient();
 
 				#endregion (Email) Addresses Service
