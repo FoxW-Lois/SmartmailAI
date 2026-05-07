@@ -18,17 +18,17 @@
 
 ## Architecture
 Le projet s'organise autour de l'architecture/méthode de conception MVVM (Model–view–viewmodel). La solution SmartmailAI.sln comporte 3 sous-projets afin de séparer les responsabilités et de regrouper le code par types d'opérations :  
-	- SmartmailAI : Organise l'interface et l'expérience utilisateur (navigation, themes, langues, paramètres utilisateur...)  
-	- SmartmailAI.Core : Organise et regroupe toutes les opérations relatives à la gestion des données (credentials, base de données, état des emails...)  
-	- SmartmailAI.Infrastructure : Gère tout ce qui est relatif à l'écosystème WinUI3
+  - SmartmailAI : Organise l'interface et l'expérience utilisateur (navigation, themes, langues, paramètres utilisateur...)  
+  - SmartmailAI.Core : Organise et regroupe toutes les opérations relatives à la gestion des données (credentials, base de données, état des emails...)  
+  - SmartmailAI.Infrastructure : Gère tout ce qui est relatif à l'écosystème WinUI3
 
 <img width="645" height="512" alt="Schema_darchitecture_technique drawio" src="https://github.com/user-attachments/assets/443fd0b7-d741-4729-a01e-62ccc7d83ac0" />
 L'utilisateur de l'application va se connecter avec un compte et utiliser Google Authenticator pour la double authentification. Ensuite quand il va ajouter un mail, l'utilisateur utilisera un serveur SMTP ou l'API Google pour intégrer sa boite mail et ses mails correspondant pour les intégrer dans l'application. Les mails de l'utilisateur seront ensuite enregistrés dans la base de données SQLite. 
 Pour qu'un utilisateur puisse se connecter, il faut qu'une licence soit disponible, et ces informations concernant la licence seront enregistrées dans une base externe MariaDB. Celle-ci peut permettre de bloquer à distance l'utilisation de l'application si par exemple un client ne renouvelle pas sa licence, ou bien récupérer le package d'installation sans en avoir payé une.
   
 ## Sécurité et RGPD
-  - Double authentification
-  - Filtrage et détection de phishings
+  - Double authentification  
+  - Filtrage et détection de phishings  
   A VENIR : hashage + cryptage de toutes les données présentes en BDD
   
 ## Équipe
