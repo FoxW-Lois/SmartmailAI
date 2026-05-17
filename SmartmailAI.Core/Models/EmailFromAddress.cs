@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace SmartmailAI.Core.Models;
 
-public class EmailGmail
+public class EmailFromAddress
 {
 	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
 

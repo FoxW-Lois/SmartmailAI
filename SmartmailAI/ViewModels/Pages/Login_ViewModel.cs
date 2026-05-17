@@ -61,18 +61,24 @@ public partial class Login_ViewModel(IAuthService authService, IMailReaderServic
 		var listAccountsLinked = await _addressesService.GetListAccountsLinkedAsync();
 
 		foreach (var account in listAccountsLinked)
-			await LoadMessagesAsync(account);
+		{
+			if (account is AccountGmail accountGmail)
+				await LoadMessagesAsync(accountGmail: accountGmail);
+			else if (account is AccountOther accountOther)
+				await LoadMessagesAsync(accountOther: accountOther);
+		}
 
 		return (true, false, null);
 	}
 
-	public ObservableCollection<EmailGmail> Messages { get; } = [];
+	public ObservableCollection<EmailFromAddress> Messages { get; } = [];
 
-	public async Task LoadMessagesAsync(AccountGmail accountGmail)
+	public async Task LoadMessagesAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
 	{
 		Messages.Clear();
 
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail, false);
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(false, accountGmail: accountGmail,
+			accountOther: accountOther);
 
 		foreach (var email in mails)
 			await _emailRepository.AddEmailAsync(email);

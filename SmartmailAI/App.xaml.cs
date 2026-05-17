@@ -254,10 +254,17 @@ public partial class App : Application
 
 				services.AddSingleton<IAddressesRepository, AddressesRepository>();
 				services.AddSingleton<IAddressesService, AddressesService>();
+
 				services.AddSingleton<IGmailApiService, GmailApiService>();
 				services.AddSingleton<IGmailCredentialService, GmailCredentialService>();
 				services.AddSingleton<IGmailLogoutService, GmailLogoutService>();
 				services.AddSingleton<ITokenStore, GmailTokenStore>();
+
+				services.AddSingleton<IOtherCredentialService, OtherCredentialService>();
+				services.AddSingleton<IOtherProtocolService, OtherProtocolService>();
+				services.AddSingleton<IOtherLogoutService, OtherLogoutService>();
+				services.AddSingleton<IOtherTokenStore, OtherTokenStore>();
+
 				services.AddSingleton<IMailReaderService, MailReaderService>();
 				services.AddSingleton<IEmailRepository, EmailRepository>();
 				services.AddSingleton<IEmailsSyncService, EmailsSyncService>();

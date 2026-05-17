@@ -13,7 +13,7 @@
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
-		<ItemsRepeater ItemsSource="{x:Bind ViewModel.AccountsGmail, Mode=OneWay}">
+		<ItemsRepeater ItemsSource="{x:Bind ViewModel.AccountsMail, Mode=OneWay}">
 			<ItemsRepeater.ItemTemplate>
 				<DataTemplate x:DataType="models:AccountGmail">
 					<Border Margin="4" Padding="8">

@@ -44,7 +44,10 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 
 		try
 		{
-			await _mailReaderService.SaveAttachmentFromEmailAsync(account, args.emailGuid, args.attachment, args.destinationFolder);
+			if (account is AccountGmail gmailAccount)
+				await _mailReaderService.SaveAttachmentFromEmailAsync(args.emailGuid, args.attachment, args.destinationFolder, accountGmail: gmailAccount);
+			else if (account is AccountOther otherAccount)
+				await _mailReaderService.SaveAttachmentFromEmailAsync(args.emailGuid, args.attachment, args.destinationFolder, accountOther: otherAccount);
 		}
 		catch (Exception)
 		{

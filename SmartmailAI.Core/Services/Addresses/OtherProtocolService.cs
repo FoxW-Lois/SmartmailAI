@@ -1,0 +1,193 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using MailKit;
+using MailKit.Net.Imap;
+using MailKit.Net.Smtp;
+using MailKit.Search;
+using MailKit.Security;
+using MimeKit;
+using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Models;
+
+namespace SmartmailAI.Core.Services.Addresses;
+
+public class OtherProtocolService : IOtherProtocolService
+{
+	public async Task<string> GetEmailAddressAsync(AccountOther account)
+	{
+		return await Task.FromResult(account.Email);
+	}
+
+	public async Task<List<EmailFromAddress>> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress, int? maxResults = 50,
+		DateTime? lastConnection = null)
+	{
+		using var client = new ImapClient();
+
+		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
+
+		await client.AuthenticateAsync(account.UserName, account.Password);
+
+		var folder = await GetFolderAsync(client, mailboxType);
+
+		await folder.OpenAsync(FolderAccess.ReadOnly);
+
+		var query = SearchQuery.All;
+
+		if (lastConnection is not null && !isAddingNewAddress)
+		{
+			query = query.And(SearchQuery.DeliveredAfter(lastConnection.Value));
+		}
+
+		var uids = await folder.SearchAsync(query);
+
+		var latestUids = uids.TakeLast(maxResults ?? 50).Reverse().ToList();
+
+		var result = new List<EmailFromAddress>();
+
+		foreach (var uid in latestUids)
+		{
+			var message = await folder.GetMessageAsync(uid);
+
+			var from = message.From.Mailboxes.FirstOrDefault();
+			var to = message.To.Mailboxes.FirstOrDefault();
+
+			result.Add(new EmailFromAddress
+			{
+				Guid = uid.Id.ToString(),
+				FromEmail = from?.Address ?? string.Empty,
+				FromName = from?.Name,
+				ToEmail = to?.Address ?? string.Empty,
+				ToName = to?.Name,
+				Subject = message.Subject ?? string.Empty,
+				Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
+				Date = message.Date.LocalDateTime,
+				Owner = account.Email,
+				MailboxType = mailboxType,
+				Attachments = GetAttachments(message)
+			});
+		}
+
+		await client.DisconnectAsync(true);
+
+		return result;
+	}
+
+	public async Task SaveAttachmentAsync(AccountOther account, string messageId, MailAttachment attachment, string destinationFolder)
+	{
+		using var client = new ImapClient();
+
+		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
+
+		await client.AuthenticateAsync(account.UserName, account.Password);
+
+		await client.Inbox!.OpenAsync(FolderAccess.ReadOnly);
+
+		var uid = new UniqueId(uint.Parse(messageId));
+
+		var message = await client.Inbox.GetMessageAsync(uid);
+
+		var mimeAttachment = message.Attachments.OfType<MimePart>().FirstOrDefault(x => x.FileName == attachment.FileName);
+
+		if (mimeAttachment is null)
+			return;
+
+		var path = Path.Combine(destinationFolder, attachment.FileName);
+
+		await using var stream = File.Create(path);
+
+		await mimeAttachment.Content!.DecodeToAsync(stream);
+
+		attachment.FilePath = path;
+
+		await client.DisconnectAsync(true);
+	}
+
+	public async Task SendEmailAsync(AccountOther account, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null)
+	{
+		var message = CreateMimeMessage(account.Email, to, subject, body, attachments ?? []);
+
+		using var smtp = new SmtpClient();
+
+		await smtp.ConnectAsync(account.SmtpHost, account.SmtpPort, account.SmtpUseSsl
+			? SecureSocketOptions.SslOnConnect
+			: SecureSocketOptions.StartTls);
+
+		await smtp.AuthenticateAsync(account.UserName, account.Password);
+
+		await smtp.SendAsync(message);
+
+		await smtp.DisconnectAsync(true);
+	}
+
+	#region Helpers
+
+	private static async Task<IMailFolder> GetFolderAsync(ImapClient client, string mailboxType)
+	{
+		mailboxType = mailboxType.ToUpperInvariant();
+
+		if (mailboxType == "INBOX")
+			return client.Inbox!;
+
+		var personal = client.GetFolder(client.PersonalNamespaces[0]);
+
+		var folders = await personal.GetSubfoldersAsync(false);
+
+		return folders.FirstOrDefault(x => x.Name.Equals(mailboxType, StringComparison.OrdinalIgnoreCase)) ?? client.Inbox!;
+	}
+
+	private static List<MailAttachment> GetAttachments(MimeMessage message)
+	{
+		var result = new List<MailAttachment>();
+
+		foreach (var attachment in message.Attachments)
+		{
+			if (attachment is not MimePart part)
+				continue;
+
+			result.Add(new MailAttachment
+			{
+				FileName = part.FileName!,
+				MimeType = part.ContentType.MimeType,
+				FileSize = (ulong)(part.Content?.Stream?.Length ?? 0)
+			});
+		}
+
+		return result;
+	}
+
+	private static MimeMessage CreateMimeMessage(string from, string to, string subject, string body, IEnumerable<MailAttachment> attachments)
+	{
+		var message = new MimeMessage();
+
+		message.From.Add(MailboxAddress.Parse(from));
+
+		message.To.Add(MailboxAddress.Parse(to));
+
+		message.Subject = subject;
+
+		var builder = new BodyBuilder
+		{
+			TextBody = body
+		};
+
+		foreach (var attachment in attachments)
+		{
+			if (string.IsNullOrWhiteSpace(attachment.FilePath))
+				continue;
+
+			if (!File.Exists(attachment.FilePath))
+				continue;
+
+			builder.Attachments.Add(attachment.FilePath);
+		}
+
+		message.Body = builder.ToMessageBody();
+
+		return message;
+	}
+
+	#endregion Helpers
+}

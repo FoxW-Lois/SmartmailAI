@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.Messengers;
-using SmartmailAI.Core.Services.Addresses;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -63,32 +62,41 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		if (string.IsNullOrWhiteSpace(To) || string.IsNullOrWhiteSpace(Subject))
 			return;
 
-		var accountGmail = await _addressesService.GetAccountByEmailAsync(_from);
+		var accountMail = await _addressesService.GetAccountByEmailAsync(_from);
 
-		if (accountGmail is null)
+		if (accountMail is null)
 		{
 			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
 				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
 			return;
 		}
 
-		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail!);
+		if (accountMail is AccountGmail accountGmail)
+		{
+			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail!);
 
-		if (credential is null)
-		{
-			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
-			return;
-		}
+			if (credential is null)
+			{
+				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+					resourceLoader.GetString("Error_AccountUnfound_Gmail"));
+				return;
+			}
 
-		try
-		{
-			await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+			try
+			{
+				await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+			}
+			catch (Exception)
+			{
+				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+					resourceLoader.GetString("Error_EmailSendingFailed"));
+				return;
+			}
 		}
-		catch (Exception)
+		else if (accountMail is AccountOther accountOther)
 		{
-			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_EmailSendingFailed"));
+			// TODO : Gérer l'envoi d'emails pour SMTP/IMAP
+
 			return;
 		}
 

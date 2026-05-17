@@ -11,21 +11,21 @@ public class MappersToEmailDTOService : IMappersToEmailDTOService
 	{
 	}
 
-	public Email MapEmailGmailToEmail(EmailGmail emailGmail)
+	public Email MapEmailFromAddressToEmail(EmailFromAddress emailFromAddress)
 	{
 		return new Email
 		{
-			Guid = emailGmail.Guid,
-			SenderEmail = emailGmail.FromEmail,
-			SenderName = emailGmail.FromName ?? emailGmail.FromEmail,
-			ReceiverEmail = emailGmail.ToEmail,
-			ReceiverName = emailGmail.ToName,
-			Subject = emailGmail.Subject,
-			Content = emailGmail.Body,
-			DateSent = emailGmail.Date,
-			Owner = emailGmail.Owner,
-			Attachments = emailGmail.Attachments,
-			MailboxType = emailGmail.MailboxType switch
+			Guid = emailFromAddress.Guid,
+			SenderEmail = emailFromAddress.FromEmail,
+			SenderName = emailFromAddress.FromName ?? emailFromAddress.FromEmail,
+			ReceiverEmail = emailFromAddress.ToEmail,
+			ReceiverName = emailFromAddress.ToName,
+			Subject = emailFromAddress.Subject,
+			Content = emailFromAddress.Body,
+			DateSent = emailFromAddress.Date,
+			Owner = emailFromAddress.Owner,
+			Attachments = emailFromAddress.Attachments,
+			MailboxType = emailFromAddress.MailboxType switch
 			{
 				"Inbox" => MailboxType.Inbox,
 				"Sent" => MailboxType.Sent,
@@ -40,12 +40,12 @@ public class MappersToEmailDTOService : IMappersToEmailDTOService
 		};
 	}
 
-	public async Task<List<Email>> MapEmailGmailToEmail_List(List<EmailGmail> emailGmailList)
+	public async Task<List<Email>> MapEmailFromAddressToEmail_List(List<EmailFromAddress> emailFromAddressList)
 	{
 		List<Email> emailList = [];
-		foreach (var emailGmail in emailGmailList)
+		foreach (var emailFromAddress in emailFromAddressList)
 		{
-			var newEmail = MapEmailGmailToEmail(emailGmail);
+			var newEmail = MapEmailFromAddressToEmail(emailFromAddress);
 			emailList.Add(newEmail);
 		}
 

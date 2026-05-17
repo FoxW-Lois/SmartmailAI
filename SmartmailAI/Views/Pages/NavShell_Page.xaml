@@ -97,10 +97,10 @@
 
 				<NavigationViewItem
 					x:Uid="Shell_MailAddresses"
-					MenuItemsSource="{Binding AccountsGmail}"
+					MenuItemsSource="{Binding AccountsMail}"
 					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.MenuItems>
-						<DataTemplate x:DataType="models:AccountGmail">
+						<DataTemplate x:DataType="models:AccountMailBase">
 							<NavigationViewItem Content="{x:Bind Email}" Tag="{x:Bind}" />
 						</DataTemplate>
 					</NavigationViewItem.MenuItems>

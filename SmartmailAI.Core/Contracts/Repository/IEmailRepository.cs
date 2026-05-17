@@ -16,6 +16,6 @@ public interface IEmailRepository
 
 	Task DeleteEmailAsync(Email email);
 
-	// TODO: Mettre en paramètres : (AccountGmail? accountGmail, AccountOutlook? accountOutlook, AccountOther? accountOther)
-	Task DeleteAllEmailsAsync(AccountGmail accountGmail);
+	// TODO: Mettre en paramètres : (AccountOutlook? accountOutlook)
+	Task DeleteAllEmailsAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null);
 }

@@ -18,8 +18,18 @@ public class MailReaderService(IGmailCredentialService credentialService, IGmail
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
-	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(AccountGmail accountGmail, bool isAddingNewAddress)
+	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountGmail? accountGmail = null,
+		AccountOther? accountOther = null)
 	{
+		if (accountOther != null)
+		{
+			// TODO: Ajouter la récupéreation des emails pour IMAP/SMTP
+			return [];
+		}
+
+		if (accountGmail == null)
+			return [];
+
 		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
 		if (credential == null)
 			return [];
@@ -28,7 +38,7 @@ public class MailReaderService(IGmailCredentialService credentialService, IGmail
 		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
 
 		DateTime? lastConnection;
-		List<EmailGmail> rawEmailsList;
+		List<EmailFromAddress> rawEmailsList;
 		int numMails = 2;
 
 		if (currentAccount != null)
@@ -43,13 +53,23 @@ public class MailReaderService(IGmailCredentialService credentialService, IGmail
 			rawEmailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails));
 		}
 
-		List<Email> emailsList = await _mappersToEmailDTOService.MapEmailGmailToEmail_List(rawEmailsList);
+		List<Email> emailsList = await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmailsList);
 
 		return emailsList;
 	}
 
-	public async Task SaveAttachmentFromEmailAsync(AccountGmail accountGmail, string messageId, MailAttachment attachment, string destinationFolder)
+	public async Task SaveAttachmentFromEmailAsync(string messageId, MailAttachment attachment, string destinationFolder,
+		AccountGmail? accountGmail = null, AccountOther? accountOther = null)
 	{
+		if (accountOther != null)
+		{
+			// TODO: For other email providers, you would implement a different logic to fetch emails using IMAP/SMTP
+			return;
+		}
+
+		if (accountGmail == null)
+			return;
+
 		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
 		if (credential == null)
 			return;

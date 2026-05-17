@@ -406,12 +406,6 @@
   <data name="AddAddress_OtherChoice.Text" xml:space="preserve">
     <value>IMAP/SMTP :</value>
   </data>
-  <data name="Error_RecoveryEmailOAuth2Invalid" xml:space="preserve">
-    <value>The connection of the Gmail address to the application has failed. Please try again later.</value>
-  </data>
-  <data name="Error_RecoveryEmailOutlookInvalid" xml:space="preserve">
-    <value>The connection of the Outlook address to the application has failed. Please try again later.</value>
-  </data>
   <data name="Shell_AddressManagement.Content" xml:space="preserve">
     <value>Manage addresses</value>
   </data>
@@ -516,5 +510,29 @@
   </data>
   <data name="Email_Details_Security.Text" xml:space="preserve">
     <value>Security</value>
+  </data>
+  <data name="AddAddress_UserName.Header" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="AddAddress_ImapHost.Header" xml:space="preserve">
+    <value>IMAP Host</value>
+  </data>
+  <data name="AddAddress_SmtpHost.Header" xml:space="preserve">
+    <value>SMTP Host</value>
+  </data>
+  <data name="AddAddress_ImapPort.Header" xml:space="preserve">
+    <value>IMAP Port</value>
+  </data>
+  <data name="AddAddress_StmpPort.Header" xml:space="preserve">
+    <value>SMTP Port</value>
+  </data>
+  <data name="AddAddress_ImapUseSsl.Content" xml:space="preserve">
+    <value>Use SSL for IMAP</value>
+  </data>
+  <data name="AddAddress_SmtpUseSsl.Content" xml:space="preserve">
+    <value>Use SSL for SMTP</value>
+  </data>
+  <data name="Error_RecoveryMailInvalid" xml:space="preserve">
+    <value>The connection of the Mail address to the application has failed. Please try again later.</value>
   </data>
 </root>
