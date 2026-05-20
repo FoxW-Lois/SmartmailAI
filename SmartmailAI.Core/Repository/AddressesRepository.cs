@@ -27,36 +27,40 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 			.FirstOrDefaultAsync(a => a.Email == email);
 	}
 
-	public async Task AddAddressAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task AddAddressByGoogleAsync(AccountGmail accountGmail)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		if (accountGmail != null)
-		{
-			_context.AccountGmail.Add(accountGmail);
-		}
-
-		if (accountOther != null)
-		{
-			_context.AccountOther.Add(accountOther);
-		}
+		_context.AccountMailBase.Add(accountGmail);
 
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<bool> DeleteAddressAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task AddAddressByOtherAsync(AccountOther accountOther)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		if (accountGmail != null)
-		{
-			_context.AccountGmail.Remove(accountGmail);
-		}
+		_context.AccountMailBase.Add(accountOther);
 
-		if (accountOther != null)
-		{
-			_context.AccountOther.Remove(accountOther);
-		}
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task<bool> DeleteAddressByGoogleAsync(AccountGmail accountGmail)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		_context.AccountMailBase.Remove(accountGmail);
+
+		await _context.SaveChangesAsync();
+
+		return true;
+	}
+
+	public async Task<bool> DeleteAddressByOtherAsync(AccountOther accountOther)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		_context.AccountMailBase.Remove(accountOther);
 
 		await _context.SaveChangesAsync();
 
