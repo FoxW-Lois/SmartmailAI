@@ -481,8 +481,8 @@
   <data name="Error_AccountUnfound_Gmail" xml:space="preserve">
     <value>Gmail account unfound.</value>
   </data>
-  <data name="Error_AccountUnfound_SMTP_IMAP_POP3" xml:space="preserve">
-    <value>Email account (SMTP/IMAP/POP3) unfound.</value>
+  <data name="Error_AccountUnfound_Other" xml:space="preserve">
+    <value>Email account (via SMTP/IMAP) unfound.</value>
   </data>
   <data name="Error_AccountUnfound_Outlook" xml:space="preserve">
     <value>Outlook account unfound.</value>
@@ -521,7 +521,7 @@
     <value>SMTP Host</value>
   </data>
   <data name="AddAddress_ImapPort.Header" xml:space="preserve">
-    <value>IMAP Port</value>
+    <value>IMAP Port (587 or 465)</value>
   </data>
   <data name="AddAddress_StmpPort.Header" xml:space="preserve">
     <value>SMTP Port</value>
