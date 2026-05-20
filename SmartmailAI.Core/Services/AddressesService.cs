@@ -58,7 +58,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 			TokenStorageKey = userKey
 		};
 
-		await _addressRepository.AddAddressByGoogleAsync(account);
+		await _addressRepository.AddAddressAsync(accountGmail: account);
 		return (true, account, null);
 	}
 
@@ -99,7 +99,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 		// TODO: Faire en sorte de ne PAS conserver le password en bdd
 		account.Password = string.Empty;
 
-		await _addressRepository.AddAddressByOtherAsync(account);
+		await _addressRepository.AddAddressAsync(accountOther: account);
 		return (true, account, null);
 	}
 
@@ -108,7 +108,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 	{
 		await _gmailLogoutService.LogoutAsync(account);
 		await _emailRepository.DeleteAllEmailsAsync(accountGmail: account);
-		await _addressRepository.DeleteAddressByGoogleAsync(account);
+		await _addressRepository.DeleteAddressAsync(accountGmail: account);
 
 		return true;
 	}
@@ -117,7 +117,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 	{
 		await _otherLogoutService.LogoutAsync(account);
 		await _emailRepository.DeleteAllEmailsAsync(accountOther: account);
-		await _addressRepository.DeleteAddressByOtherAsync(account);
+		await _addressRepository.DeleteAddressAsync(accountOther: account);
 
 		return true;
 	}

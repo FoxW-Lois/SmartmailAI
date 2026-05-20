@@ -30,7 +30,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	private int _imapPort = 993;
 	private string _imapUseSsl = "true";
 	private string _smtpHost = string.Empty;
-	private int _smtpPort = 465; // 587 ou 465
+	private int _smtpPort = 587;
 	private string _smtpUseSsl = "true";
 
 	public string Email

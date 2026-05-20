@@ -524,7 +524,7 @@
     <value>Port IMAP</value>
   </data>
   <data name="AddAddress_StmpPort.Header" xml:space="preserve">
-    <value>Port SMTP (587 ou 465)</value>
+    <value>Port SMTP</value>
   </data>
   <data name="AddAddress_ImapUseSsl.Content" xml:space="preserve">
     <value>Utilisation du SSL pour IMAP</value>
