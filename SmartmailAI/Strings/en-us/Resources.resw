@@ -521,10 +521,10 @@
     <value>SMTP Host</value>
   </data>
   <data name="AddAddress_ImapPort.Header" xml:space="preserve">
-    <value>IMAP Port (587 or 465)</value>
+    <value>IMAP Port</value>
   </data>
-  <data name="AddAddress_StmpPort.Header" xml:space="preserve">
-    <value>SMTP Port</value>
+  <data name="AddAddress_SmtpPort.Header" xml:space="preserve">
+    <value>SMTP Port (587 or 465)</value>
   </data>
   <data name="AddAddress_ImapUseSsl.Content" xml:space="preserve">
     <value>Use SSL for IMAP</value>

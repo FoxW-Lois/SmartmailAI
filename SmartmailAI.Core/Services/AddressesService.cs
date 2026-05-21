@@ -92,10 +92,10 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 		if (!success)
 			return (false, null, null); // null en 3ème position car déjà traité en cas par défaut par l'appelant
 
-		// Stockage sécurisé du mot de passe
+		// Stockage sécurisé du mot de passe en local
 		await _otherTokenStore.SavePasswordAsync(account.TokenStorageKey, account.Password);
 
-		// TODO: Faire en sorte de ne PAS conserver le password en bdd
+		// Supprime le mot de passe entré afin de ne surtout PAS le conserver en bdd
 		account.Password = string.Empty;
 
 		await _addressRepository.AddAddressByOtherAsync(account);

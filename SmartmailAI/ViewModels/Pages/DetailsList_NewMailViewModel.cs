@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.Messengers;
+using SmartmailAI.Core.Services.Addresses;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -14,6 +15,9 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IAddressesService _addressesService;
 	private readonly IGmailApiService _gmailApiService;
 	private readonly IGmailCredentialService _gmailCredentialService;
+	private readonly IOtherProtocolService _otherProtocolService;
+	private readonly IOtherCredentialService _otherCredentialService;
+	private readonly IOtherTokenStore _otherTokenStore;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
@@ -21,11 +25,15 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	public bool HasAttachments => Attachments.Count > 0;
 
 	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
+		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
 		IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
 		_gmailCredentialService = gmailCredentialService;
+		_otherProtocolService = otherProtocolService;
+		_otherCredentialService = otherCredentialService;
+		_otherTokenStore = otherTokenStore;
 		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
@@ -95,9 +103,31 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		}
 		else if (accountMail is AccountOther accountOther)
 		{
-			// TODO : Gérer l'envoi d'emails pour SMTP/IMAP
+			string? password = await _otherTokenStore.GetPasswordAsync(accountOther.TokenStorageKey);
+			if (password == null) return;
 
-			return;
+			// On récupère le mot de passe stocké pour le compte et on le set dans l'accountOther pour pouvoir se connecter via IMAP/SMTP
+			accountOther.Password = password;
+
+			var success = await _otherCredentialService.ConnectAsync(accountOther);
+
+			if (!success)
+			{
+				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+					resourceLoader.GetString("Error_AccountUnfound_Other"));
+				return;
+			}
+
+			try
+			{
+				await _otherProtocolService.SendEmailAsync(accountOther, To, Subject, Body, Attachments);
+			}
+			catch (Exception)
+			{
+				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+					resourceLoader.GetString("Error_EmailSendingFailed"));
+				return;
+			}
 		}
 
 		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay

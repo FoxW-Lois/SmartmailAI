@@ -8,10 +8,8 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
-public class GmailCredentialService(ITokenStore tokenStore) : IGmailCredentialService
+public class GmailCredentialService() : IGmailCredentialService
 {
-	private readonly ITokenStore _tokenStore = tokenStore;
-
 	public async Task<UserCredential?> ConnectAsync(string userKey)
 	{
 		try

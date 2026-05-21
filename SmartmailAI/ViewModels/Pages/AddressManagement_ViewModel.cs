@@ -52,6 +52,7 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 			success = await _addressesService.RemoveGmailAccountAsync(accountGmail);
 		else if (accountOther != null)
 			success = await _addressesService.RemoveOtherAccountAsync(accountOther);
+		//TODO: ajouter un check accountOutlook != null
 
 		if (!success)
 		{

@@ -14,8 +14,10 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
-public class OtherProtocolService : IOtherProtocolService
+public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProtocolService
 {
+	private readonly IOtherTokenStore _otherTokenStore = otherTokenStore;
+
 	public async Task<string> GetEmailAddressAsync(AccountOther account)
 	{
 		return await Task.FromResult(account.Email);
@@ -28,10 +30,12 @@ public class OtherProtocolService : IOtherProtocolService
 
 		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
 
-		await client.AuthenticateAsync(account.UserName, account.Password);
+		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+		if (password == null) return [];
+
+		await client.AuthenticateAsync(account.UserName, password);
 
 		var folder = await GetFolderAsync(client, mailboxType);
-
 		await folder.OpenAsync(FolderAccess.ReadOnly);
 
 		var query = SearchQuery.All;
@@ -42,9 +46,7 @@ public class OtherProtocolService : IOtherProtocolService
 		}
 
 		var uids = await folder.SearchAsync(query);
-
 		var latestUids = uids.TakeLast(maxResults ?? 50).Reverse().ToList();
-
 		var result = new List<EmailFromAddress>();
 
 		foreach (var uid in latestUids)
@@ -81,14 +83,14 @@ public class OtherProtocolService : IOtherProtocolService
 
 		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
 
-		await client.AuthenticateAsync(account.UserName, account.Password);
+		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+		if (password == null) return;
 
+		await client.AuthenticateAsync(account.UserName, password);
 		await client.Inbox!.OpenAsync(FolderAccess.ReadOnly);
 
 		var uid = new UniqueId(uint.Parse(messageId));
-
 		var message = await client.Inbox.GetMessageAsync(uid);
-
 		var mimeAttachment = message.Attachments.OfType<MimePart>().FirstOrDefault(x => x.FileName == attachment.FileName);
 
 		if (mimeAttachment is null)
@@ -115,7 +117,10 @@ public class OtherProtocolService : IOtherProtocolService
 			? SecureSocketOptions.SslOnConnect
 			: SecureSocketOptions.StartTls);
 
-		await smtp.AuthenticateAsync(account.UserName, account.Password);
+		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+		if (password == null) return;
+
+		await smtp.AuthenticateAsync(account.UserName, password);
 
 		await smtp.SendAsync(message);
 
