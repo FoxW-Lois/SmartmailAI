@@ -15,6 +15,9 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IAddressesService _addressesService;
 	private readonly IGmailApiService _gmailApiService;
 	private readonly IGmailCredentialService _gmailCredentialService;
+	private readonly IOtherProtocolService _otherProtocolService;
+	private readonly IOtherCredentialService _otherCredentialService;
+	private readonly IOtherTokenStore _otherTokenStore;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
@@ -22,11 +25,15 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	public bool HasAttachments => Attachments.Count > 0;
 
 	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
+		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
 		IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
 		_gmailCredentialService = gmailCredentialService;
+		_otherProtocolService = otherProtocolService;
+		_otherCredentialService = otherCredentialService;
+		_otherTokenStore = otherTokenStore;
 		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
@@ -63,37 +70,88 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		if (string.IsNullOrWhiteSpace(To) || string.IsNullOrWhiteSpace(Subject))
 			return;
 
-		var accountGmail = await _addressesService.GetAccountByEmailAsync(_from);
+		var account = await _addressesService.GetAccountByEmailAsync(_from);
 
-		if (accountGmail is null)
+		if (account is null)
 		{
-			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
-			return;
-		}
-
-		var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail!);
-
-		if (credential is null)
-		{
-			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
+			await ShowErrorAsync("Error_AccountUnfound_Gmail");
 			return;
 		}
 
 		try
 		{
-			await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+			switch (account)
+			{
+				case AccountGmail gmailAccount:
+					await SendWithGmailAsync(gmailAccount);
+					break;
+
+				case AccountOther otherAccount:
+					await SendWithOtherAsync(otherAccount);
+					break;
+
+				default:
+					return;
+			}
+
+			// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
+			Discard();
 		}
 		catch (Exception)
 		{
-			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_EmailSendingFailed"));
+			await ShowErrorAsync("Error_EmailSendingFailed");
+		}
+	}
+
+	#region Sedding emails helpers
+
+	private async Task SendWithGmailAsync(AccountGmail account)
+	{
+		var credential = await _gmailCredentialService.GetCredentialAsync(account);
+
+		if (credential is null)
+		{
+			await ShowErrorAsync("Error_AccountUnfound_Gmail");
 			return;
 		}
 
-		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
-		Discard();
+		await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+	}
+
+	private async Task SendWithOtherAsync(AccountOther account)
+	{
+		var connected = await PrepareOtherAccountAsync(account);
+
+		if (!connected)
+		{
+			await ShowErrorAsync("Error_AccountUnfound_Other");
+			return;
+		}
+
+		await _otherProtocolService.SendEmailAsync(account, To, Subject, Body, Attachments);
+	}
+
+	#endregion Sedding emails helpers
+
+	#region Other account helpers
+
+	private async Task<bool> PrepareOtherAccountAsync(AccountOther account)
+	{
+		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+
+		if (password is null)
+			return false;
+
+		account.Password = password;
+
+		return await _otherCredentialService.ConnectAsync(account);
+	}
+
+	#endregion Other account helpers
+
+	private async Task ShowErrorAsync(string resourceKey)
+	{
+		await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"), resourceLoader.GetString(resourceKey));
 	}
 
 	[RelayCommand]

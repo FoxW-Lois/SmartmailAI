@@ -29,7 +29,7 @@ public class GmailApiService : IGmailApiService
 		return profile.EmailAddress;
 	}
 
-	public async Task<List<EmailGmail>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress, int? maxResults = 50,
+	public async Task<List<EmailFromAddress>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress, int? maxResults = 50,
 		DateTime? lastConnection = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer
@@ -54,7 +54,7 @@ public class GmailApiService : IGmailApiService
 		if (response.Messages == null)
 			return [];
 
-		var result = new List<EmailGmail>();
+		var result = new List<EmailFromAddress>();
 		string emailAddressOwner = await GetEmailAddressAsync(credential);
 
 		foreach (var msg in response.Messages)
@@ -64,7 +64,7 @@ public class GmailApiService : IGmailApiService
 			var (fromName, fromEmail) = ParseEmailAddress(GetHeader(full, "From"));
 			var (toName, toEmail) = ParseEmailAddress(GetHeader(full, "To"));
 
-			result.Add(new EmailGmail
+			result.Add(new EmailFromAddress
 			{
 				Guid = msg.Id,
 				FromEmail = fromEmail,

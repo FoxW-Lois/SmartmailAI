@@ -250,22 +250,29 @@ public partial class App : Application
 				services.AddTransient<IAccountRepository, AccountRepository>();
 				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
 
-				#region (Email) Addresses Service
+				#region (Email) Addresses Services
 
 				services.AddSingleton<IAddressesRepository, AddressesRepository>();
 				services.AddSingleton<IAddressesService, AddressesService>();
+
 				services.AddSingleton<IGmailApiService, GmailApiService>();
 				services.AddSingleton<IGmailCredentialService, GmailCredentialService>();
 				services.AddSingleton<IGmailLogoutService, GmailLogoutService>();
 				services.AddSingleton<ITokenStore, GmailTokenStore>();
+
+				services.AddSingleton<IOtherCredentialService, OtherCredentialService>();
+				services.AddSingleton<IOtherProtocolService, OtherProtocolService>();
+				services.AddSingleton<IOtherLogoutService, OtherLogoutService>();
+				services.AddSingleton<IOtherTokenStore, OtherTokenStore>();
+
 				services.AddSingleton<IMailReaderService, MailReaderService>();
 				services.AddSingleton<IEmailRepository, EmailRepository>();
 				services.AddSingleton<IEmailsSyncService, EmailsSyncService>();
 				services.AddHttpClient();
 
-				#endregion (Email) Addresses Service
+				#endregion (Email) Addresses Services
 
-				#region Services instantiation
+				#region Authentication Services
 
 				services.AddSingleton<IAuthService, AuthService>();
 				services.AddSingleton<ICryptoService, CryptoService>();
@@ -273,7 +280,7 @@ public partial class App : Application
 				services.AddSingleton<ITotpService, TotpService>();
 				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
 
-				#endregion Services instantiation
+				#endregion Authentication Services
 
 				#region DbContext
 

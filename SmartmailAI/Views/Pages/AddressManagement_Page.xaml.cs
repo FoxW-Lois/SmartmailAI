@@ -19,8 +19,8 @@ public sealed partial class AddressManagement_Page : Page
 	private async void OnAddressDeleteClicked(object sender, RoutedEventArgs e)
 	{
 		if (sender is not Button button) return;
-		if (button.CommandParameter is not AccountGmail accountGmail) return;
+		if (button.CommandParameter is not AccountGmail accountGmail || button.CommandParameter is not AccountOther accountOther) return;
 
-		await ViewModel.DeleteAddressAsync(accountGmail);
+		await ViewModel.DeleteAddressAsync(accountGmail: accountGmail, accountOther: accountOther);
 	}
 }

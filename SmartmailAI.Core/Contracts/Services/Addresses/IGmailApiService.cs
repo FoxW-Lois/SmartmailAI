@@ -10,7 +10,7 @@ public interface IGmailApiService
 {
 	Task<string> GetEmailAddressAsync(UserCredential credential);
 
-	Task<List<EmailGmail>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress, int? maxResults = 50,
+	Task<List<EmailFromAddress>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress, int? maxResults = 50,
 		DateTime? lastConnection = null);
 
 	Task SaveAttachmentAsync(UserCredential credential, string messageId, MailAttachment attachment, string destinationFolder);

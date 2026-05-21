@@ -75,7 +75,7 @@ public sealed partial class NavShell_Page : Page
 			NavigationFrame.BackStack.Clear();
 		}
 
-		if (args.InvokedItemContainer?.DataContext is AccountGmail account)
+		if (args.InvokedItemContainer?.DataContext is AccountMailBase account)
 		{
 			string addressAccount = account.Email;
 			_navigationService.NavigateTo(typeof(DetailsList_ViewModel).FullName!, addressAccount);

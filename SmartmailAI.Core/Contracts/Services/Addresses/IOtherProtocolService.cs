@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SmartmailAI.Core.Models;
+
+namespace SmartmailAI.Core.Contracts.Services.Addresses;
+
+public interface IOtherProtocolService
+{
+	Task<string> GetEmailAddressAsync(AccountOther account);
+
+	Task<List<EmailFromAddress>> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress, int? maxResults = 50,
+		DateTime? lastConnection = null);
+
+	Task SaveAttachmentAsync(AccountOther account, string messageId, MailAttachment attachment, string destinationFolder);
+
+	Task SendEmailAsync(AccountOther account, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null);
+}

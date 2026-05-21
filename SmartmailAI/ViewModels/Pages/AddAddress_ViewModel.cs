@@ -17,15 +17,77 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	private readonly IMailReaderService _mailReaderService = railReaderService;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IAuthService _authService = authService;
-	private string _email = string.Empty;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#region Champs pour la connexion SMTP/IMAP
+
+	// Déclaration avec valeur par défaut :
+	private string _email = string.Empty;
+	private string _userName = string.Empty;
+	private string _password = string.Empty;
+	private string _imapHost = string.Empty;
+	private int _imapPort = 993;
+	private string _imapUseSsl = "true";
+	private string _smtpHost = string.Empty;
+	private int _smtpPort = 465; // 587 ou 465
+	private string _smtpUseSsl = "true";
 
 	public string Email
 	{
 		get => _email;
 		set => SetProperty(ref _email, value);
 	}
+
+	public string UserName
+	{
+		get => _userName;
+		set => SetProperty(ref _userName, value);
+	}
+
+	public string Password
+	{
+		get => _password;
+		set => SetProperty(ref _password, value);
+	}
+
+	public string ImapHost
+	{
+		get => _imapHost;
+		set => SetProperty(ref _imapHost, value);
+	}
+
+	public int ImapPort
+	{
+		get => _imapPort;
+		set => SetProperty(ref _imapPort, value);
+	}
+
+	public string ImapUseSsl
+	{
+		get => _imapUseSsl;
+		set => SetProperty(ref _imapUseSsl, value);
+	}
+
+	public string SmtpHost
+	{
+		get => _smtpHost;
+		set => SetProperty(ref _smtpHost, value);
+	}
+
+	public int SmtpPort
+	{
+		get => _smtpPort;
+		set => SetProperty(ref _smtpPort, value);
+	}
+
+	public string SmtpUseSsl
+	{
+		get => _smtpUseSsl;
+		set => SetProperty(ref _smtpUseSsl, value);
+	}
+
+	#endregion Champs pour la connexion SMTP/IMAP
 
 	public string ErrorMessage
 	{
@@ -39,13 +101,17 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public ObservableCollection<EmailGmail> Messages { get; } = [];
+	public ObservableCollection<EmailFromAddress> Messages { get; } = [];
 
-	public async Task LoadMessagesAsync(AccountGmail accountGmail)
+	public async Task LoadMessagesAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
 	{
 		Messages.Clear();
 
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(accountGmail, true);
+		if (accountGmail == null && accountOther == null)
+			return;
+
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(true, accountGmail: accountGmail,
+			accountOther: accountOther);
 
 		foreach (var email in mails)
 			await _emailRepository.AddEmailAsync(email);
@@ -68,18 +134,18 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		}
 		else if (!success)
 		{
-			ErrorMessage = resourceLoader.GetString("Error_RecoveryEmailOAuth2Invalid");
+			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
 		}
 
 		if (accountGmail == null)
 		{
-			ErrorMessage = resourceLoader.GetString("Error_RecoveryEmailOAuth2Invalid");
+			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
-		await LoadMessagesAsync(accountGmail);
+		await LoadMessagesAsync(accountGmail: accountGmail);
 		return true;
 	}
 
@@ -92,7 +158,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 
 		if (!success)
 		{
-			ErrorMessage = resourceLoader.GetString("Error_RecoveryEmailOutlookInvalid");
+			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
 		}
 
@@ -100,20 +166,45 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		return true;
 	}
 
-	// TODO: ajouter méthode de connexion pour les autres types d'adresses (via IMAP/SMTP/POP3)
-	public async Task<bool> AddOtherAddressAsync(string password)
+	public async Task<bool> AddOtherAddressAsync(string userName, string password, string imapHost, int imapPort, bool imapUseSsl,
+		string smtpHost, int smtpPort, bool smtpUseSsl)
 	{
 		ErrorMessage = string.Empty;
 
-		bool success = await _addressesService.AddOtherAddressAsync();
-
-		if (!success)
+		AddOtherAddressRequest request = new()
 		{
-			ErrorMessage = resourceLoader.GetString("Error_EmailOrPasswordInvalid");
+			Email = Email,
+			UserName = userName,
+			Password = password,
+			ImapHost = imapHost,
+			ImapPort = imapPort,
+			ImapUseSsl = imapUseSsl,
+			SmtpHost = smtpHost,
+			SmtpPort = smtpPort,
+			SmtpUseSsl = smtpUseSsl
+		};
+
+		(bool success, AccountOther? accountOther, string? specificError) = await _addressesService.AddOtherAddressAsync(request);
+
+		if (!success && specificError == "Email_AlreadyExist")
+		{
+			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
+			return false;
+		}
+		else if (!success)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
+			return false;
+		}
+
+		if (accountOther == null)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
+		await LoadMessagesAsync(accountOther: accountOther);
 		return true;
 	}
 

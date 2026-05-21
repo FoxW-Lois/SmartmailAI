@@ -13,9 +13,9 @@
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
-		<ItemsRepeater ItemsSource="{x:Bind ViewModel.AccountsGmail, Mode=OneWay}">
+		<ItemsRepeater ItemsSource="{x:Bind ViewModel.AccountsMail, Mode=OneWay}">
 			<ItemsRepeater.ItemTemplate>
-				<DataTemplate x:DataType="models:AccountGmail">
+				<DataTemplate x:DataType="models:AccountMailBase">
 					<Border Margin="4" Padding="8">
 						<Grid HorizontalAlignment="Center" ColumnSpacing="52">
 							<Grid.ColumnDefinitions>

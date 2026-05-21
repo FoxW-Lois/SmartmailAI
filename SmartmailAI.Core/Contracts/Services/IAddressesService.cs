@@ -17,11 +17,13 @@ public interface IAddressesService
 
 	Task<bool> AddOutlookAsync();
 
-	Task<bool> AddOtherAddressAsync();
+	Task<(bool, AccountOther?, string?)> AddOtherAddressAsync(AddOtherAddressRequest request);
 
 	Task<bool> RemoveGmailAccountAsync(AccountGmail account);
 
-	Task<AccountGmail?> GetAccountByEmailAsync(string email);
+	Task<bool> RemoveOtherAccountAsync(AccountOther account);
 
-	Task<List<AccountGmail>> GetListAccountsLinkedAsync();
+	Task<AccountMailBase?> GetAccountByEmailAsync(string email);
+
+	Task<List<AccountMailBase>> GetListAccountsLinkedAsync();
 }

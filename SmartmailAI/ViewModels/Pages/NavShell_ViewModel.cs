@@ -14,7 +14,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	public partial object? Selected { get; set; }
 
 	[ObservableProperty]
-	private ObservableCollection<AccountGmail> accountsGmail = [];
+	private ObservableCollection<AccountMailBase> accountsMail = [];
 
 	#region Interfaces declaration
 
@@ -126,10 +126,10 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	{
 		var accounts = await _addressesRepository.GetAllAddressesAsync();
 
-		AccountsGmail.Clear();
+		AccountsMail.Clear();
 
 		foreach (var account in accounts)
-			AccountsGmail.Add(account);
+			AccountsMail.Add(account);
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées

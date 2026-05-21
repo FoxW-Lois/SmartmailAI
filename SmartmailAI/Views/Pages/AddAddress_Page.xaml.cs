@@ -17,11 +17,12 @@ public sealed partial class AddAddress_Page : Page
 
 	private async void OnAddClicked(object sender, RoutedEventArgs e)
 	{
-		bool success = await ViewModel.AddOtherAddressAsync(PasswordBox.Password);
+		bool success = await ViewModel.AddOtherAddressAsync(ViewModel.UserName, ViewModel.Password, ViewModel.ImapHost, ViewModel.ImapPort,
+			bool.Parse(ViewModel.ImapUseSsl), ViewModel.SmtpHost, ViewModel.SmtpPort, bool.Parse(ViewModel.SmtpUseSsl));
 
 		if (success)
 		{
-			Frame.Navigate(typeof(DetailsList_Page));
+			Frame.Navigate(typeof(AddressManagement_Page));
 			// Nettoie l'historique de navigation
 			Frame.BackStack.Clear();
 		}

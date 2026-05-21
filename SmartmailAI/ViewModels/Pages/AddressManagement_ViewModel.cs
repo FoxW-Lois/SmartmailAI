@@ -15,7 +15,7 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 	private readonly ResourceLoader resourceLoader = new();
 
 	[ObservableProperty]
-	private ObservableCollection<AccountGmail> accountsGmail = [];
+	private ObservableCollection<AccountMailBase> accountsMail = [];
 
 	public string ErrorMessage
 	{
@@ -39,14 +39,20 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 	public async Task LoadAddressesAsync()
 	{
 		var result = await _addressRepository.GetAllAddressesAsync();
-		AccountsGmail = new ObservableCollection<AccountGmail>(result);
+		AccountsMail = new ObservableCollection<AccountMailBase>(result);
 	}
 
-	public async Task DeleteAddressAsync(AccountGmail accountGmail)
+	public async Task DeleteAddressAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
 	{
 		ErrorMessage = string.Empty;
 
-		bool success = await _addressesService.RemoveGmailAccountAsync(accountGmail);
+		bool success = false;
+
+		if (accountGmail != null)
+			success = await _addressesService.RemoveGmailAccountAsync(accountGmail);
+		else if (accountOther != null)
+			success = await _addressesService.RemoveOtherAccountAsync(accountOther);
+		//TODO: ajouter un check accountOutlook != null
 
 		if (!success)
 		{
@@ -54,7 +60,11 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 			return;
 		}
 
-		AccountsGmail.Remove(accountGmail);
+		if (accountGmail != null)
+			AccountsMail.Remove(accountGmail);
+		else if (accountOther != null)
+			AccountsMail.Remove(accountOther);
+
 		await _addressesService.RefreshAddressesListAsync();
 
 		// Le 3ème paramètre (true) nettoie l'historique de navigation

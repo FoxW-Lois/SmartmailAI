@@ -6,7 +6,7 @@ namespace SmartmailAI.Core.Contracts.Services;
 
 public interface IMappersToEmailDTOService
 {
-	Email MapEmailGmailToEmail(EmailGmail emailGmail);
+	Email MapEmailFromAddressToEmail(EmailFromAddress emailFromAddress);
 
-	Task<List<Email>> MapEmailGmailToEmail_List(List<EmailGmail> emailGmailList);
+	Task<List<Email>> MapEmailFromAddressToEmail_List(List<EmailFromAddress> emailFromAddressList);
 }
