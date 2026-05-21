@@ -70,68 +70,88 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		if (string.IsNullOrWhiteSpace(To) || string.IsNullOrWhiteSpace(Subject))
 			return;
 
-		var accountMail = await _addressesService.GetAccountByEmailAsync(_from);
+		var account = await _addressesService.GetAccountByEmailAsync(_from);
 
-		if (accountMail is null)
+		if (account is null)
 		{
-			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_AccountUnfound_Gmail"));
+			await ShowErrorAsync("Error_AccountUnfound_Gmail");
 			return;
 		}
 
-		if (accountMail is AccountGmail accountGmail)
+		try
 		{
-			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail!);
+			switch (account)
+			{
+				case AccountGmail gmailAccount:
+					await SendWithGmailAsync(gmailAccount);
+					break;
 
-			if (credential is null)
-			{
-				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-					resourceLoader.GetString("Error_AccountUnfound_Gmail"));
-				return;
+				case AccountOther otherAccount:
+					await SendWithOtherAsync(otherAccount);
+					break;
+
+				default:
+					return;
 			}
 
-			try
-			{
-				await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
-			}
-			catch (Exception)
-			{
-				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-					resourceLoader.GetString("Error_EmailSendingFailed"));
-				return;
-			}
+			// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
+			Discard();
 		}
-		else if (accountMail is AccountOther accountOther)
+		catch (Exception)
 		{
-			string? password = await _otherTokenStore.GetPasswordAsync(accountOther.TokenStorageKey);
-			if (password == null) return;
+			await ShowErrorAsync("Error_EmailSendingFailed");
+		}
+	}
 
-			// On récupère le mot de passe stocké pour le compte et on le set dans l'accountOther pour pouvoir se connecter via IMAP/SMTP
-			accountOther.Password = password;
+	#region Sedding emails helpers
 
-			var success = await _otherCredentialService.ConnectAsync(accountOther);
+	private async Task SendWithGmailAsync(AccountGmail account)
+	{
+		var credential = await _gmailCredentialService.GetCredentialAsync(account);
 
-			if (!success)
-			{
-				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-					resourceLoader.GetString("Error_AccountUnfound_Other"));
-				return;
-			}
-
-			try
-			{
-				await _otherProtocolService.SendEmailAsync(accountOther, To, Subject, Body, Attachments);
-			}
-			catch (Exception)
-			{
-				await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-					resourceLoader.GetString("Error_EmailSendingFailed"));
-				return;
-			}
+		if (credential is null)
+		{
+			await ShowErrorAsync("Error_AccountUnfound_Gmail");
+			return;
 		}
 
-		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
-		Discard();
+		await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+	}
+
+	private async Task SendWithOtherAsync(AccountOther account)
+	{
+		var connected = await PrepareOtherAccountAsync(account);
+
+		if (!connected)
+		{
+			await ShowErrorAsync("Error_AccountUnfound_Other");
+			return;
+		}
+
+		await _otherProtocolService.SendEmailAsync(account, To, Subject, Body, Attachments);
+	}
+
+	#endregion Sedding emails helpers
+
+	#region Other account helpers
+
+	private async Task<bool> PrepareOtherAccountAsync(AccountOther account)
+	{
+		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+
+		if (password is null)
+			return false;
+
+		account.Password = password;
+
+		return await _otherCredentialService.ConnectAsync(account);
+	}
+
+	#endregion Other account helpers
+
+	private async Task ShowErrorAsync(string resourceKey)
+	{
+		await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"), resourceLoader.GetString(resourceKey));
 	}
 
 	[RelayCommand]

@@ -27,95 +27,110 @@ public class MailReaderService(IGmailCredentialService gmailCredentialService, I
 	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountGmail? accountGmail = null,
 		AccountOther? accountOther = null)
 	{
-		List<Email> emailsList = [];
-		DateTime? lastConnection;
-		List<EmailFromAddress> rawEmailsList;
-		int numMails = 2;
+		const int NumMails = 2;
 
-		if (accountGmail != null)
-		{
-			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
-			if (credential == null)
-				return [];
+		var lastConnection = await GetCurrentAccountLastConnectionAsync();
 
-			string currentAccountLogin = _authService.CurrentAccountLogin;
-			var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
+		List<EmailFromAddress> rawEmails;
 
-			if (currentAccount != null)
-			{
-				lastConnection = currentAccount.LastConnection;
-				rawEmailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails, lastConnection);
-				rawEmailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails, lastConnection));
-			}
-			else
-			{
-				rawEmailsList = await _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails);
-				rawEmailsList.AddRange(await _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails));
-			}
+		if (accountGmail is not null)
+			rawEmails = await GetGmailMessagesAsync(accountGmail, isAddingNewAddress, NumMails, lastConnection);
+		else if (accountOther is not null)
+			rawEmails = await GetOtherMessagesAsync(accountOther, isAddingNewAddress, NumMails, lastConnection);
+		else
+			return [];
 
-			emailsList = await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmailsList);
-		}
-		else if (accountOther != null)
-		{
-			string? password = await _otherTokenStore.GetPasswordAsync(accountOther.TokenStorageKey);
-			if (password == null) return [];
-
-			// On récupère le mot de passe stocké pour le compte et on le set dans l'accountOther pour pouvoir se connecter via IMAP/SMTP
-			accountOther.Password = password;
-
-			var success = await _otherCredentialService.ConnectAsync(accountOther);
-			if (!success)
-				return [];
-
-			string currentAccountLogin = _authService.CurrentAccountLogin;
-			var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
-
-			if (currentAccount != null)
-			{
-				lastConnection = currentAccount.LastConnection;
-				rawEmailsList = await _otherProtocolService.GetLastMessagesAsync(accountOther, "Inbox", isAddingNewAddress, numMails, lastConnection);
-				rawEmailsList.AddRange(await _otherProtocolService.GetLastMessagesAsync(accountOther, "Sent", isAddingNewAddress, numMails, lastConnection));
-			}
-			else
-			{
-				rawEmailsList = await _otherProtocolService.GetLastMessagesAsync(accountOther, "Inbox", isAddingNewAddress, numMails);
-				rawEmailsList.AddRange(await _otherProtocolService.GetLastMessagesAsync(accountOther, "Sent", isAddingNewAddress, numMails));
-			}
-
-			emailsList = await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmailsList);
-		}
-
-		return emailsList;
+		return await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmails);
 	}
+
+	#region Getting emails helpers
+
+	private async Task<List<EmailFromAddress>> GetGmailMessagesAsync(AccountGmail account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
+	{
+		var credential = await _gmailCredentialService.GetCredentialAsync(account);
+
+		if (credential is null)
+			return [];
+
+		var inboxTask = _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails,
+			lastConnection);
+
+		var sentTask = _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails,
+			lastConnection);
+
+		await Task.WhenAll(inboxTask, sentTask);
+
+		return [.. await inboxTask, .. await sentTask];
+	}
+
+	private async Task<List<EmailFromAddress>> GetOtherMessagesAsync(AccountOther account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
+	{
+		var connected = await PrepareOtherAccountAsync(account);
+
+		if (!connected)
+			return [];
+
+		var inboxTask = _otherProtocolService.GetLastMessagesAsync(account, "Inbox", isAddingNewAddress, numMails,
+			lastConnection);
+
+		var sentTask = _otherProtocolService.GetLastMessagesAsync(account, "Sent", isAddingNewAddress, numMails,
+			lastConnection);
+
+		await Task.WhenAll(inboxTask, sentTask);
+
+		return [.. await inboxTask, .. await sentTask];
+	}
+
+	#endregion Getting emails helpers
 
 	public async Task SaveAttachmentFromEmailAsync(string messageId, MailAttachment attachment, string destinationFolder,
 		AccountGmail? accountGmail = null, AccountOther? accountOther = null)
 	{
-		if (accountGmail != null)
+		if (accountGmail is not null)
 		{
 			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
-			if (credential == null)
+
+			if (credential is null)
 				return;
 
 			await _gmailApiService.SaveAttachmentAsync(credential, messageId, attachment, destinationFolder);
-		}
-
-		if (accountOther != null)
-		{
-			string? password = await _otherTokenStore.GetPasswordAsync(accountOther.TokenStorageKey);
-			if (password == null) return;
-
-			// On récupère le mot de passe stocké pour le compte et on le set dans l'accountOther pour pouvoir se connecter via IMAP/SMTP
-			accountOther.Password = password;
-
-			var success = await _otherCredentialService.ConnectAsync(accountOther);
-
-			if (!success)
-				return;
-
-			await _otherProtocolService.SaveAttachmentAsync(accountOther, messageId, attachment, destinationFolder);
 
 			return;
 		}
+
+		if (accountOther is not null)
+		{
+			var connected = await PrepareOtherAccountAsync(accountOther);
+
+			if (!connected)
+				return;
+
+			await _otherProtocolService.SaveAttachmentAsync(accountOther, messageId, attachment, destinationFolder);
+		}
 	}
+
+	#region Other account helpers
+
+	private async Task<bool> PrepareOtherAccountAsync(AccountOther account)
+	{
+		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+
+		if (password is null)
+			return false;
+
+		account.Password = password;
+
+		return await _otherCredentialService.ConnectAsync(account);
+	}
+
+	private async Task<DateTime?> GetCurrentAccountLastConnectionAsync()
+	{
+		string currentAccountLogin = _authService.CurrentAccountLogin;
+
+		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
+
+		return currentAccount?.LastConnection;
+	}
+
+	#endregion Other account helpers
 }
