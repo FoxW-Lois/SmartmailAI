@@ -139,5 +139,15 @@ public class Email
 		}
 	}
 
+	[NotMapped]
+	public bool IsHtmlContent => !string.IsNullOrEmpty(Content) &&
+		(Content.Contains("<html", StringComparison.OrdinalIgnoreCase)
+		|| Content.Contains("<body", StringComparison.OrdinalIgnoreCase)
+		|| Content.Contains("<div", StringComparison.OrdinalIgnoreCase)
+		|| Content.Contains("<table", StringComparison.OrdinalIgnoreCase)
+		|| Content.Contains("<p", StringComparison.OrdinalIgnoreCase)
+		|| Content.Contains("<span", StringComparison.OrdinalIgnoreCase)
+		);
+
 	#endregion Propriétés dédiées à l'affichage
 }

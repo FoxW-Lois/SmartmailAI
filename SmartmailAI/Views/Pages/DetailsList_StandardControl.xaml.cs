@@ -8,6 +8,7 @@ namespace SmartmailAI.Views.Pages;
 public sealed partial class DetailsList_StandardControl : UserControl
 {
 	public DetailsList_StandardViewModel ViewModel { get; }
+	private string? _lastRenderedEmail;
 
 	public DetailsList_StandardControl()
 	{
@@ -27,10 +28,51 @@ public sealed partial class DetailsList_StandardControl : UserControl
 
 	private static void OnDetailsListMenuItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
-		if (d is DetailsList_StandardControl control)
+		if (d is DetailsList_StandardControl control && e.NewValue is Email email)
 		{
 			control.ForegroundElement.ChangeView(0, 0, 1);
+
+			control.DispatcherQueue.TryEnqueue(async () =>
+			{
+				await control.RenderEmailAsync(email);
+			});
 		}
+	}
+
+	private async Task RenderEmailAsync(Email email)
+	{
+		if (!email.IsHtmlContent)
+			return;
+
+		if (_lastRenderedEmail == email.Content)
+			return;
+
+		_lastRenderedEmail = email.Content;
+
+		await MailWebView.EnsureCoreWebView2Async();
+
+		MailWebView.NavigateToString(WrapHtml(email.Content!));
+	}
+
+	private static string WrapHtml(string html)
+	{
+		return $@"
+		<!DOCTYPE html>
+		<html>
+		<head>
+		<meta charset='utf-8'>
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<style>
+		body {{
+			font-family: Segoe UI;
+			margin: 12px;
+		}}
+		</style>
+		</head>
+		<body>
+		{html}
+		</body>
+		</html>";
 	}
 
 	private async void OnAttachmentClick(object sender, RoutedEventArgs e)

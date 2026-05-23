@@ -8,6 +8,7 @@
 			<!--  Converters  -->
 			<styles:BoolToFontWeightConverter x:Key="BoolToFontWeight" />
 			<styles:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+			<styles:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
 			<ResourceDictionary.MergedDictionaries>
 				<!--  Note: Don't include this in other resource dictionaries!  -->
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />

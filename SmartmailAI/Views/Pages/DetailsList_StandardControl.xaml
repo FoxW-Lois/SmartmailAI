@@ -12,7 +12,7 @@
 		HorizontalAlignment="Stretch"
 		IsTabStop="True"
 		VerticalScrollMode="Enabled">
-		<StackPanel HorizontalAlignment="Left">
+		<StackPanel x:Name="RootStackPannel" HorizontalAlignment="Left">
 			<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
 				<Ellipse Width="36" Height="36">
 					<Ellipse.Fill>
@@ -73,7 +73,14 @@
 				<TextBlock
 					Margin="{StaticResource LargeTopMargin}"
 					Style="{StaticResource DetailBodyStyle}"
-					Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}" />
+					Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsHtmlContent, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+				<WebView2
+					x:Name="MailWebView"
+					Width="{Binding ElementName=RootStackPannel, Path=ActualWidth}"
+					Height="{Binding ElementName=RootStackPannel, Path=ActualHeight}"
+					Margin="{StaticResource LargeTopMargin}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsHtmlContent, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
 				<TextBlock
 					x:Uid="Email_Details_Attachments"
