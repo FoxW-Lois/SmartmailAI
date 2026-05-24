@@ -55,15 +55,19 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 			var message = await folder.GetMessageAsync(uid);
 
 			var from = message.From.Mailboxes.FirstOrDefault();
-			var to = message.To.Mailboxes.FirstOrDefault();
+			var to = message.To.Mailboxes;
+			var Cc = message.Cc.Mailboxes;
+			var Bcc = message.Bcc.Mailboxes;
 
 			result.Add(new EmailFromAddress
 			{
 				Guid = uid.Id.ToString(),
 				FromEmail = from?.Address ?? string.Empty,
 				FromName = from?.Name,
-				ToEmail = to?.Address ?? string.Empty,
-				ToName = to?.Name,
+				ToEmail = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Address)),
+				ToName = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Name!)),
+				Cc = MailAddressParserHelper.FormatStringAddresses(Cc.Select(m => m.Address)),
+				Bcc = MailAddressParserHelper.FormatStringAddresses(Bcc.Select(m => m.Address)),
 				Subject = message.Subject ?? string.Empty,
 				Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
 				Date = message.Date.LocalDateTime,

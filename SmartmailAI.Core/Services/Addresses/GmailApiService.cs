@@ -63,15 +63,17 @@ public class GmailApiService : IGmailApiService
 			var full = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
 
 			var (fromName, fromEmail) = ParseEmailAddress(GetHeader(full, "From"));
-			var (toName, toEmail) = ParseEmailAddress(GetHeader(full, "To"));
+			var (toName, toEmail) = ParseListEmailsAddresses(GetHeader(full, "To"));
 
 			result.Add(new EmailFromAddress
 			{
 				Guid = msg.Id,
 				FromEmail = fromEmail,
 				FromName = fromName,
-				ToEmail = toEmail,
-				ToName = toName,
+				ToEmail = MailAddressParserHelper.FormatStringAddresses(toEmail),
+				ToName = MailAddressParserHelper.FormatStringAddresses(toName),
+				Cc = GetHeader(full, "Cc"),
+				Bcc = GetHeader(full, "Bcc"),
 				Subject = GetHeader(full, "Subject"),
 				Body = GetMessageBody(full),
 				Date = GetMessageDate(full),
@@ -216,6 +218,32 @@ public class GmailApiService : IGmailApiService
 		{
 			// Fallback si format non standard
 			return (null, rawHeader);
+		}
+	}
+
+	private static (IEnumerable<string>? DisplayName, IEnumerable<string> Email) ParseListEmailsAddresses(string? rawHeader)
+	{
+		if (string.IsNullOrWhiteSpace(rawHeader))
+			return (null, []);
+
+		try
+		{
+			var collection = new MailAddressCollection { rawHeader };
+
+			var displayNames = collection
+				.Select(x => string.IsNullOrWhiteSpace(x.DisplayName) ? null : x.DisplayName)
+				.Where(x => x is not null)!
+				.Cast<string>()
+				.ToList();
+
+			var emails = collection.Select(x => x.Address).ToList();
+
+			return (displayNames.Count > 0 ? displayNames : null, emails);
+		}
+		catch
+		{
+			// Fallback si format non standard
+			return (null, [rawHeader]);
 		}
 	}
 

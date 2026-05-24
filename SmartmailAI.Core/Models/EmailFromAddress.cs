@@ -16,6 +16,8 @@ public class EmailFromAddress
 	[Column("FromName")] public string? FromName { get; init; }
 	[Column("ToEmail")] public string ToEmail { get; init; } = default!;
 	[Column("ToName")] public string? ToName { get; init; }
+	[Column("Cc")] public string? Cc { get; init; }
+	[Column("Bcc")] public string? Bcc { get; init; }
 
 	[Column("Subject")] public string Subject { get; init; } = default!;
 	[Column("Body")] public string Body { get; init; } = default!;

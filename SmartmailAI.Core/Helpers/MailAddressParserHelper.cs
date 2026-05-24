@@ -24,4 +24,9 @@ public static class MailAddressParserHelper
 
 		return input.Split([',', ';', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 	}
+
+	public static string FormatStringAddresses(IEnumerable<string>? addresses)
+	{
+		return string.Join(", ", addresses ?? []);
+	}
 }

@@ -42,6 +42,24 @@
 				</TextBlock>
 
 				<TextBlock
+					x:Uid="CcTextBlock"
+					Margin="{StaticResource MediumTopMargin}"
+					Style="{StaticResource DetailSubTitleStyle}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.HasCc, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Visibility="{x:Bind DetailsListMenuItem_Email.HasCc, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+					<Run Text="{x:Bind DetailsListMenuItem_Email.Cc, Mode=OneWay}" />
+				</TextBlock>
+
+				<TextBlock
+					x:Uid="BccTextBlock"
+					Margin="{StaticResource MediumTopMargin}"
+					Style="{StaticResource DetailSubTitleStyle}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.HasBcc, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Visibility="{x:Bind DetailsListMenuItem_Email.HasBcc, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+					<Run Text="{x:Bind DetailsListMenuItem_Email.Bcc, Mode=OneWay}" />
+				</TextBlock>
+
+				<TextBlock
 					x:Uid="Email_Details_DateSent"
 					Margin="{StaticResource MediumTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"

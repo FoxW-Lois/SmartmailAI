@@ -23,6 +23,11 @@ public class Email
 	[Column("ReceiverName")] public string? ReceiverName { get; set; }
 	[NotMapped] public Uri? ReceiverProfileImage { get; set; }
 
+	[Column("Cc")] public string? Cc { get; init; }
+	[Column("Bcc")] public string? Bcc { get; init; }
+	[NotMapped] public bool HasCc => !string.IsNullOrWhiteSpace(Cc);
+	[NotMapped] public bool HasBcc => !string.IsNullOrWhiteSpace(Bcc);
+
 	[Column("Subject")] public string? Subject { get; set; }
 	[Column("Content")] public string? Content { get; set; }
 	[Column("Owner")] public string Owner { get; set; } = default!;

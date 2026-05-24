@@ -20,6 +20,8 @@ public class MappersToEmailDTOService : IMappersToEmailDTOService
 			SenderName = emailFromAddress.FromName ?? emailFromAddress.FromEmail,
 			ReceiverEmail = emailFromAddress.ToEmail,
 			ReceiverName = emailFromAddress.ToName,
+			Cc = emailFromAddress.Cc,
+			Bcc = emailFromAddress.Bcc,
 			Subject = emailFromAddress.Subject,
 			Content = emailFromAddress.Body,
 			DateSent = emailFromAddress.Date,
