@@ -61,6 +61,9 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private string _body = string.Empty;
 
 	[ObservableProperty]
+	private bool _isCcVisible;
+
+	[ObservableProperty]
 	private bool _isBccVisible;
 
 	[RelayCommand]
@@ -114,7 +117,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 			return;
 		}
 
-		await _gmailApiService.SendEmailAsync(credential, To, Subject, Body, Attachments);
+		await _gmailApiService.SendEmailAsync(credential, MailAddressParserHelper.ParseStringAddresses(To), Subject, Body, Attachments,
+			MailAddressParserHelper.ParseStringAddresses(Cc), MailAddressParserHelper.ParseStringAddresses(Bcc));
 	}
 
 	private async Task SendWithOtherAsync(AccountOther account)
@@ -127,7 +131,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 			return;
 		}
 
-		await _otherProtocolService.SendEmailAsync(account, To, Subject, Body, Attachments);
+		await _otherProtocolService.SendEmailAsync(account, MailAddressParserHelper.ParseStringAddresses(To), Subject, Body, Attachments,
+			MailAddressParserHelper.ParseStringAddresses(Cc), MailAddressParserHelper.ParseStringAddresses(Bcc));
 	}
 
 	#endregion Sedding emails helpers
@@ -162,10 +167,16 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	}
 
 	[RelayCommand]
-	private void Expand()
+	private static void Expand()
 	{
 		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay en taille maximale
 		WeakReferenceMessenger.Default.Send(new ToggleExpandComposeMessage());
+	}
+
+	[RelayCommand]
+	private void ToggleCc()
+	{
+		IsCcVisible = !IsCcVisible;
 	}
 
 	[RelayCommand]
@@ -181,6 +192,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		Bcc = string.Empty;
 		Subject = string.Empty;
 		Body = string.Empty;
+		IsCcVisible = false;
 		IsBccVisible = false;
 	}
 

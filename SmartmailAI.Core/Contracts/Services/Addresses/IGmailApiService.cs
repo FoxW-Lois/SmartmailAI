@@ -15,5 +15,6 @@ public interface IGmailApiService
 
 	Task SaveAttachmentAsync(UserCredential credential, string messageId, MailAttachment attachment, string destinationFolder);
 
-	Task SendEmailAsync(UserCredential credential, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null);
+	Task SendEmailAsync(UserCredential credential, IEnumerable<string> to, string subject, string body, IEnumerable<MailAttachment>? attachments = null,
+		IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
 }

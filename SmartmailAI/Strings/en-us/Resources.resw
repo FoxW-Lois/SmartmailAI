@@ -535,4 +535,10 @@
   <data name="Error_RecoveryMailInvalid" xml:space="preserve">
     <value>The connection of the Mail address to the application has failed. Please try again later.</value>
   </data>
+  <data name="ButtonCc.Content" xml:space="preserve">
+    <value>Cc</value>
+  </data>
+  <data name="BccTextBlock.Text" xml:space="preserve">
+    <value>Bcc</value>
+  </data>
 </root>

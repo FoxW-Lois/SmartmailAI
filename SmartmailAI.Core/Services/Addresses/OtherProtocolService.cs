@@ -10,6 +10,7 @@ using MailKit.Search;
 using MailKit.Security;
 using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Helpers;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
@@ -107,9 +108,11 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		await client.DisconnectAsync(true);
 	}
 
-	public async Task SendEmailAsync(AccountOther account, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null)
+	public async Task SendEmailAsync(AccountOther account, IEnumerable<string> to, string subject, string body,
+		IEnumerable<MailAttachment>? attachments = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null)
 	{
-		var message = CreateMimeMessage(account.Email, to, subject, body, attachments ?? []);
+		var message = MimeHelper.CreateMimeMessage(account.Email, to, subject, body, attachments ?? [],
+			cc ?? [], bcc ?? []);
 
 		using var smtp = new SmtpClient();
 
@@ -127,7 +130,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		await smtp.DisconnectAsync(true);
 	}
 
-	#region Helpers
+	#region Helpers internes au Service (envoi des emails)
 
 	private static async Task<IMailFolder> GetFolderAsync(ImapClient client, string mailboxType)
 	{
@@ -163,36 +166,5 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		return result;
 	}
 
-	private static MimeMessage CreateMimeMessage(string from, string to, string subject, string body, IEnumerable<MailAttachment> attachments)
-	{
-		var message = new MimeMessage();
-
-		message.From.Add(MailboxAddress.Parse(from));
-
-		message.To.Add(MailboxAddress.Parse(to));
-
-		message.Subject = subject;
-
-		var builder = new BodyBuilder
-		{
-			TextBody = body
-		};
-
-		foreach (var attachment in attachments)
-		{
-			if (string.IsNullOrWhiteSpace(attachment.FilePath))
-				continue;
-
-			if (!File.Exists(attachment.FilePath))
-				continue;
-
-			builder.Attachments.Add(attachment.FilePath);
-		}
-
-		message.Body = builder.ToMessageBody();
-
-		return message;
-	}
-
-	#endregion Helpers
+	#endregion Helpers internes au Service (envoi des emails)
 }

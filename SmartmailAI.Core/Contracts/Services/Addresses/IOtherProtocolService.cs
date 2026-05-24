@@ -14,5 +14,6 @@ public interface IOtherProtocolService
 
 	Task SaveAttachmentAsync(AccountOther account, string messageId, MailAttachment attachment, string destinationFolder);
 
-	Task SendEmailAsync(AccountOther account, string to, string subject, string body, IEnumerable<MailAttachment>? attachments = null);
+	Task SendEmailAsync(AccountOther account, IEnumerable<string> to, string subject, string body, IEnumerable<MailAttachment>? attachments = null,
+		IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null);
 }
