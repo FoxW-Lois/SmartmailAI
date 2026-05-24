@@ -23,4 +23,6 @@ public interface IEmailsService
 	Task DeleteEmailAsync(Email email);
 
 	Task MarkEmailAsTrashedAsync(Email email);
+
+	Task ApplySecurityAnalysisAsync(Email email);
 }

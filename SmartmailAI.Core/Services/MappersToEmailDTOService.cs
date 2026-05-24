@@ -5,11 +5,9 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
 
-public class MappersToEmailDTOService : IMappersToEmailDTOService
+public class MappersToEmailDTOService(IEmailsService emailsService) : IMappersToEmailDTOService
 {
-	public MappersToEmailDTOService()
-	{
-	}
+	private IEmailsService _emailsService = emailsService;
 
 	public Email MapEmailFromAddressToEmail(EmailFromAddress emailFromAddress)
 	{
@@ -48,6 +46,8 @@ public class MappersToEmailDTOService : IMappersToEmailDTOService
 		foreach (var emailFromAddress in emailFromAddressList)
 		{
 			var newEmail = MapEmailFromAddressToEmail(emailFromAddress);
+			await _emailsService.ApplySecurityAnalysisAsync(newEmail);
+
 			emailList.Add(newEmail);
 		}
 

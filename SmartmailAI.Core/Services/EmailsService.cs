@@ -400,10 +400,10 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		//else
 		//	_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
 
-		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter celle-là ↓
+		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter ces 3 là ↓
 		_AllEmails = hardcodedEmails;
-
-		await ApplySecurityAnalysisAsync(_AllEmails);
+		foreach (var email in _AllEmails)
+			await ApplySecurityAnalysisAsync(email);
 
 		var categories = new List<MailboxCategory>
 		{
@@ -484,8 +484,6 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		return categories;
 	}
 
-	#region CRUD Emails
-
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
 	{
 		//_AllEmails = await _emailRepository.GetAllEmailsAsync();
@@ -509,6 +507,8 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		await Task.CompletedTask;
 		return emails;
 	}
+
+	#region	Changement d'états des emails
 
 	public Task MarkEmailAsStarredAsync(Email email)
 	{
@@ -617,40 +617,34 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		return Task.CompletedTask;
 	}
 
-	#endregion CRUD Emails
+	#endregion Changement d'états des emails
 
 	#region Analyse de sécurité des emails
 
-	private async Task ApplySecurityAnalysisAsync(IEnumerable<Email> emails)
+	public async Task ApplySecurityAnalysisAsync(Email email)
 	{
-		foreach (var email in emails)
+		if (email.MailboxType == MailboxType.Trash)
+			return;
+
+		var reasons = new List<string>();
+		int riskScore = await CalculateRiskScoreAsync(email, reasons);
+
+		email.PhishingScore = riskScore;
+		email.IsPhishingDetected = riskScore >= 50;
+		email.SecurityWarning = GetSecurityWarning(riskScore);
+		email.SecurityReasons = reasons.Count > 0
+			? string.Join("\n• ", new[] { reasons[0] }.Concat(reasons.Skip(1)))
+			: "Aucun signal suspect détecté.";
+
+		var links = ExtractLinks(email.Content);
+		email.DetectedLinks = links.Count > 0
+			? string.Join("\n", links)
+			: "Aucun lien détecté";
+
+		if (riskScore >= 50 && email.MailboxType != MailboxType.PhishingSpam)
 		{
-			if (email is null)
-				continue;
-
-			if (email.MailboxType == MailboxType.Trash)
-				continue;
-
-			var reasons = new List<string>();
-			int riskScore = await CalculateRiskScoreAsync(email, reasons);
-
-			email.PhishingScore = riskScore;
-			email.IsPhishingDetected = riskScore >= 50;
-			email.SecurityWarning = GetSecurityWarning(riskScore);
-			email.SecurityReasons = reasons.Count > 0
-				? string.Join("\n• ", new[] { reasons[0] }.Concat(reasons.Skip(1)))
-				: "Aucun signal suspect détecté.";
-
-			var links = ExtractLinks(email.Content);
-			email.DetectedLinks = links.Count > 0
-				? string.Join("\n", links)
-				: "Aucun lien détecté";
-
-			if (riskScore >= 50 && email.MailboxType != MailboxType.PhishingSpam)
-			{
-				email.PreviousMailboxType = email.MailboxType;
-				email.MailboxType = MailboxType.PhishingSpam;
-			}
+			email.PreviousMailboxType = email.MailboxType;
+			email.MailboxType = MailboxType.PhishingSpam;
 		}
 	}
 
