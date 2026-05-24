@@ -80,6 +80,12 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 			return;
 		}
 
+		if (!IsCcVisible)
+			Cc = string.Empty;
+
+		if (!IsBccVisible)
+			Bcc = string.Empty;
+
 		try
 		{
 			switch (account)
