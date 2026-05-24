@@ -268,7 +268,8 @@
 			x:Name="ComposeOverlay"
 			Grid.Row="1"
 			Width="{Binding ElementName=ListDetailsViewControl, Path=ActualWidth}"
-			MaxWidth="{x:Bind HalfWindowWidth, Mode=OneWay}"
+			MinWidth="350"
+			MaxWidth="{x:Bind ViewModel.ComposeMaxWidth, Mode=OneWay}"
 			HorizontalAlignment="Right"
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 			Visibility="{x:Bind ViewModel.IsComposing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">

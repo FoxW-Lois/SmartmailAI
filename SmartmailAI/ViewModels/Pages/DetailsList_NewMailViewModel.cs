@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.Messengers;
-using SmartmailAI.Core.Services.Addresses;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -165,7 +164,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	[RelayCommand]
 	private void Expand()
 	{
-		// TODO : ouvrir en plein écran
+		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay en taille maximale
+		WeakReferenceMessenger.Default.Send(new ToggleExpandComposeMessage());
 	}
 
 	[RelayCommand]

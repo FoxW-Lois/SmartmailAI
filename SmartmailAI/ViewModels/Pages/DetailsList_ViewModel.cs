@@ -25,6 +25,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private bool _isComposing;
 
 	[ObservableProperty]
+	private bool _isComposeExpanded;
+
+	[ObservableProperty]
 	private object? _selectedDetail;
 
 	// Pas de private/public car utilisé uniquement par la partial method
@@ -41,6 +44,18 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		{
 			WeakReferenceMessenger.Default.Send(new ResponseAddressAccountMessage { AddressAccount = addressAccount });
 		});
+
+		// Quand reçoit une demande de redimmentionnement du compose, change l'état d'expansion du compose
+		WeakReferenceMessenger.Default.Register<ToggleExpandComposeMessage>(this, (_, _) =>
+		{
+			IsComposeExpanded = !IsComposeExpanded;
+		});
+
+		App.MainWindow.SizeChanged += (_, _) =>
+		{
+			OnPropertyChanged(nameof(HalfWindowWidth));
+			OnPropertyChanged(nameof(ComposeMaxWidth));
+		};
 	}
 
 	public async Task OnNavigatedTo(object? parameter)
@@ -80,6 +95,20 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		if (value is not ComposeSentinel)
 			IsComposing = false;
 	}
+
+	#region Gestion de la taille du ComposeOverlay
+
+	private static double WindowWidth => App.MainWindow.Bounds.Width;
+	private static double HalfWindowWidth => App.MainWindow.Bounds.Width / 2.5;
+
+	public double ComposeMaxWidth => IsComposeExpanded ? WindowWidth * 0.65 : HalfWindowWidth;
+
+	partial void OnIsComposeExpandedChanged(bool value)
+	{
+		OnPropertyChanged(nameof(ComposeMaxWidth));
+	}
+
+	#endregion Gestion de la taille du ComposeOverlay
 
 	[RelayCommand]
 	private async Task OpenNewMailAsync()
