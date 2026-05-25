@@ -10,11 +10,7 @@ public interface IAddressesRepository
 
 	Task<AccountMailBase?> GetAddressByEmailAsync(string email);
 
-	Task AddAddressByGoogleAsync(AccountGmail accountGmail);
+	Task AddAddressAsync(AccountMailBase account);
 
-	Task AddAddressByOtherAsync(AccountOther accountOther);
-
-	Task<bool> DeleteAddressByGoogleAsync(AccountGmail accountGmail);
-
-	Task<bool> DeleteAddressByOtherAsync(AccountOther accountOther);
+	Task<bool> DeleteAddressAsync(AccountMailBase account);
 }

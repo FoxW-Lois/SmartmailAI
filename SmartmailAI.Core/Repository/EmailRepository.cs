@@ -56,15 +56,11 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 		await _context.SaveChangesAsync();
 	}
 
-	// TODO: Mettre en paramètres : (AccountOutlook? accountOutlook)
-	public async Task DeleteAllEmailsAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task DeleteAllEmailsAsync(AccountMailBase account)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		var emailsToDelete = await _context.Email
-			.Where(e => (accountGmail != null && e.Owner == accountGmail.Email) ||
-							(accountOther != null && e.Owner == accountOther.Email))
-			.ToListAsync();
+		List<Email>? emailsToDelete = await _context.Email.Where(e => account != null && e.Owner == account.Email).ToListAsync();
 
 		_context.Email.RemoveRange(emailsToDelete);
 		await _context.SaveChangesAsync();

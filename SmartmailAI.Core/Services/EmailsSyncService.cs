@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
@@ -70,10 +71,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 					if (_cts.IsCancellationRequested)
 						return;
 
-					if (address is AccountGmail gmailAccount)
-						await SyncNewEmailsAsync(accountGmail: gmailAccount);
-					else if (address is AccountOther otherAccount)
-						await SyncNewEmailsAsync(accountOther: otherAccount);
+					await SyncNewEmailsAsync(address);
 				}
 
 				await _authService.UpdateLastConnection();
@@ -91,13 +89,12 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 		}
 	}
 
-	public async Task SyncNewEmailsAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task SyncNewEmailsAsync(AccountMailBase account)
 	{
-		if (accountGmail == null && accountOther == null)
+		if (account == null)
 			return;
 
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(false, accountGmail: accountGmail,
-			accountOther: accountOther);
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(false, account);
 
 		foreach (var email in mails)
 			await _emailRepository.AddEmailAsync(email);

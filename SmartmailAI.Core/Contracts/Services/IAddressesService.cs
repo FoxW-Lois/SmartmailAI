@@ -19,9 +19,7 @@ public interface IAddressesService
 
 	Task<(bool, AccountOther?, string?)> AddOtherAddressAsync(AddOtherAddressRequest request);
 
-	Task<bool> RemoveGmailAccountAsync(AccountGmail account);
-
-	Task<bool> RemoveOtherAccountAsync(AccountOther account);
+	Task<bool> RemoveAddressAsync(AccountMailBase account);
 
 	Task<AccountMailBase?> GetAccountByEmailAsync(string email);
 

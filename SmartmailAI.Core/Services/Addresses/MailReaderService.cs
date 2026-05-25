@@ -24,8 +24,7 @@ public class MailReaderService(IGmailCredentialService gmailCredentialService, I
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
-	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountGmail? accountGmail = null,
-		AccountOther? accountOther = null)
+	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase account)
 	{
 		const int NumMails = 2;
 
@@ -33,12 +32,13 @@ public class MailReaderService(IGmailCredentialService gmailCredentialService, I
 
 		List<EmailFromAddress> rawEmails;
 
-		if (accountGmail is not null)
+		if (account is AccountGmail accountGmail)
 			rawEmails = await GetGmailMessagesAsync(accountGmail, isAddingNewAddress, NumMails, lastConnection);
-		else if (accountOther is not null)
+		else if (account is AccountOther accountOther)
 			rawEmails = await GetOtherMessagesAsync(accountOther, isAddingNewAddress, NumMails, lastConnection);
 		else
 			return [];
+		// TODO: ajouter un check account is AccountOutlook accountOutlook
 
 		return await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmails);
 	}
@@ -83,10 +83,9 @@ public class MailReaderService(IGmailCredentialService gmailCredentialService, I
 
 	#endregion Getting emails helpers
 
-	public async Task SaveAttachmentFromEmailAsync(string messageId, MailAttachment attachment, string destinationFolder,
-		AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task SaveAttachmentFromEmailAsync(string messageId, MailAttachment attachment, string destinationFolder, AccountMailBase account)
 	{
-		if (accountGmail is not null)
+		if (account is AccountGmail accountGmail)
 		{
 			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
 
@@ -98,7 +97,7 @@ public class MailReaderService(IGmailCredentialService gmailCredentialService, I
 			return;
 		}
 
-		if (accountOther is not null)
+		if (account is AccountOther accountOther)
 		{
 			var connected = await PrepareOtherAccountAsync(accountOther);
 

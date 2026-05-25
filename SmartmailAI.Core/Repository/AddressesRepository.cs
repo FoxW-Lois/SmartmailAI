@@ -27,40 +27,20 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 			.FirstOrDefaultAsync(a => a.Email == email);
 	}
 
-	public async Task AddAddressByGoogleAsync(AccountGmail accountGmail)
+	public async Task AddAddressAsync(AccountMailBase account)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		_context.AccountMailBase.Add(accountGmail);
+		_context.AccountMailBase.Add(account);
 
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task AddAddressByOtherAsync(AccountOther accountOther)
+	public async Task<bool> DeleteAddressAsync(AccountMailBase account)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		_context.AccountMailBase.Add(accountOther);
-
-		await _context.SaveChangesAsync();
-	}
-
-	public async Task<bool> DeleteAddressByGoogleAsync(AccountGmail accountGmail)
-	{
-		using var _context = _factory.CreateDbContext();
-
-		_context.AccountMailBase.Remove(accountGmail);
-
-		await _context.SaveChangesAsync();
-
-		return true;
-	}
-
-	public async Task<bool> DeleteAddressByOtherAsync(AccountOther accountOther)
-	{
-		using var _context = _factory.CreateDbContext();
-
-		_context.AccountMailBase.Remove(accountOther);
+		_context.AccountMailBase.Remove(account);
 
 		await _context.SaveChangesAsync();
 

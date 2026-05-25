@@ -42,17 +42,11 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 		AccountsMail = new ObservableCollection<AccountMailBase>(result);
 	}
 
-	public async Task DeleteAddressAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task DeleteAddressAsync(AccountMailBase account)
 	{
 		ErrorMessage = string.Empty;
 
-		bool success = false;
-
-		if (accountGmail != null)
-			success = await _addressesService.RemoveGmailAccountAsync(accountGmail);
-		else if (accountOther != null)
-			success = await _addressesService.RemoveOtherAccountAsync(accountOther);
-		//TODO: ajouter un check accountOutlook != null
+		bool success = await _addressesService.RemoveAddressAsync(account);
 
 		if (!success)
 		{
@@ -60,10 +54,7 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 			return;
 		}
 
-		if (accountGmail != null)
-			AccountsMail.Remove(accountGmail);
-		else if (accountOther != null)
-			AccountsMail.Remove(accountOther);
+		AccountsMail.Remove(account);
 
 		await _addressesService.RefreshAddressesListAsync();
 

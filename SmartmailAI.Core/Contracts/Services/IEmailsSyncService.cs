@@ -9,7 +9,7 @@ public interface IEmailsSyncService
 
 	Task RunAsync();
 
-	Task SyncNewEmailsAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null);
+	Task SyncNewEmailsAsync(AccountMailBase account);
 
 	void Stop();
 }

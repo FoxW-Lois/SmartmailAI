@@ -7,14 +7,14 @@ using SmartmailAI.Core.Contracts.Services.Addresses;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddAddress_ViewModel(IAddressesService addressesService, IMailReaderService railReaderService,
+public partial class AddAddress_ViewModel(IAddressesService addressesService, IMailReaderService mailReaderService,
 	IEmailRepository emailRepository, IAuthService authService) : ObservableRecipient
 {
 	[ObservableProperty]
 	public partial bool IsOtherChoice { get; set; }
 
 	private readonly IAddressesService _addressesService = addressesService;
-	private readonly IMailReaderService _mailReaderService = railReaderService;
+	private readonly IMailReaderService _mailReaderService = mailReaderService;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IAuthService _authService = authService;
 	private string _errorMessage = string.Empty;
@@ -103,15 +103,14 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 
 	public ObservableCollection<EmailFromAddress> Messages { get; } = [];
 
-	public async Task LoadMessagesAsync(AccountGmail? accountGmail = null, AccountOther? accountOther = null)
+	public async Task LoadMessagesAsync(AccountMailBase account)
 	{
 		Messages.Clear();
 
-		if (accountGmail == null && accountOther == null)
+		if (account == null)
 			return;
 
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(true, accountGmail: accountGmail,
-			accountOther: accountOther);
+		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(true, account);
 
 		foreach (var email in mails)
 			await _emailRepository.AddEmailAsync(email);
@@ -145,7 +144,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
-		await LoadMessagesAsync(accountGmail: accountGmail);
+		await LoadMessagesAsync(accountGmail);
 		return true;
 	}
 
@@ -204,7 +203,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
-		await LoadMessagesAsync(accountOther: accountOther);
+		await LoadMessagesAsync(accountOther);
 		return true;
 	}
 

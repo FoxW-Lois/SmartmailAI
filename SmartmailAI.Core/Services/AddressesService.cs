@@ -57,7 +57,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 			TokenStorageKey = userKey
 		};
 
-		await _addressRepository.AddAddressByGoogleAsync(account);
+		await _addressRepository.AddAddressAsync(account);
 		return (true, account, null);
 	}
 
@@ -98,25 +98,27 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 		// Supprime le mot de passe entré afin de ne surtout PAS le conserver en bdd
 		account.Password = string.Empty;
 
-		await _addressRepository.AddAddressByOtherAsync(account);
+		await _addressRepository.AddAddressAsync(account);
 		return (true, account, null);
 	}
 
 	// Déconnexion
-	public async Task<bool> RemoveGmailAccountAsync(AccountGmail account)
+	public async Task<bool> RemoveAddressAsync(AccountMailBase account)
 	{
-		await _gmailLogoutService.LogoutAsync(account);
-		await _emailRepository.DeleteAllEmailsAsync(accountGmail: account);
-		await _addressRepository.DeleteAddressByGoogleAsync(account);
+		if (account is AccountGmail accountGmail)
+		{
+			// TODO: Voir supprimer les fichiers de OAuth locaux => Users\<user>\AppData\Roaming\Google.Apis.Auth
+			await _gmailLogoutService.LogoutAsync(accountGmail);
+		}
+		else if (account is AccountOther accountOther)
+		{
+			_otherTokenStore.DeleteToken(accountOther.TokenStorageKey);
+			await _otherLogoutService.LogoutAsync(accountOther);
+		}
+		// TODO: ajouter un check account is AccountOutlook accountOutlook
 
-		return true;
-	}
-
-	public async Task<bool> RemoveOtherAccountAsync(AccountOther account)
-	{
-		await _otherLogoutService.LogoutAsync(account);
-		await _emailRepository.DeleteAllEmailsAsync(accountOther: account);
-		await _addressRepository.DeleteAddressByOtherAsync(account);
+		await _emailRepository.DeleteAllEmailsAsync(account);
+		await _addressRepository.DeleteAddressAsync(account);
 
 		return true;
 	}

@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Security.Principal;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Authentication;
 using SmartmailAI.Core.Data;
-using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Authentication;
@@ -95,7 +97,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			Password = hash,
 			Salt = salt,
 			TwoFactorEnabled = false,
-			//TODO: mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
+			// TODO: En production = mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
 			Enabled = true,
 			LastConnection = DateTime.Now
 		};

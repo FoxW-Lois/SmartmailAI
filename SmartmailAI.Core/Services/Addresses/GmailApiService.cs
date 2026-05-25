@@ -41,7 +41,7 @@ public class GmailApiService : IGmailApiService
 
 		var request = service.Users.Messages.List("me");
 		request.MaxResults = maxResults;
-		request.LabelIds = MailboxType.ToUpper();       // TODO : pour récupérer des (vrais) spams/phishings => mettre "SPAM" en valeur
+		request.LabelIds = MailboxType.ToUpper();       // TODO: pour récupérer des (vrais) spams/phishings => mettre "SPAM" en valeur
 		request.IncludeSpamTrash = false;               // => mettre true en valeur
 
 		if (lastConnection is not null && !isAddingNewAddress)
