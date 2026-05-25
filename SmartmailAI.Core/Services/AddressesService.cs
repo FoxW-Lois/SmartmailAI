@@ -106,15 +106,9 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 	public async Task<bool> RemoveAddressAsync(AccountMailBase account)
 	{
 		if (account is AccountGmail accountGmail)
-		{
-			// TODO: Voir supprimer les fichiers de OAuth locaux => Users\<user>\AppData\Roaming\Google.Apis.Auth
 			await _gmailLogoutService.LogoutAsync(accountGmail);
-		}
 		else if (account is AccountOther accountOther)
-		{
-			_otherTokenStore.DeleteToken(accountOther.TokenStorageKey);
 			await _otherLogoutService.LogoutAsync(accountOther);
-		}
 		// TODO: ajouter un check account is AccountOutlook accountOutlook
 
 		await _emailRepository.DeleteAllEmailsAsync(account);

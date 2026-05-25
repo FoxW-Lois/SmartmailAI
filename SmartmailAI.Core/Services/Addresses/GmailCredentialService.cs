@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
+using Google.Apis.Util.Store;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models;
 
@@ -10,6 +12,9 @@ namespace SmartmailAI.Core.Services.Addresses;
 
 public class GmailCredentialService() : IGmailCredentialService
 {
+	private static readonly FileDataStore? dataStore = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+		"SmartmailAI", "Google.Apis.AuthToken"), true);
+
 	public async Task<UserCredential?> ConnectAsync(string userKey)
 	{
 		try
@@ -23,7 +28,7 @@ public class GmailCredentialService() : IGmailCredentialService
 			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
 			return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-				secrets, scopes, userKey, CancellationToken.None
+				secrets, scopes, userKey, CancellationToken.None, dataStore
 			);
 		}
 		catch (Exception)
@@ -46,7 +51,7 @@ public class GmailCredentialService() : IGmailCredentialService
 			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
 			return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-				secrets, scopes, accountGmail.TokenStorageKey, CancellationToken.None
+				secrets, scopes, accountGmail.TokenStorageKey, CancellationToken.None, dataStore
 			);
 		}
 		catch (Exception)

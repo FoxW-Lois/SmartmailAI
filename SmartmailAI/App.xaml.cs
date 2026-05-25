@@ -258,7 +258,7 @@ public partial class App : Application
 				services.AddSingleton<IGmailApiService, GmailApiService>();
 				services.AddSingleton<IGmailCredentialService, GmailCredentialService>();
 				services.AddSingleton<IGmailLogoutService, GmailLogoutService>();
-				services.AddSingleton<ITokenStore, GmailTokenStore>();
+				services.AddSingleton<ITokenStore, TokenStore>();
 
 				services.AddSingleton<IOtherCredentialService, OtherCredentialService>();
 				services.AddSingleton<IOtherProtocolService, OtherProtocolService>();

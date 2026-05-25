@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models;
@@ -10,9 +12,12 @@ public class GmailLogoutService(ITokenStore tokenStore, HttpClient httpClient) :
 	private readonly ITokenStore _tokenStore = tokenStore;
 	private readonly HttpClient _httpClient = httpClient;
 
+	private readonly string _rootFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+		"SmartmailAI", "Google.Apis.AuthToken");
+
 	public async Task LogoutAsync(AccountGmail account)
 	{
-		var refreshToken = await _tokenStore.GetRefreshTokenAsync(account.TokenStorageKey);
+		var refreshToken = await _tokenStore.GetRefreshTokenAsync(account.TokenStorageKey, _rootFolder);
 
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
@@ -25,6 +30,6 @@ public class GmailLogoutService(ITokenStore tokenStore, HttpClient httpClient) :
 			);
 		}
 
-		_tokenStore.DeleteToken(account.TokenStorageKey);
+		_tokenStore.DeleteToken(account.TokenStorageKey, _rootFolder);
 	}
 }

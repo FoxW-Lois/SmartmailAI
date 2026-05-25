@@ -9,12 +9,11 @@ namespace SmartmailAI.Core.Services.Addresses;
 
 public class OtherTokenStore : IOtherTokenStore
 {
-	private readonly string _rootFolder;
+	private static readonly string _rootFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+		"SmartmailAI", "SMTP-IMAP.AuthToken");
 
 	public OtherTokenStore()
 	{
-		_rootFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Project", "MailTokens");
-
 		Directory.CreateDirectory(_rootFolder);
 	}
 
@@ -22,7 +21,9 @@ public class OtherTokenStore : IOtherTokenStore
 	{
 		var path = GetPath(key);
 
-		var encrypted = ProtectedData.Protect(Encoding.UTF8.GetBytes(password), null, DataProtectionScope.CurrentUser);
+		byte[] data = Encoding.UTF8.GetBytes(password);
+
+		byte[] encrypted = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
 
 		await File.WriteAllBytesAsync(path, encrypted);
 	}
@@ -34,22 +35,16 @@ public class OtherTokenStore : IOtherTokenStore
 		if (!File.Exists(path))
 			return null;
 
-		var encrypted = await File.ReadAllBytesAsync(path);
+		byte[] encrypted = await File.ReadAllBytesAsync(path);
 
-		var bytes = ProtectedData.Unprotect(encrypted, null, DataProtectionScope.CurrentUser);
+		byte[] decrypted = ProtectedData.Unprotect(encrypted, null, DataProtectionScope.CurrentUser);
 
-		return Encoding.UTF8.GetString(bytes);
+		return Encoding.UTF8.GetString(decrypted);
 	}
 
-	public void DeleteToken(string key)
-	{
-		var path = GetPath(key);
+	// La suppression de token est gérée par la suppression de l'adresse correspondante (via OtherLogoutService), donc pas besoin d'une méthode dédiée ici
 
-		if (File.Exists(path))
-			File.Delete(path);
-	}
-
-	private string GetPath(string key)
+	private static string GetPath(string key)
 	{
 		return Path.Combine(_rootFolder, $"{key}.bin");
 	}
