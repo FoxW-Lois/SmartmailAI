@@ -14,9 +14,9 @@ namespace SmartmailAI.Core.Services;
 public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService,
 	IDnsSecurityService dnsSecurityService) : IEmailsService
 {
-	// Ne surtout pas initialiser cette liste, que soit à la déclaration ou bien dans le constructeur
-	// Elle doit être initialisée uniquement dans les méthodes GetAllEmailsAsync et GetEmailsByMailboxTypeAsync pour garantir que
-	// l'analyse de sécurité est appliquée à tous les emails avant de les retourner
+	// Pour l'utilisation de données de tests : ne surtout pas initialiser cette liste, que soit à la déclaration ou bien dans le constructeur
+	// Elle doit être initialisée uniquement dans GetAllCategoriesAsync en brute pour garantir que l'analyse de sécurité est appliquée
+	// à tous les emails hardcodés avant de les retourner
 	private List<Email>? _AllEmails;
 
 	private readonly IEmailRepository _emailRepository = emailRepository;
