@@ -103,7 +103,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 
 	public ObservableCollection<EmailFromAddress> Messages { get; } = [];
 
-	public async Task LoadMessagesAsync(AccountMailBase account)
+	private async Task LoadMessagesAsync(AccountMailBase account)
 	{
 		Messages.Clear();
 

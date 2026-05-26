@@ -25,12 +25,13 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	public IAddressesService _addressesService { get; }
 	public IEmailsSyncService _emailsSyncService { get; }
 	public ILocalSessionService _localSessionService { get; }
+	public Login_ViewModel _login_ViewModel { get; }
 
 	#endregion Interfaces declaration
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
 		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService,
-		ILocalSessionService localSessionService)
+		ILocalSessionService localSessionService, Login_ViewModel login_ViewModel)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
@@ -40,6 +41,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		_addressesService = addressesService;
 		_emailsSyncService = emailsSyncService;
 		_localSessionService = localSessionService;
+		_login_ViewModel = login_ViewModel;
 
 		// Tente de restaurer la session locale
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
@@ -55,19 +57,26 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			UpdateVisibility();
 		};
 
-		_addressesService.AddressesListChanged += (_, hasAny) =>
-		{
-			HasLinkedAddresses = hasAny;
-			_ = LoadAccountsAsync();
-			UpdateVisibility();
+		// Charge/recharge les adresses emails connectées dans le service au lancement de l'application
+		_addressesService.RefreshAddressesListAsync();
 
-			if (_addressesService.HasAny == true)
+		// Si la base de données contient déjà des adresses emails enregistrées/connectées, on les charge dans le NavShell et en plus
+		// on lance la synchronisation des emails pour ces comptes
+		if (_addressesService.HasAny)
+		{
+			var listAccountsLinked = _addressesService.GetListAccountsLinkedAsync().GetAwaiter().GetResult();
+
+			foreach (var account in listAccountsLinked)
 			{
-				_emailsSyncService.Stop();
-				_emailsSyncService.StartAsync();
+				var _ = _login_ViewModel.LoadMessagesAsync(account);
 			}
-			else
-				_emailsSyncService.Stop();
+
+			OnAddressesListChanged(true);
+		}
+
+		_addressesService.AddressesListChanged += async (_, hasAny) =>
+		{
+			OnAddressesListChanged(hasAny);
 		};
 
 		UpdateVisibility();
@@ -131,6 +140,21 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		foreach (var account in accounts)
 			AccountsMail.Add(account);
+	}
+
+	private void OnAddressesListChanged(bool hasAny)
+	{
+		HasLinkedAddresses = hasAny;
+		_ = LoadAccountsAsync();
+		UpdateVisibility();
+
+		if (_addressesService.HasAny == true)
+		{
+			_emailsSyncService.Stop();
+			_emailsSyncService.StartAsync();
+		}
+		else
+			_emailsSyncService.Stop();
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées

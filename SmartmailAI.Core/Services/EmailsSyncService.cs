@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;

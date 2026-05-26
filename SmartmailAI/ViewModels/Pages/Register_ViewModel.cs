@@ -83,8 +83,6 @@ public partial class Register_ViewModel(IAuthService authService, ILocalSessionS
 			return false;
 		}
 
-		_localSessionService.CreateSession();
-
 		return true;
 	}
 }
