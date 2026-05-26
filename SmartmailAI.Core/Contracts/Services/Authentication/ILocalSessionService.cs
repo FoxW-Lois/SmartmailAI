@@ -6,7 +6,8 @@ public interface ILocalSessionService
 {
 	void CreateSession();
 
-	string? RotateSession();
+	// TODO : Mettre en place le RotateSession() avec un serveur distant une fois en production
+	//string? RotateSession();
 
 	bool ValidateSession();
 

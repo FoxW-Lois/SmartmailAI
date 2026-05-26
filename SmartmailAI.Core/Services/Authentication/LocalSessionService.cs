@@ -35,6 +35,8 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 
 	#endregion Token Helpers
 
+	#region Session Management
+
 	public void CreateSession()
 	{
 		string refreshToken = GenerateToken();
@@ -58,34 +60,35 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 		SaveSession(session);
 	}
 
-	public string? RotateSession()
-	{
-		LocalSession? session = LoadSession();
+	// TODO : Mettre en place le RotateSession() avec un serveur distant une fois en production
+	//public string? RotateSession()
+	//{
+	//	LocalSession? session = LoadSession();
 
-		if (session is null)
-			return null;
+	//	if (session is null)
+	//		return null;
 
-		if (!ValidateSession())
-		{
-			_emailsSyncService.Stop();
-			_authService.Logout();
-			KillSession();
+	//	if (!ValidateSession())
+	//	{
+	//		_emailsSyncService.Stop();
+	//		_authService.Logout();
+	//		KillSession();
 
-			return null;
-		}
+	//		return null;
+	//	}
 
-		string newToken = GenerateToken();
+	//	string newToken = GenerateToken();
 
-		session.PreviousRefreshTokenHash = session.CurrentRefreshTokenHash;
-		session.CurrentRefreshToken = newToken;
-		session.CurrentRefreshTokenHash = HashToken(newToken);
-		session.RotationCounter++;
-		session.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7);
+	//	session.PreviousRefreshTokenHash = session.CurrentRefreshTokenHash;
+	//	session.CurrentRefreshToken = newToken;
+	//	session.CurrentRefreshTokenHash = HashToken(newToken);
+	//	session.RotationCounter++;
+	//	session.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30);
 
-		SaveSession(session);
+	//	SaveSession(session);
 
-		return newToken;
-	}
+	//	return newToken;
+	//}
 
 	public bool ValidateSession()
 	{
@@ -127,7 +130,15 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 		File.WriteAllBytes(tempPath, encrypted);
 	}
 
-	#region Session Management
+	public void KillSession()
+	{
+		string sessionPath = Path.Combine(_rootFolder, ".tmp");
+
+		if (File.Exists(sessionPath))
+		{
+			File.Delete(sessionPath);
+		}
+	}
 
 	private static LocalSession? LoadSession()
 	{
@@ -139,9 +150,7 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 		try
 		{
 			byte[] encrypted = File.ReadAllBytes(sessionPath);
-
 			byte[] raw = ProtectedData.Unprotect(encrypted, null, DataProtectionScope.CurrentUser);
-
 			string json = Encoding.UTF8.GetString(raw);
 
 			return JsonSerializer.Deserialize<LocalSession>(json);
@@ -149,16 +158,6 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 		catch
 		{
 			return null;
-		}
-	}
-
-	public void KillSession()
-	{
-		string sessionPath = Path.Combine(_rootFolder, ".tmp");
-
-		if (File.Exists(sessionPath))
-		{
-			File.Delete(sessionPath);
 		}
 	}
 
