@@ -24,9 +24,6 @@ public class TotpService : ITotpService
 		issuer = Uri.EscapeDataString(issuer);
 		account = Uri.EscapeDataString(account);
 
-		return $"otpauth://totp/{issuer}:{account}" +
-				$"?secret={base32Secret}" +
-				$"&issuer={issuer}" +
-				$"&digits=6";
+		return $"otpauth://totp/{issuer}:{account}" + $"?secret={base32Secret}" + $"&issuer={issuer}" + $"&digits=6";
 	}
 }

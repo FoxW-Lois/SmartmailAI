@@ -2,18 +2,19 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
-using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services.Addresses;
 
 namespace SmartmailAI.ViewModels.Pages;
 
 public partial class Login_ViewModel(IAuthService authService, IMailReaderService mailReaderService, IEmailRepository emailRepository,
-	IAddressesService addressesService) : ObservableRecipient
+	IAddressesService addressesService, ILocalSessionService localSessionService) : ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IAddressesService _addressesService = addressesService;
+	private readonly ILocalSessionService _localSessionService = localSessionService;
 
 	private string _login = string.Empty;
 	private string _errorMessage = string.Empty;
@@ -64,6 +65,8 @@ public partial class Login_ViewModel(IAuthService authService, IMailReaderServic
 		{
 			await LoadMessagesAsync(account);
 		}
+
+		_localSessionService.CreateSession();
 
 		return (true, false, null);
 	}

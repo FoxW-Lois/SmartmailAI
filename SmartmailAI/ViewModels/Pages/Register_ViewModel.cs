@@ -5,9 +5,11 @@ using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class Register_ViewModel(IAuthService authService) : ObservableRecipient
+public partial class Register_ViewModel(IAuthService authService, ILocalSessionService localSessionService)
+	: ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
+	private readonly ILocalSessionService _localSessionService = localSessionService;
 
 	private string _login = string.Empty;
 	private string _phoneNumber = string.Empty;
@@ -80,6 +82,8 @@ public partial class Register_ViewModel(IAuthService authService) : ObservableRe
 			ErrorMessage = Error;
 			return false;
 		}
+
+		_localSessionService.CreateSession();
 
 		return true;
 	}

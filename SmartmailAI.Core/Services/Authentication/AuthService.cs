@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
@@ -28,7 +25,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	public bool IsAuthenticated
 	{
 		get => _isAuthenticated;
-		private set
+		set
 		{
 			if (_isAuthenticated != value)
 			{
@@ -42,13 +39,6 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 
 	// Exposition du login de l'instance en cours
 	public string CurrentAccountLogin { get; private set; } = "";
-
-	public async Task<bool> TryRestoreSessionAsync()
-	{
-		// TODO: à faire avec cookie de session (token stocké localement ?)
-		IsAuthenticated = false;
-		return IsAuthenticated;
-	}
 
 	// Connexion
 	public async Task<(bool Success, string? SpecificError)> LoginAsync(string login, string password)

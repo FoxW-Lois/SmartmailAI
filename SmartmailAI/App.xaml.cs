@@ -279,6 +279,7 @@ public partial class App : Application
 				services.AddSingleton<IQrCodeService, QrCodeService>();
 				services.AddSingleton<ITotpService, TotpService>();
 				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
+				services.AddSingleton<ILocalSessionService, LocalSessionService>();
 
 				#endregion Authentication Services
 

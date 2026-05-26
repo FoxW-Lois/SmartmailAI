@@ -19,21 +19,18 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	#region Interfaces declaration
 
 	public INavigationService NavigationService { get; }
-
 	public INavigationViewService NavigationViewService { get; }
-
 	public IAuthService _authService { get; }
-
 	public IAddressesRepository _addressesRepository { get; }
-
 	public IAddressesService _addressesService { get; }
-
 	public IEmailsSyncService _emailsSyncService { get; }
+	public ILocalSessionService _localSessionService { get; }
 
 	#endregion Interfaces declaration
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
-		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService)
+		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService,
+		ILocalSessionService localSessionService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
@@ -42,6 +39,10 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		_addressesRepository = addressesRepository;
 		_addressesService = addressesService;
 		_emailsSyncService = emailsSyncService;
+		_localSessionService = localSessionService;
+
+		// Tente de restaurer la session locale
+		_authService.IsAuthenticated = _localSessionService.ValidateSession();
 
 		IsLogged = _authService.IsAuthenticated;
 		HasLinkedAddresses = _addressesService.HasAny;
@@ -138,5 +139,6 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	{
 		_emailsSyncService.Stop();
 		_authService.Logout();
+		_localSessionService.KillSession();
 	}
 }

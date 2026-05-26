@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Contracts.Services.Authentication;
 
 public interface IAuthService
 {
-	bool IsAuthenticated { get; }
+	bool IsAuthenticated { get; set; }
 
 	string CurrentAccountLogin { get; }
 
 	// Notification du changement d'état concernant l'authentification de l'utilisateur
 	event EventHandler<bool> AuthenticationStateChanged;
-
-	Task<bool> TryRestoreSessionAsync();
 
 	Task<(bool Success, string? SpecificError)> LoginAsync(string login, string password);
 
