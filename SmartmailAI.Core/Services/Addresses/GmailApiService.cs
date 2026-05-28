@@ -88,6 +88,7 @@ public class GmailApiService : IGmailApiService
 			catch (DbUpdateException)
 			{
 				// En cas de doublon (email déjà présent en base), on ignore silencieusement et on continue
+				// Cela ne devrait pas arriver car déjà ammorcé par EmailRepository.KeepOnlyNewEmailsAsync()
 			}
 		}
 

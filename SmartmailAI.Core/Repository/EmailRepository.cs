@@ -65,4 +65,16 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory) : IE
 		_context.Email.RemoveRange(emailsToDelete);
 		await _context.SaveChangesAsync();
 	}
+
+	public async Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		List<Email> existingEmails = await _context.Email.Where(e => e.Owner == ownerAddress).ToListAsync();
+
+		var existingAddresses = await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).ToHashSetAsync();
+		var newEmailsToKeep = newEmails.Where(e => !existingAddresses.Contains(e.Guid)).ToList();
+
+		return newEmailsToKeep;
+	}
 }

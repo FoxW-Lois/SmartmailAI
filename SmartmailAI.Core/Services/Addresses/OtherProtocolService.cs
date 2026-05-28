@@ -8,6 +8,7 @@ using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Search;
 using MailKit.Security;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Helpers;
@@ -59,22 +60,30 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 			var Cc = message.Cc.Mailboxes;
 			var Bcc = message.Bcc.Mailboxes;
 
-			result.Add(new EmailFromAddress
+			try
 			{
-				Guid = uid.Id.ToString(),
-				FromEmail = from?.Address ?? string.Empty,
-				FromName = from?.Name,
-				ToEmail = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Address)),
-				ToName = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Name!)),
-				Cc = MailAddressParserHelper.FormatStringAddresses(Cc.Select(m => m.Address)),
-				Bcc = MailAddressParserHelper.FormatStringAddresses(Bcc.Select(m => m.Address)),
-				Subject = message.Subject ?? string.Empty,
-				Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
-				Date = message.Date.LocalDateTime,
-				Owner = account.Email,
-				MailboxType = mailboxType,
-				Attachments = GetAttachments(message)
-			});
+				result.Add(new EmailFromAddress
+				{
+					Guid = uid.Id.ToString(),
+					FromEmail = from?.Address ?? string.Empty,
+					FromName = from?.Name,
+					ToEmail = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Address)),
+					ToName = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Name!)),
+					Cc = MailAddressParserHelper.FormatStringAddresses(Cc.Select(m => m.Address)),
+					Bcc = MailAddressParserHelper.FormatStringAddresses(Bcc.Select(m => m.Address)),
+					Subject = message.Subject ?? string.Empty,
+					Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
+					Date = message.Date.LocalDateTime,
+					Owner = account.Email,
+					MailboxType = mailboxType,
+					Attachments = GetAttachments(message)
+				});
+			}
+			catch (DbUpdateException)
+			{
+				// En cas de doublon (email déjà présent en base), on ignore silencieusement et on continue
+				// Cela ne devrait pas arriver car déjà ammorcé par EmailRepository.KeepOnlyNewEmailsAsync()
+			}
 		}
 
 		await client.DisconnectAsync(true);

@@ -9,10 +9,11 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
-public class MailReaderService(IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService,
+public class MailReaderService(IEmailRepository emailRepository, IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService,
 	IOtherCredentialService otherCredentialService, IOtherProtocolService otherProtocolService, IOtherTokenStore otherTokenStore,
 	IAuthService authService, IAccountRepository accountRepository, IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
 {
+	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IGmailCredentialService _gmailCredentialService = gmailCredentialService;
 	private readonly IGmailApiService _gmailApiService = gmailApiService;
 
@@ -40,7 +41,12 @@ public class MailReaderService(IGmailCredentialService gmailCredentialService, I
 			return [];
 		// TODO: ajouter un check account is AccountOutlook accountOutlook
 
-		return await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmails);
+		List<Email> emailsRecovered = await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmails);
+
+		if (isAddingNewAddress)
+			return emailsRecovered;
+
+		return await _emailRepository.KeepOnlyNewEmailsAsync(account.Email, emailsRecovered);
 	}
 
 	#region Getting emails helpers
