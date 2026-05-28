@@ -7,7 +7,7 @@ namespace SmartmailAI.Core.Services;
 
 public class MappersToEmailDTOService(IEmailsService emailsService) : IMappersToEmailDTOService
 {
-	private IEmailsService _emailsService = emailsService;
+	private readonly IEmailsService _emailsService = emailsService;
 
 	public Email MapEmailFromAddressToEmail(EmailFromAddress emailFromAddress)
 	{

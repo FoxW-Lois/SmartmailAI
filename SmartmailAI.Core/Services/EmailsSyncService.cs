@@ -17,7 +17,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 	private readonly IAddressesRepository _addressesRepository;
 	private readonly IAuthService _authService;
 	private readonly PeriodicTimer _timer;
-	private readonly TimeSpan _interval = TimeSpan.FromMinutes(1);
+	private readonly TimeSpan _interval = TimeSpan.FromSeconds(30);
 	private CancellationTokenSource _cts = new();
 
 	private readonly SemaphoreSlim _startLock = new(1, 1);
@@ -83,7 +83,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 		}
 		catch (Exception ex)
 		{
-			Debug.WriteLine($"Erreur inattendue dans la boucle de synchro Gmail: {ex}");
+			Debug.WriteLine($"Erreur inattendue dans la boucle de synchro des emails: {ex}");
 			_isRunning = false;
 		}
 	}

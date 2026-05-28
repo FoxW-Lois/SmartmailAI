@@ -9,6 +9,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Helpers;
@@ -30,8 +31,8 @@ public class GmailApiService : IGmailApiService
 		return profile.EmailAddress;
 	}
 
-	public async Task<List<EmailFromAddress>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress, int? maxResults = 50,
-		DateTime? lastConnection = null)
+	public async Task<List<EmailFromAddress>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress,
+		int? maxResults = 50, DateTime? lastConnection = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer
 		{
@@ -46,7 +47,7 @@ public class GmailApiService : IGmailApiService
 
 		if (lastConnection is not null && !isAddingNewAddress)
 		{
-			var unixSeconds = ToUnixSeconds(lastConnection.Value);
+			var unixSeconds = ToUnixSeconds(lastConnection.Value.AddMinutes(-2));
 			request.Q = $"after:{unixSeconds}";
 		}
 
@@ -65,22 +66,29 @@ public class GmailApiService : IGmailApiService
 			var (fromName, fromEmail) = ParseEmailAddress(GetHeader(full, "From"));
 			var (toName, toEmail) = ParseListEmailsAddresses(GetHeader(full, "To"));
 
-			result.Add(new EmailFromAddress
+			try
 			{
-				Guid = msg.Id,
-				FromEmail = fromEmail,
-				FromName = fromName,
-				ToEmail = MailAddressParserHelper.FormatStringAddresses(toEmail),
-				ToName = MailAddressParserHelper.FormatStringAddresses(toName),
-				Cc = GetHeader(full, "Cc"),
-				Bcc = GetHeader(full, "Bcc"),
-				Subject = GetHeader(full, "Subject"),
-				Body = GetMessageBody(full),
-				Date = GetMessageDate(full),
-				Owner = emailAddressOwner,
-				MailboxType = MailboxType,
-				Attachments = GetAttachments(full)
-			});
+				result.Add(new EmailFromAddress
+				{
+					Guid = msg.Id,
+					FromEmail = fromEmail,
+					FromName = fromName,
+					ToEmail = MailAddressParserHelper.FormatStringAddresses(toEmail),
+					ToName = MailAddressParserHelper.FormatStringAddresses(toName),
+					Cc = GetHeader(full, "Cc"),
+					Bcc = GetHeader(full, "Bcc"),
+					Subject = GetHeader(full, "Subject"),
+					Body = GetMessageBody(full),
+					Date = GetMessageDate(full),
+					Owner = emailAddressOwner,
+					MailboxType = MailboxType,
+					Attachments = GetAttachments(full)
+				});
+			}
+			catch (DbUpdateException)
+			{
+				// En cas de doublon (email déjà présent en base), on ignore silencieusement et on continue
+			}
 		}
 
 		return result;

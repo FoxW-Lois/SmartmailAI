@@ -8,9 +8,9 @@ namespace SmartmailAI.Core.Models;
 
 public class EmailFromAddress
 {
-	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
-
-	[Column("Guid")] public string Guid { get; init; } = default!;
+	// TODO : A voir
+	// [Column("Guid")] public string Guid { get; init; } = default!;
+	[Key][Column("Guid")] public string Guid { get; init; } = default!;
 
 	[Column("FromEmail")] public string FromEmail { get; init; } = default!;
 	[Column("FromName")] public string? FromName { get; init; }

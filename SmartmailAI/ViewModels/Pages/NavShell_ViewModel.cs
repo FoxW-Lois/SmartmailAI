@@ -45,9 +45,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		// Tente de restaurer la session locale
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
-
 		IsLogged = _authService.IsAuthenticated;
-		HasLinkedAddresses = _addressesService.HasAny;
 
 		_authService.AuthenticationStateChanged += (_, isLogged) =>
 		{
@@ -59,6 +57,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		// Charge/recharge les adresses emails connectées dans le service au lancement de l'application
 		_addressesService.RefreshAddressesListAsync();
+		HasLinkedAddresses = _addressesService.HasAny;
 
 		// Si la base de données contient déjà des adresses emails enregistrées/connectées, on les charge dans le NavShell et en plus
 		// on lance la synchronisation des emails pour ces comptes
@@ -71,12 +70,25 @@ public partial class NavShell_ViewModel : ObservableRecipient
 				var _ = _login_ViewModel.LoadMessagesAsync(account);
 			}
 
-			OnAddressesListChanged(true);
+			_ = LoadAccountsAsync();
+
+			//_emailsSyncService.Stop();
+			//_emailsSyncService.StartAsync();
 		}
 
 		_addressesService.AddressesListChanged += async (_, hasAny) =>
 		{
-			OnAddressesListChanged(hasAny);
+			HasLinkedAddresses = hasAny;
+			_ = LoadAccountsAsync();
+			UpdateVisibility();
+
+			if (_addressesService.HasAny == true)
+			{
+				_emailsSyncService.Stop();
+				await _emailsSyncService.StartAsync();
+			}
+			else
+				_emailsSyncService.Stop();
 		};
 
 		UpdateVisibility();
@@ -140,21 +152,6 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		foreach (var account in accounts)
 			AccountsMail.Add(account);
-	}
-
-	private void OnAddressesListChanged(bool hasAny)
-	{
-		HasLinkedAddresses = hasAny;
-		_ = LoadAccountsAsync();
-		UpdateVisibility();
-
-		if (_addressesService.HasAny == true)
-		{
-			_emailsSyncService.Stop();
-			_emailsSyncService.StartAsync();
-		}
-		else
-			_emailsSyncService.Stop();
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées

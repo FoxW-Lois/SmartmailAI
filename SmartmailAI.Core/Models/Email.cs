@@ -10,10 +10,13 @@ namespace SmartmailAI.Core.Models;
 
 public class Email
 {
+	// Clé primaire composite : Guid + SenderEmail + ReceiverEmail (définie dans le AppDbContext_Email)
+
 	#region Propriétés de base / Composition
 
-	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
-	[Column("Guid")] public string Guid { get; init; } = default!;
+	// TODO : Ajouter/définir une clé primaire composite
+	// [Column("Guid")] public string Guid { get; init; } = default!;
+	[Key][Column("Guid")] public string Guid { get; init; } = default!;
 
 	[Column("SenderEmail")] public string SenderEmail { get; set; } = default!;
 	[Column("SenderName")] public string SenderName { get; set; } = default!; // ← Nullable en bdd mais recevra le SenderEmail si null côté UI
