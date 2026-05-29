@@ -72,7 +72,7 @@ public class GmailApiService : IGmailApiService
 				{
 					Guid = msg.Id,
 					FromEmail = fromEmail,
-					FromName = fromName,
+					FromName = fromName ?? fromEmail,
 					ToEmail = MailAddressParserHelper.FormatStringAddresses(toEmail),
 					ToName = MailAddressParserHelper.FormatStringAddresses(toName),
 					Cc = GetHeader(full, "Cc"),

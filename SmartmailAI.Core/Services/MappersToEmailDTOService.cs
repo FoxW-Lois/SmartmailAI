@@ -15,9 +15,9 @@ public class MappersToEmailDTOService(IEmailsService emailsService) : IMappersTo
 		{
 			Guid = emailFromAddress.Guid,
 			SenderEmail = emailFromAddress.FromEmail,
-			SenderName = emailFromAddress.FromName ?? emailFromAddress.FromEmail,
+			SenderName = !string.IsNullOrWhiteSpace(emailFromAddress.FromName) ? emailFromAddress.FromName : emailFromAddress.FromEmail,
 			ReceiverEmail = emailFromAddress.ToEmail,
-			ReceiverName = emailFromAddress.ToName,
+			ReceiverName = !string.IsNullOrWhiteSpace(emailFromAddress.ToName) ? emailFromAddress.ToName : emailFromAddress.ToEmail,
 			Cc = emailFromAddress.Cc,
 			Bcc = emailFromAddress.Bcc,
 			Subject = emailFromAddress.Subject,
