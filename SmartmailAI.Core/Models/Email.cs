@@ -12,8 +12,7 @@ public class Email
 {
 	#region Propriétés de base / Composition
 
-	[Key][Column("Id_internal")] public int Id_internal { get; init; } = default!;
-	[Column("Guid")] public string Guid { get; init; } = default!;
+	[Key][Column("Guid")] public string Guid { get; init; } = default!;
 
 	[Column("SenderEmail")] public string SenderEmail { get; set; } = default!;
 	[Column("SenderName")] public string SenderName { get; set; } = default!; // ← Nullable en bdd mais recevra le SenderEmail si null côté UI

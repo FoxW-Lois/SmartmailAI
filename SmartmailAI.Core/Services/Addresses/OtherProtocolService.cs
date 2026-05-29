@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
 using MailKit.Search;
 using MailKit.Security;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Helpers;
 using SmartmailAI.Core.Models;
 
@@ -59,22 +62,38 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 			var Cc = message.Cc.Mailboxes;
 			var Bcc = message.Bcc.Mailboxes;
 
-			result.Add(new EmailFromAddress
+			try
 			{
-				Guid = uid.Id.ToString(),
-				FromEmail = from?.Address ?? string.Empty,
-				FromName = from?.Name,
-				ToEmail = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Address)),
-				ToName = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Name!)),
-				Cc = MailAddressParserHelper.FormatStringAddresses(Cc.Select(m => m.Address)),
-				Bcc = MailAddressParserHelper.FormatStringAddresses(Bcc.Select(m => m.Address)),
-				Subject = message.Subject ?? string.Empty,
-				Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
-				Date = message.Date.LocalDateTime,
-				Owner = account.Email,
-				MailboxType = mailboxType,
-				Attachments = GetAttachments(message)
-			});
+				var fromEmail = from?.Address ?? string.Empty;
+				var toEmail = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Address));
+				var toName = MailAddressParserHelper.FormatStringAddresses(to?.Select(m => m.Name!));
+				var cc = MailAddressParserHelper.FormatStringAddresses(Cc.Select(m => m.Address));
+				var bcc = MailAddressParserHelper.FormatStringAddresses(Bcc.Select(m => m.Address));
+				var date = message.Date.LocalDateTime;
+				var ownerAddress = account.Email;
+
+				result.Add(new EmailFromAddress
+				{
+					Guid = CreateGuid.DeterministicGuid(fromEmail, toEmail, date.ToString(), ownerAddress).ToString(),
+					FromEmail = fromEmail,
+					FromName = from?.Name ?? fromEmail,
+					ToEmail = toEmail,
+					ToName = toName,
+					Cc = cc,
+					Bcc = bcc,
+					Subject = message.Subject ?? string.Empty,
+					Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
+					Date = date,
+					Owner = ownerAddress,
+					MailboxType = mailboxType,
+					Attachments = GetAttachments(message)
+				});
+			}
+			catch (DbUpdateException)
+			{
+				// En cas de doublon (email déjà présent en base), on ignore silencieusement et on continue
+				// Cela ne devrait pas arriver car déjà ammorcé par EmailRepository.KeepOnlyNewEmailsAsync()
+			}
 		}
 
 		await client.DisconnectAsync(true);
@@ -138,16 +157,14 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 
 	private static async Task<IMailFolder> GetFolderAsync(ImapClient client, string mailboxType)
 	{
-		mailboxType = mailboxType.ToUpperInvariant();
-
-		if (mailboxType == "INBOX")
-			return client.Inbox!;
-
-		var personal = client.GetFolder(client.PersonalNamespaces[0]);
-
-		var folders = await personal.GetSubfoldersAsync(false);
-
-		return folders.FirstOrDefault(x => x.Name.Equals(mailboxType, StringComparison.OrdinalIgnoreCase)) ?? client.Inbox!;
+		return mailboxType.ToUpperInvariant() switch
+		{
+			"INBOX" => await Task.FromResult(client.Inbox!)!,
+			"SENT" => await Task.FromResult(client.GetFolder(SpecialFolder.Sent)!),
+			"TRASH" => await Task.FromResult(client.GetFolder(SpecialFolder.Trash)!),
+			"DRAFTS" => await Task.FromResult(client.GetFolder(SpecialFolder.Drafts)!),
+			_ => await Task.FromResult(client.Inbox!)!
+		};
 	}
 
 	private static List<MailAttachment> GetAttachments(MimeMessage message)

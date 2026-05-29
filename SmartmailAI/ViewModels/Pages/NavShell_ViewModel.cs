@@ -45,9 +45,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		// Tente de restaurer la session locale
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
-
 		IsLogged = _authService.IsAuthenticated;
-		HasLinkedAddresses = _addressesService.HasAny;
 
 		_authService.AuthenticationStateChanged += (_, isLogged) =>
 		{
@@ -57,27 +55,44 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			UpdateVisibility();
 		};
 
+		_addressesService.AddressesListChanged += async (_, hasAny) =>
+		{
+			HasLinkedAddresses = hasAny;
+			await LoadAccountsAsync();
+			UpdateVisibility();
+
+			if (hasAny)
+			{
+				await _emailsSyncService.StartAsync();
+			}
+			else
+				_emailsSyncService.Stop();
+		};
+
+		UpdateVisibility();
+	}
+
+	public async Task InitializeAsync()
+	{
 		// Charge/recharge les adresses emails connectées dans le service au lancement de l'application
-		_addressesService.RefreshAddressesListAsync();
+		await _addressesService.RefreshAddressesListAsync();
+		HasLinkedAddresses = _addressesService.HasAny;
 
 		// Si la base de données contient déjà des adresses emails enregistrées/connectées, on les charge dans le NavShell et en plus
 		// on lance la synchronisation des emails pour ces comptes
 		if (_addressesService.HasAny)
 		{
-			var listAccountsLinked = _addressesService.GetListAccountsLinkedAsync().GetAwaiter().GetResult();
+			var accounts = await _addressesService.GetListAccountsLinkedAsync();
 
-			foreach (var account in listAccountsLinked)
+			foreach (var account in accounts)
 			{
-				var _ = _login_ViewModel.LoadMessagesAsync(account);
+				await _login_ViewModel.LoadMessagesAsync(account);
 			}
 
-			OnAddressesListChanged(true);
-		}
+			await LoadAccountsAsync();
 
-		_addressesService.AddressesListChanged += async (_, hasAny) =>
-		{
-			OnAddressesListChanged(hasAny);
-		};
+			await _emailsSyncService.StartAsync();
+		}
 
 		UpdateVisibility();
 	}
@@ -140,21 +155,6 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		foreach (var account in accounts)
 			AccountsMail.Add(account);
-	}
-
-	private void OnAddressesListChanged(bool hasAny)
-	{
-		HasLinkedAddresses = hasAny;
-		_ = LoadAccountsAsync();
-		UpdateVisibility();
-
-		if (_addressesService.HasAny == true)
-		{
-			_emailsSyncService.Stop();
-			_emailsSyncService.StartAsync();
-		}
-		else
-			_emailsSyncService.Stop();
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées

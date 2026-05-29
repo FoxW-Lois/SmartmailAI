@@ -39,11 +39,20 @@ public sealed partial class NavShell_Page : Page
 		App.MainWindow.Activated += MainWindow_Activated;
 
 		_navigationService = navigationService;
+
+		Loaded += NavShell_Loaded;
 	}
 
 	private void Page_Loaded(object sender, RoutedEventArgs e)
 	{
 		TitleBarHelper.UpdateTitleBar(App.MainWindow, RequestedTheme);
+	}
+
+	private async void NavShell_Loaded(object sender, RoutedEventArgs e)
+	{
+		Loaded -= NavShell_Loaded;
+
+		await ViewModel.InitializeAsync();
 	}
 
 	private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)

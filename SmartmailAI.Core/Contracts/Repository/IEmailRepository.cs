@@ -17,4 +17,6 @@ public interface IEmailRepository
 	Task DeleteEmailAsync(Email email);
 
 	Task DeleteAllEmailsAsync(AccountMailBase account);
+
+	Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails);
 }

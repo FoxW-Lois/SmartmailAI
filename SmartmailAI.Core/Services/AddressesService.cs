@@ -8,10 +8,9 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
 
-public class AddressesService(IAddressesRepository addressRepository, IEmailRepository emailRepository,
-	IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService, IGmailLogoutService gmailLogoutService,
-	IOtherCredentialService otherCredentialService, IOtherProtocolService otherProtocolService, IOtherLogoutService otherLogoutService,
-	IOtherTokenStore otherTokenStore) : IAddressesService
+public class AddressesService(IAddressesRepository addressRepository, IEmailRepository emailRepository, IGmailCredentialService gmailCredentialService,
+	IGmailApiService gmailApiService, IGmailLogoutService gmailLogoutService, IOtherCredentialService otherCredentialService,
+	IOtherLogoutService otherLogoutService, IOtherTokenStore otherTokenStore) : IAddressesService
 {
 	private readonly IAddressesRepository _addressRepository = addressRepository;
 	private readonly IEmailRepository _emailRepository = emailRepository;
@@ -21,7 +20,6 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 	private readonly IGmailLogoutService _gmailLogoutService = gmailLogoutService;
 
 	private readonly IOtherCredentialService _otherCredentialService = otherCredentialService;
-	private readonly IOtherProtocolService _otherProtocolService = otherProtocolService;
 	private readonly IOtherLogoutService _otherLogoutService = otherLogoutService;
 	private readonly IOtherTokenStore _otherTokenStore = otherTokenStore;
 
