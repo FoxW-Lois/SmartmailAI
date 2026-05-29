@@ -16,9 +16,9 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 	private readonly IEmailRepository _emailRepository;
 	private readonly IAddressesRepository _addressesRepository;
 	private readonly IAuthService _authService;
-	private readonly PeriodicTimer _timer;
 	private readonly TimeSpan _interval = TimeSpan.FromSeconds(30);
 	private CancellationTokenSource _cts = new();
+	private Task? _runningTask;
 
 	private readonly SemaphoreSlim _startLock = new(1, 1);
 	private bool _isRunning;
@@ -30,8 +30,6 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 		_emailRepository = emailRepository;
 		_addressesRepository = addressesRepository;
 		_authService = authService;
-
-		_timer = new PeriodicTimer(_interval);
 	}
 
 	public async Task StartAsync()
@@ -46,7 +44,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 
 			_cts = new CancellationTokenSource();
 
-			await RunAsync();
+			_runningTask = Task.Run(RunAsync);
 		}
 		finally
 		{
@@ -58,8 +56,9 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 	{
 		try
 		{
-			// Ne JAMAIS casser le while
-			while (await _timer.WaitForNextTickAsync(_cts.Token))
+			using var timer = new PeriodicTimer(_interval);
+
+			while (await timer.WaitForNextTickAsync(_cts.Token))
 			{
 				var addressRefreshList = await _addressesRepository.GetAllAddressesAsync();
 
@@ -78,12 +77,14 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 		}
 		catch (OperationCanceledException)
 		{
-			// Arrêt pour éviter les crashs et la mobilisation inutile de RAM
-			Stop();
+			Debug.WriteLine("Synchronisation arrêtée.");
 		}
 		catch (Exception ex)
 		{
-			Debug.WriteLine($"Erreur inattendue dans la boucle de synchro des emails: {ex}");
+			Debug.WriteLine($"Erreur inattendue dans la boucle de synchro des emails : {ex}");
+		}
+		finally
+		{
 			_isRunning = false;
 		}
 	}
@@ -106,11 +107,17 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 
 		_cts.Cancel();
 		_isRunning = false;
+		_runningTask = null;
 	}
 
 	public async ValueTask DisposeAsync()
 	{
-		_cts.Cancel();
-		_timer.Dispose();
+		Stop();
+
+		if (_runningTask != null)
+			await _runningTask;
+
+		_cts.Dispose();
+		_startLock.Dispose();
 	}
 }
