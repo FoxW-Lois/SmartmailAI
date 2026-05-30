@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Authentication;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
@@ -9,12 +10,12 @@ using SmartmailAI.Core.Models;
 namespace SmartmailAI.Core.Services.Authentication;
 
 public class AuthService(IAccountRepository accountRepository, IAccountSecretStore secretStore, ITotpService totpService,
-	ICryptoService cryptoService) : IAuthService
+	IDpapiService dpapiService) : IAuthService
 {
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IAccountSecretStore _secretStore = secretStore;
 	private readonly ITotpService _totpService = totpService;
-	private readonly ICryptoService _cryptoService = cryptoService;
+	private readonly IDpapiService _dpapiService = dpapiService;
 
 	#region Notification du changement d'état concernant l'authentification de l'utilisateur
 
@@ -133,7 +134,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			// Génération de la clé secrète
 			var secret = _totpService.GenerateSecret();
 			// Chiffrement de la clé
-			var encryptedSecret = _cryptoService.Encrypt(secret.Base32);
+			var encryptedSecret = _dpapiService.Encrypt(secret.Base32);
 			// Stockage de la clé
 			await _secretStore.SaveSecretAsync(login, encryptedSecret);
 
@@ -160,7 +161,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			return false;
 
 		// Déchiffrement de la clé
-		var secret = _cryptoService.Decrypt(encryptedSecret);
+		var secret = _dpapiService.Decrypt(encryptedSecret);
 
 		// Validation TOTP
 		bool codeValidation = _totpService.ValidateCode(secret, code);

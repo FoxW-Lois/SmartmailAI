@@ -12,7 +12,7 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 {
 	private readonly ITotpService _totpService;
 	private readonly IQrCodeService _qrCodeService;
-	private readonly ICryptoService _cryptoService;
+	private readonly IDpapiService _dpapiService;
 	private readonly IAccountSecretStore _secretStore;
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
@@ -42,6 +42,7 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 	}
 
 	#endregion QrCode variables
+
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
 	public string ErrorMessage
@@ -56,12 +57,12 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 
 	public ICommand Confirm2FACommand { get; }
 
-	public SettingsTwoFactor_ViewModel(ITotpService totpService, IQrCodeService qrCodeService, ICryptoService cryptoService,
+	public SettingsTwoFactor_ViewModel(ITotpService totpService, IQrCodeService qrCodeService, IDpapiService dpapiService,
 		IAccountSecretStore secretStore, IAuthService authService, INavigationService navigationService)
 	{
 		_totpService = totpService;
 		_qrCodeService = qrCodeService;
-		_cryptoService = cryptoService;
+		_dpapiService = dpapiService;
 		_secretStore = secretStore;
 		_authService = authService;
 		_navigationService = navigationService;
@@ -102,7 +103,7 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 		ErrorMessage = string.Empty;
 
 		// Chiffrement et stockage définitif
-		var encryptedSecret = _cryptoService.Encrypt(_tempSecret.Base32);
+		var encryptedSecret = _dpapiService.Encrypt(_tempSecret.Base32);
 
 		await _secretStore.SaveSecretAsync(_authService.CurrentAccountLogin, encryptedSecret);
 

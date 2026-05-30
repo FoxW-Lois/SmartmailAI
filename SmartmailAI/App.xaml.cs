@@ -275,7 +275,7 @@ public partial class App : Application
 				#region Authentication Services
 
 				services.AddSingleton<IAuthService, AuthService>();
-				services.AddSingleton<ICryptoService, CryptoService>();
+				services.AddSingleton<IDpapiService, DpapiService>();
 				services.AddSingleton<IQrCodeService, QrCodeService>();
 				services.AddSingleton<ITotpService, TotpService>();
 				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
@@ -285,9 +285,10 @@ public partial class App : Application
 
 				#region DbContext
 
-				// BDD gérant les comptes d'accès à l'application
+				// BDD gérant les comptes d'accès à l'application, l'enregistrement d'adresses emails,
+				// l'enregistrement et la gestion d'états des emails
 
-				var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailServerDB.db");
+				var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
 
 				services.AddDbContextFactory<AppDbContext_Address>(options =>
 				{
@@ -352,7 +353,7 @@ public partial class App : Application
 			// Get AppActivationArguments
 			var appActivationArguments = AppInstance.GetCurrent().GetActivatedEventArgs();
 
-			await CheckDatabase.EnsureDatabaseAsync();
+			await Database.EnsureDatabaseAsync();
 
 			// Initialize the window
 			MainWindow = new MainWindow();

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using SmartmailAI.Core.Contracts.Services.Authentication;
+using SmartmailAI.Core.Contracts.Services;
 
-namespace SmartmailAI.Core.Services.Authentication;
+namespace SmartmailAI.Core.Services;
 
-public class CryptoService : ICryptoService
+public class DpapiService : IDpapiService
 {
 	public string Encrypt(string plaintext)
 	{
