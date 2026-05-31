@@ -5,7 +5,7 @@ using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 
 namespace SmartmailAI.Core.Services.LocalSecurity;
 
-public class DpapiService : ISecureDataService
+public class DpapiService : IDpapiService
 {
 	public string Encrypt(string plaintext)
 	{

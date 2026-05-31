@@ -1,6 +1,6 @@
 ﻿namespace SmartmailAI.Core.Contracts.Services.LocalSecurity;
 
-public interface ISecureDataService
+public interface IDpapiService
 {
 	string Encrypt(string plaintext);
 

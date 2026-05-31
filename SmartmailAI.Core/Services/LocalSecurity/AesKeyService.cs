@@ -7,9 +7,9 @@ using Windows.Storage;
 
 namespace SmartmailAI.Core.Services.LocalSecurity;
 
-public class AesKeyService(DpapiService dpapi) : IAesKeyService
+public class AesKeyService(IDpapiService dpapi) : IAesKeyService
 {
-	private readonly DpapiService _dpapi = dpapi;
+	private readonly IDpapiService _dpapi = dpapi;
 
 	private const string KeyFileName = "aes.key";
 

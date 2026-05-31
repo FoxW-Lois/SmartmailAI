@@ -286,10 +286,9 @@ public partial class App : Application
 
 				#region LocalSecurity Services
 
-				services.AddSingleton<DpapiService>();
+				services.AddSingleton<IDpapiService, DpapiService>();
 				services.AddSingleton<IAesKeyService, AesKeyService>();
 				services.AddSingleton<IAesService, AesService>();
-				services.AddSingleton<AesValueConverter>();
 
 				#endregion LocalSecurity Services
 

@@ -12,8 +12,10 @@ using Google.Apis.Services;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Helpers;
 using SmartmailAI.Core.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
@@ -57,30 +59,33 @@ public class GmailApiService : IGmailApiService
 			return [];
 
 		var result = new List<EmailFromAddress>();
-		string emailAddressOwner = await GetEmailAddressAsync(credential);
+		string ownerAddress = await GetEmailAddressAsync(credential);
 
 		foreach (var msg in response.Messages)
 		{
 			var full = await service.Users.Messages.Get("me", msg.Id).ExecuteAsync();
 
 			var (fromName, fromEmail) = ParseEmailAddress(GetHeader(full, "From"));
-			var (toName, toEmail) = ParseListEmailsAddresses(GetHeader(full, "To"));
+			var (toNameParsed, toEmailParsed) = ParseListEmailsAddresses(GetHeader(full, "To"));
+			var toEmail = MailAddressParserHelper.FormatStringAddresses(toEmailParsed);
+			var toName = MailAddressParserHelper.FormatStringAddresses(toNameParsed);
+			var date = GetMessageDate(full);
 
 			try
 			{
 				result.Add(new EmailFromAddress
 				{
-					Guid = msg.Id,
+					Guid = CreateGuid.DeterministicGuid(fromEmail, toEmail, date.ToString()!, ownerAddress).ToString(),
 					FromEmail = fromEmail,
 					FromName = fromName ?? fromEmail,
-					ToEmail = MailAddressParserHelper.FormatStringAddresses(toEmail),
-					ToName = MailAddressParserHelper.FormatStringAddresses(toName),
+					ToEmail = toEmail,
+					ToName = toName,
 					Cc = GetHeader(full, "Cc"),
 					Bcc = GetHeader(full, "Bcc"),
 					Subject = GetHeader(full, "Subject"),
 					Body = GetMessageBody(full),
-					Date = GetMessageDate(full),
-					Owner = emailAddressOwner,
+					Date = date,
+					Owner = ownerAddress,
 					MailboxType = MailboxType,
 					Attachments = GetAttachments(full)
 				});

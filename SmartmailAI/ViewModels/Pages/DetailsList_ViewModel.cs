@@ -319,11 +319,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		if (emailToRestore is null) return Task.CompletedTask;
 
-		var emailToRestoreFound = previousCategory.ItemsCollection
-			.FirstOrDefault(e => e.Guid == emailToRestore.Guid
-							&& e.SenderEmail == emailToRestore.SenderEmail
-							&& e.ReceiverEmail == emailToRestore.ReceiverEmail
-							&& e.IsRead);
+		var emailToRestoreFound = previousCategory.ItemsCollection.FirstOrDefault(e => e.Guid == emailToRestore.Guid && e.IsRead);
 
 		if (emailToRestoreFound is not null)
 			RestoreSelectionRequested?.Invoke(emailToRestoreFound);

@@ -3,19 +3,19 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Authentication;
+using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
-using SmartmailAI.Core.Services.LocalSecurity;
 
 namespace SmartmailAI.Core.Services.Authentication;
 
 public class AuthService(IAccountRepository accountRepository, IAccountSecretStore secretStore, ITotpService totpService,
-	DpapiService dpapiService) : IAuthService
+	IDpapiService dpapiService) : IAuthService
 {
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IAccountSecretStore _secretStore = secretStore;
 	private readonly ITotpService _totpService = totpService;
-	private readonly DpapiService _dpapiService = dpapiService;
+	private readonly IDpapiService _dpapiService = dpapiService;
 
 	#region Notification du changement d'état concernant l'authentification de l'utilisateur
 
