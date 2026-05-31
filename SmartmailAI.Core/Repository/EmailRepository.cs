@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SmartmailAI.Core.AppDbContext;
+using SmartmailAI.Core.Contracts;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 using SmartmailAI.Core.Models;
-using static QRCoder.PayloadGenerator;
 
 namespace SmartmailAI.Core.Repository;
 
-public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAesService aesService) : IEmailRepository
+public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAesService aesService) : IEmailRepository,
+	IEncryptDecryptDatas<Email>
 {
 	private readonly IDbContextFactory<AppDbContext_Email> _factory = factory;
 	private readonly IAesService _aesService = aesService;
@@ -26,7 +26,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		   .OrderByDescending(e => e.DateSent)
 		   .ToListAsync();
 
-		emails = await DecryptEmailList(emails);
+		emails = await DecryptEmailListAsync(emails);
 
 		return emails;
 	}
@@ -39,7 +39,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 			.OrderByDescending(e => e.DateSent)
 			.ToListAsync();
 
-		emails = await DecryptEmailList(emails);
+		emails = await DecryptEmailListAsync(emails);
 		emails = [.. emails.Where(e => e.Owner == ownerAddress)];
 
 		return emails;
@@ -49,7 +49,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
-		email = await EncryptEmail(email);
+		email = await EncryptDataAsync(email);
 
 		_context.Email.Add(email);
 		await _context.SaveChangesAsync();
@@ -59,7 +59,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
-		email = await EncryptEmail(email);
+		email = await EncryptDataAsync(email);
 
 		_context.Email.Update(email);
 		await _context.SaveChangesAsync();
@@ -69,7 +69,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
-		email = await EncryptEmail(email);
+		email = await EncryptDataAsync(email);
 
 		_context.Email.Remove(email);
 		await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		   .OrderByDescending(e => e.DateSent)
 		   .ToListAsync();
 
-		var emailsToDelete = await EncryptEmailList(emails);
+		var emailsToDelete = await EncryptEmailListAsync(emails);
 		emailsToDelete = [.. emailsToDelete.Where(e => account != null && e.Owner == account.Email)];
 
 		_context.Email.RemoveRange(emailsToDelete);
@@ -96,7 +96,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 
 		// TODO: à voir pour le chiffrement de ownerAddress
 		//ownerAddress = await _aesService.EncryptAsync(ownerAddress);
-		newEmails = await EncryptEmailList(newEmails);
+		newEmails = await EncryptEmailListAsync(newEmails);
 
 		var existingAddresses = await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).ToHashSetAsync();
 		var newEmailsToKeep = newEmails.Where(e => !existingAddresses.Contains(e.Guid)).ToList();
@@ -104,7 +104,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		return newEmailsToKeep;
 	}
 
-	private async Task<Email> EncryptEmail(Email email)
+	public async Task<Email> EncryptDataAsync(Email email)
 	{
 		email.SenderEmail = await _aesService.EncryptAsync(email.SenderEmail);
 		email.SenderName = await _aesService.EncryptAsync(email.SenderName);
@@ -129,19 +129,19 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		return email;
 	}
 
-	private async Task<List<Email>> EncryptEmailList(List<Email> emails)
+	private async Task<List<Email>> EncryptEmailListAsync(List<Email> emails)
 	{
 		List<Email> encryptedEmails = [];
 
 		foreach (var email in emails)
 		{
-			encryptedEmails.Add(await EncryptEmail(email));
+			encryptedEmails.Add(await EncryptDataAsync(email));
 		}
 
 		return encryptedEmails;
 	}
 
-	private async Task<Email> DecryptEmail(Email email)
+	public async Task<Email> DecryptDataAsync(Email email)
 	{
 		email.SenderEmail = await _aesService.DecryptAsync(email.SenderEmail);
 		email.SenderName = await _aesService.DecryptAsync(email.SenderName);
@@ -166,13 +166,13 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		return email;
 	}
 
-	private async Task<List<Email>> DecryptEmailList(List<Email> emails)
+	private async Task<List<Email>> DecryptEmailListAsync(List<Email> emails)
 	{
 		List<Email> decryptedEmails = [];
 
 		foreach (var email in emails)
 		{
-			decryptedEmails.Add(await DecryptEmail(email));
+			decryptedEmails.Add(await DecryptDataAsync(email));
 		}
 
 		return decryptedEmails;
