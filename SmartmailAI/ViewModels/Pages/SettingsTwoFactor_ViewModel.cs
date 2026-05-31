@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Data;
+using SmartmailAI.Core.Services.LocalSecurity;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -12,7 +13,7 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 {
 	private readonly ITotpService _totpService;
 	private readonly IQrCodeService _qrCodeService;
-	private readonly IDpapiService _dpapiService;
+	private readonly DpapiService _dpapiService;
 	private readonly IAccountSecretStore _secretStore;
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
@@ -57,7 +58,7 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 
 	public ICommand Confirm2FACommand { get; }
 
-	public SettingsTwoFactor_ViewModel(ITotpService totpService, IQrCodeService qrCodeService, IDpapiService dpapiService,
+	public SettingsTwoFactor_ViewModel(ITotpService totpService, IQrCodeService qrCodeService, DpapiService dpapiService,
 		IAccountSecretStore secretStore, IAuthService authService, INavigationService navigationService)
 	{
 		_totpService = totpService;

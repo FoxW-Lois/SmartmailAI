@@ -14,10 +14,12 @@ using Serilog;
 using SmartmailAI.Core.AppDbContext;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 using SmartmailAI.Core.Contracts.Services.Security;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Repository;
 using SmartmailAI.Core.Services.Addresses;
+using SmartmailAI.Core.Services.LocalSecurity;
 using SmartmailAI.Core.Services.Security;
 
 namespace SmartmailAI;
@@ -275,13 +277,21 @@ public partial class App : Application
 				#region Authentication Services
 
 				services.AddSingleton<IAuthService, AuthService>();
-				services.AddSingleton<IDpapiService, DpapiService>();
 				services.AddSingleton<IQrCodeService, QrCodeService>();
 				services.AddSingleton<ITotpService, TotpService>();
 				services.AddSingleton<IAccountSecretStore, AccountSecretStore>();
 				services.AddSingleton<ILocalSessionService, LocalSessionService>();
 
 				#endregion Authentication Services
+
+				#region LocalSecurity Services
+
+				services.AddSingleton<DpapiService>();
+				services.AddSingleton<IAesKeyService, AesKeyService>();
+				services.AddSingleton<IAesService, AesService>();
+				services.AddSingleton<AesValueConverter>();
+
+				#endregion LocalSecurity Services
 
 				#region DbContext
 
@@ -302,6 +312,8 @@ public partial class App : Application
 
 				services.AddDbContextFactory<AppDbContext_Email>(options =>
 				{
+					var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
+
 					options.UseSqlite($"Data Source={dbPath}");
 				});
 
