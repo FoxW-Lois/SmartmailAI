@@ -4,5 +4,5 @@ namespace SmartmailAI.Core.Models;
 
 public class AccountGmail : AccountMailBase
 {
-	[Column("GoogleUserId")] public required string GoogleUserId { get; init; }
+	[Column("GoogleUserId")] public required string GoogleUserId { get; set; }
 }

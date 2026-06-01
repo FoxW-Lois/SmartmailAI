@@ -7,11 +7,11 @@ namespace SmartmailAI.Core.Models;
 public class AccountMailBase
 {
 	[Key][Column("Id")] public Guid Id { get; init; } = Guid.NewGuid();
-	[Column("Email")][MaxLength(255)] public required string Email { get; init; }
+	[Column("Email")][MaxLength(255)] public required string Email { get; set; }
 	[Column("ConnectedAt")] public required DateTime ConnectedAt { get; init; }
 
 	// Clé locale de stockage
-	[Column("TokenStorageKey")] public required string TokenStorageKey { get; init; }
+	[Column("TokenStorageKey")] public required string TokenStorageKey { get; set; }
 
 	// Nécessaire à l'affichage en clair des Emails connectés dans le NavMenu
 	public override string ToString() => Email;
