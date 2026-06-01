@@ -39,7 +39,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	#endregion Notification du changement d'état concernant l'authentification de l'utilisateur
 
 	// Exposition du login de l'instance en cours
-	public string CurrentAccountLogin { get; private set; } = "";
+	public string CurrentAccountLogin { get; set; } = "";
 
 	// Connexion
 	public async Task<(bool Success, string? SpecificError)> LoginAsync(string login, string password)

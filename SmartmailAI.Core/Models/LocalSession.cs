@@ -6,6 +6,7 @@ public sealed class LocalSession
 {
 	public string SessionId { get; set; } = default!;
 
+	public string Login { get; set; } = default!;
 	public string CurrentRefreshToken { get; set; } = default!;
 	public string CurrentRefreshTokenHash { get; set; } = default!;
 	public string PreviousRefreshTokenHash { get; set; } = default!;

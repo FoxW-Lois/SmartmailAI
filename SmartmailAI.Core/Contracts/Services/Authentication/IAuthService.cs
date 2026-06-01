@@ -7,7 +7,7 @@ public interface IAuthService
 {
 	bool IsAuthenticated { get; set; }
 
-	string CurrentAccountLogin { get; }
+	string CurrentAccountLogin { get; set; }
 
 	// Notification du changement d'état concernant l'authentification de l'utilisateur
 	event EventHandler<bool> AuthenticationStateChanged;

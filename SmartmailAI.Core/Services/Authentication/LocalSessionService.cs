@@ -4,16 +4,15 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
-using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Authentication;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Authentication;
 
-public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthService authService) : ILocalSessionService
+public class LocalSessionService(IAuthService authService /*,IEmailsSyncService emailsSyncService*/) : ILocalSessionService
 {
-	private readonly IEmailsSyncService _emailsSyncService = emailsSyncService;
 	private readonly IAuthService _authService = authService;
+	//private readonly IEmailsSyncService _emailsSyncService = emailsSyncService;
 
 	private static readonly string _rootFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 		"SmartmailAI");
@@ -45,6 +44,7 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 		{
 			SessionId = Guid.NewGuid().ToString(),
 
+			Login = _authService.CurrentAccountLogin,
 			CurrentRefreshToken = refreshToken,
 			CurrentRefreshTokenHash = HashToken(refreshToken),
 			PreviousRefreshTokenHash = "",
@@ -113,6 +113,9 @@ public class LocalSessionService(IEmailsSyncService emailsSyncService, IAuthServ
 
 		if (providedHash != session.CurrentRefreshTokenHash)
 			return false;
+
+		_authService.CurrentAccountLogin = session.Login;
+		_authService.UpdateLastConnection();
 
 		return true;
 	}
