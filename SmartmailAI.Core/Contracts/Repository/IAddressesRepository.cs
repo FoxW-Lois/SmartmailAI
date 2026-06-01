@@ -12,5 +12,5 @@ public interface IAddressesRepository
 
 	Task AddAddressAsync(AccountMailBase account);
 
-	Task<bool> DeleteAddressAsync(AccountMailBase account);
+	Task DeleteAddressAsync(AccountMailBase account);
 }

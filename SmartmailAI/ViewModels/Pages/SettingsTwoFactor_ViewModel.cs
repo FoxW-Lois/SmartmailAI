@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 using SmartmailAI.Core.Data;
 
 namespace SmartmailAI.ViewModels.Pages;

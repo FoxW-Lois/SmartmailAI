@@ -2,8 +2,8 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
-using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Authentication;
+using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
 

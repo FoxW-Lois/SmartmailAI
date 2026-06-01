@@ -22,8 +22,8 @@ public class Email
 	[Column("ReceiverName")] public string? ReceiverName { get; set; }
 	[NotMapped] public Uri? ReceiverProfileImage { get; set; }
 
-	[Column("Cc")] public string? Cc { get; init; }
-	[Column("Bcc")] public string? Bcc { get; init; }
+	[Column("Cc")] public string? Cc { get; set; }
+	[Column("Bcc")] public string? Bcc { get; set; }
 	[NotMapped] public bool HasCc => !string.IsNullOrWhiteSpace(Cc);
 	[NotMapped] public bool HasBcc => !string.IsNullOrWhiteSpace(Bcc);
 
@@ -33,14 +33,8 @@ public class Email
 
 	[Column("DateSent")] public DateTime? DateSent { get; set; }
 
-	[Column("Attachments")]
-	public string AttachmentsJson
-	{
-		get => JsonSerializer.Serialize(Attachments);
-		set => Attachments = string.IsNullOrEmpty(value)
-			? []
-			: JsonSerializer.Deserialize<List<MailAttachment>>(value) ?? [];
-	}
+	// La sérialisation / dé-sérialisation Json se fait maintenant dans le EmailRepository afin d'appliquer un chiffrement sur les pièces jointes
+	[Column("Attachments")] public string? AttachmentsJson { get; set; }
 
 	[NotMapped] public List<MailAttachment> Attachments { get; set; } = [];
 

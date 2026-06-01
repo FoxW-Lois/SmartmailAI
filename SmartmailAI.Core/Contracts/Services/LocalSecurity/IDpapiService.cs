@@ -1,4 +1,4 @@
-﻿namespace SmartmailAI.Core.Contracts.Services;
+﻿namespace SmartmailAI.Core.Contracts.Services.LocalSecurity;
 
 public interface IDpapiService
 {
