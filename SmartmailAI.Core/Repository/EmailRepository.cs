@@ -94,12 +94,12 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
-		// TODO: à voir pour le chiffrement de ownerAddress
-		//ownerAddress = await _aesService.EncryptAsync(ownerAddress);
 		newEmails = await EncryptEmailListAsync(newEmails);
 
 		var existingAddresses = await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).ToHashSetAsync();
 		var newEmailsToKeep = newEmails.Where(e => !existingAddresses.Contains(e.Guid)).ToList();
+
+		newEmailsToKeep = await DecryptEmailListAsync(newEmailsToKeep);
 
 		return newEmailsToKeep;
 	}
