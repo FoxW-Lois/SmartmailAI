@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Util.Store;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
-public class GmailCredentialService() : IGmailCredentialService
+public class GmailCredentialService(IAddressesRepository addressesRepository) : IGmailCredentialService
 {
+	private readonly IAddressesRepository _addressesRepository = addressesRepository;
+
 	private static readonly FileDataStore? dataStore = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 		"SmartmailAI", "Google.Apis.AuthToken"), true);
 
@@ -50,8 +53,10 @@ public class GmailCredentialService() : IGmailCredentialService
 
 			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
+			var decryptedAccountGmail = await _addressesRepository.DecryptDataAsync(accountGmail);
+
 			return await GoogleWebAuthorizationBroker.AuthorizeAsync(
-				secrets, scopes, accountGmail.TokenStorageKey, CancellationToken.None, dataStore
+				secrets, scopes, decryptedAccountGmail.TokenStorageKey, CancellationToken.None, dataStore
 			);
 		}
 		catch (Exception)
