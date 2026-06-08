@@ -107,7 +107,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		newEmails = await EncryptEmailListAsync(newEmails);
 
 		// Fait un Check du Guid sur les nouveaux emails entrants, par rapport à ceux déjà présents en base pour éviter les doublons
-		// Dans le cas où l'adresse Email les possédant est connectée au projet via IMAP/SMTP, il faut supprimer le "-nombre" à la fin du Guid
+		// Dans le cas où l'adresse Email les possédant est connectée au projet via SMTP/IMAP, il faut supprimer le "-nombre" à la fin du Guid
 		// mais uniquement dans la comparaison, pas dans les données stockées en base
 		HashSet<string>? existingAddresses;
 		List<Email>? newEmailsToKeep;

@@ -404,7 +404,7 @@
     <value>Login ou mot de passe incorrect.</value>
   </data>
   <data name="AddAddress_OtherChoice.Text" xml:space="preserve">
-    <value>IMAP/SMTP :</value>
+    <value>SMTP/IMAP :</value>
   </data>
   <data name="Shell_AddressManagement.Content" xml:space="preserve">
     <value>Gérer les adresses</value>
