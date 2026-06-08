@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using MailKit;
 using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
@@ -37,7 +36,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
 		if (password == null) return [];
 
-		await client.AuthenticateAsync(account.UserName, password);
+		await client.AuthenticateAsync(account.Email, password);
 
 		var folder = await GetFolderAsync(client, mailboxType);
 		await folder.OpenAsync(FolderAccess.ReadOnly);
@@ -72,9 +71,14 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 				var date = message.Date.LocalDateTime;
 				var ownerAddress = account.Email;
 
+				// Pour récupérer les pièces jointes, le messageId doit contenir le UID du message dans la boîte de réception.
+				// Pour se conformer à cela, on place le UID du message à la fin de string, juste après la génération du Guid par
+				// CreateGuid.DeterministicGuid
+				var guid = CreateGuid.DeterministicGuid(fromEmail, toEmail, date.ToString(), ownerAddress).ToString();
+
 				result.Add(new EmailFromAddress
 				{
-					Guid = CreateGuid.DeterministicGuid(fromEmail, toEmail, date.ToString(), ownerAddress).ToString(),
+					Guid = String.Concat(guid, "-", uid.Id.ToString()),
 					FromEmail = fromEmail,
 					FromName = from?.Name ?? fromEmail,
 					ToEmail = toEmail,
@@ -110,10 +114,15 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
 		if (password == null) return;
 
-		await client.AuthenticateAsync(account.UserName, password);
+		await client.AuthenticateAsync(account.Email, password);
 		await client.Inbox!.OpenAsync(FolderAccess.ReadOnly);
 
-		var uid = new UniqueId(uint.Parse(messageId));
+		// Pour récupérer les pièces jointes, le messageId doit contenir le UID du message dans la boîte de réception.
+		// Pour se conformer à cela, on place le UID du message à la fin de string, juste après la génération du Guid par
+		// CreateGuid.DeterministicGuid et on le récupère ici en parsant le messageId.
+		var trueMessageId = messageId.Split('-').LastOrDefault();
+
+		var uid = new UniqueId(uint.Parse(trueMessageId!));
 		var message = await client.Inbox.GetMessageAsync(uid);
 		var mimeAttachment = message.Attachments.OfType<MimePart>().FirstOrDefault(x => x.FileName == attachment.FileName);
 
@@ -146,7 +155,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
 		if (password == null) return;
 
-		await smtp.AuthenticateAsync(account.UserName, password);
+		await smtp.AuthenticateAsync(account.Email, password);
 
 		await smtp.SendAsync(message);
 

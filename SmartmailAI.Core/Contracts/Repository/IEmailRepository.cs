@@ -18,5 +18,7 @@ public interface IEmailRepository
 
 	Task DeleteAllEmailsAsync(AccountMailBase account);
 
-	Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails);
+	Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails, bool isFromOtherAddress);
+
+	string NormalizeGuid(string guid);
 }

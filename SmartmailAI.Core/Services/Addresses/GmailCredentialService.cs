@@ -41,7 +41,7 @@ public class GmailCredentialService(IAddressesRepository addressesRepository) : 
 		}
 	}
 
-	public async Task<UserCredential?> GetCredentialAsync(AccountGmail accountGmail)
+	public async Task<UserCredential?> GetCredentialAsync(AccountGmail accountGmail, bool isCrypted)
 	{
 		try
 		{
@@ -53,7 +53,10 @@ public class GmailCredentialService(IAddressesRepository addressesRepository) : 
 
 			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
 
-			var decryptedAccountGmail = await _addressesRepository.DecryptDataAsync(accountGmail);
+			AccountMailBase? decryptedAccountGmail = accountGmail;
+
+			if (isCrypted)
+				decryptedAccountGmail = await _addressesRepository.DecryptDataAsync(accountGmail);
 
 			return await GoogleWebAuthorizationBroker.AuthorizeAsync(
 				secrets, scopes, decryptedAccountGmail.TokenStorageKey, CancellationToken.None, dataStore

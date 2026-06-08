@@ -101,6 +101,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 				default:
 					return;
 			}
+			// TODO: ajouter un check account is AccountOutlook accountOutlook
 
 			// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
 			Discard();
@@ -115,7 +116,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 	private async Task SendWithGmailAsync(AccountGmail account)
 	{
-		var credential = await _gmailCredentialService.GetCredentialAsync(account);
+		var credential = await _gmailCredentialService.GetCredentialAsync(account, false);
 
 		if (credential is null)
 		{

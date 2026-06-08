@@ -66,6 +66,8 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory, 
 		await _context.SaveChangesAsync();
 	}
 
+	#region Chiffrement / Déchiffrement
+
 	public async Task<Account> EncryptDataAsync(Account account)
 	{
 		account.PhoneNumber = await _aesService.EncryptAsync(account.PhoneNumber);
@@ -79,4 +81,6 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory, 
 
 		return account;
 	}
+
+	#endregion Chiffrement / Déchiffrement
 }

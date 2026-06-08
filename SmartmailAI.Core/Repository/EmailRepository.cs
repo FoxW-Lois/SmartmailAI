@@ -52,7 +52,17 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		email = await EncryptDataAsync(email);
 
 		_context.Email.Add(email);
-		await _context.SaveChangesAsync();
+
+		try
+		{
+			await _context.SaveChangesAsync();
+		}
+		catch (DbUpdateException)
+		{
+			// En cas de doublon (email déjà présent en base), on ignore silencieusement et on continue
+			// Peut arriver dans le cas où un utilisateur s'est envoyé un email à lui-même, mais cela est normalement déjà ammorcé par
+			// MailReaderService avant appel de AddEmailAsync()
+		}
 	}
 
 	public async Task UpdateEmailAsync(Email email)
@@ -90,19 +100,42 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails)
+	public async Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails, bool isFromOtherAddress)
 	{
 		using var _context = _factory.CreateDbContext();
 
 		newEmails = await EncryptEmailListAsync(newEmails);
 
-		var existingAddresses = await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).ToHashSetAsync();
-		var newEmailsToKeep = newEmails.Where(e => !existingAddresses.Contains(e.Guid)).ToList();
+		// Fait un Check du Guid sur les nouveaux emails entrants, par rapport à ceux déjà présents en base pour éviter les doublons
+		// Dans le cas où l'adresse Email les possédant est connectée au projet via IMAP/SMTP, il faut supprimer le "-nombre" à la fin du Guid
+		// mais uniquement dans la comparaison, pas dans les données stockées en base
+		HashSet<string>? existingAddresses;
+		List<Email>? newEmailsToKeep;
+
+		if (!isFromOtherAddress)
+		{
+			existingAddresses = await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).ToHashSetAsync();
+			newEmailsToKeep = [.. newEmails.Where(e => !existingAddresses.Contains(e.Guid))];
+		}
+		else
+		{
+			existingAddresses = [.. (await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).
+				ToListAsync()).Select(NormalizeGuid)];
+			newEmailsToKeep = [.. newEmails.Where(e => !existingAddresses.Contains(NormalizeGuid(e.Guid)))];
+		}
 
 		newEmailsToKeep = await DecryptEmailListAsync(newEmailsToKeep);
 
 		return newEmailsToKeep;
 	}
+
+	public string NormalizeGuid(string guid)
+	{
+		int pos = guid.LastIndexOf('-');
+		return pos > 0 ? guid[..pos] : guid;
+	}
+
+	#region Chiffrement / Déchiffrement
 
 	public async Task<Email> EncryptDataAsync(Email email)
 	{
@@ -177,4 +210,6 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 
 		return decryptedEmails;
 	}
+
+	#endregion Chiffrement / Déchiffrement
 }

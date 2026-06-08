@@ -8,5 +8,5 @@ public interface IGmailCredentialService
 {
 	Task<UserCredential?> ConnectAsync(string userKey);
 
-	Task<UserCredential?> GetCredentialAsync(AccountGmail accountGmail);
+	Task<UserCredential?> GetCredentialAsync(AccountGmail accountGmail, bool isCrypted);
 }

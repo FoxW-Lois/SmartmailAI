@@ -60,6 +60,8 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 		await _context.SaveChangesAsync();
 	}
 
+	#region Chiffrement / Déchiffrement
+
 	public async Task<AccountMailBase> EncryptDataAsync(AccountMailBase account)
 	{
 		account.Email = await _aesService.EncryptAsync(account.Email);
@@ -71,7 +73,7 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 		}
 		else if (account is AccountOther accountOther)
 		{
-			accountOther.UserName = await _aesService.EncryptAsync(accountOther.ImapHost);
+			accountOther.UserName = await _aesService.EncryptAsync(accountOther.UserName);
 			accountOther.ImapHost = await _aesService.EncryptAsync(accountOther.ImapHost);
 			accountOther.SmtpHost = await _aesService.EncryptAsync(accountOther.SmtpHost);
 		}
@@ -90,7 +92,7 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 		}
 		else if (account is AccountOther accountOther)
 		{
-			accountOther.UserName = await _aesService.DecryptAsync(accountOther.ImapHost);
+			accountOther.UserName = await _aesService.DecryptAsync(accountOther.UserName);
 			accountOther.ImapHost = await _aesService.DecryptAsync(accountOther.ImapHost);
 			accountOther.SmtpHost = await _aesService.DecryptAsync(accountOther.SmtpHost);
 		}
@@ -109,4 +111,6 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 
 		return decryptedAccounts;
 	}
+
+	#endregion Chiffrement / Déchiffrement
 }

@@ -15,7 +15,6 @@ using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Helpers;
 using SmartmailAI.Core.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SmartmailAI.Core.Services.Addresses;
 

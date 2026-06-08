@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services;
@@ -11,7 +12,8 @@ namespace SmartmailAI.Core.Services.Addresses;
 
 public class MailReaderService(IEmailRepository emailRepository, IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService,
 	IOtherCredentialService otherCredentialService, IOtherProtocolService otherProtocolService, IOtherTokenStore otherTokenStore,
-	IAuthService authService, IAccountRepository accountRepository, IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
+	IAuthService authService, IAccountRepository accountRepository, IAddressesRepository addressesRepository,
+	IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
 {
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IGmailCredentialService _gmailCredentialService = gmailCredentialService;
@@ -23,11 +25,12 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 	private readonly IAuthService _authService = authService;
 	private readonly IAccountRepository _accountRepository = accountRepository;
+	private readonly IAddressesRepository _addressesRepository = addressesRepository;
 	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
 	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase account)
 	{
-		const int NumMails = 2;
+		const int NumMails = 3;
 
 		var lastConnection = await GetCurrentAccountLastConnectionAsync();
 
@@ -46,14 +49,15 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		if (isAddingNewAddress)
 			return emailsRecovered;
 
-		return await _emailRepository.KeepOnlyNewEmailsAsync(account.Email, emailsRecovered);
+		// Le dernier paramètre (isFromOtherAddress) sera true si c'est un OtherAddress (donc SMTP/IMAP)
+		return await _emailRepository.KeepOnlyNewEmailsAsync(account.Email, emailsRecovered, account is AccountOther);
 	}
 
 	#region Getting emails helpers
 
 	private async Task<List<EmailFromAddress>> GetGmailMessagesAsync(AccountGmail account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
 	{
-		var credential = await _gmailCredentialService.GetCredentialAsync(account);
+		var credential = await _gmailCredentialService.GetCredentialAsync(account, isAddingNewAddress);
 
 		if (credential is null)
 			return [];
@@ -64,6 +68,17 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		var sentTask = _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails,
 			lastConnection);
 
+		// Fait un Check du Guid sur les 2 listes de nouveaux emails entrants, et si un email de la liste "Sent" a un Guid déjà présent
+		// dans la liste "Inbox", alors on le supprime de la liste "Sent" pour éviter les doublons.
+		// Cela arrive dans le cas où un email est envoyé à soi-même
+
+		var inbox = await inboxTask;
+		var sent = await sentTask;
+
+		sent = [.. (await sentTask).Where(s => !((inbox).Select(i => i.Guid)
+			.ToHashSet()).Contains(s.Guid))];
+		sentTask = Task.FromResult(sent);
+
 		await Task.WhenAll(inboxTask, sentTask);
 
 		return [.. await inboxTask, .. await sentTask];
@@ -71,7 +86,7 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 	private async Task<List<EmailFromAddress>> GetOtherMessagesAsync(AccountOther account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
 	{
-		var connected = await PrepareOtherAccountAsync(account);
+		var connected = await PrepareOtherAccountAsync(account, isAddingNewAddress);
 
 		if (!connected)
 			return [];
@@ -81,6 +96,18 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 		var sentTask = _otherProtocolService.GetLastMessagesAsync(account, "Sent", isAddingNewAddress, numMails,
 			lastConnection);
+
+		// Fait un Check du Guid sur les 2 listes de nouveaux emails entrants, et si un email de la liste "Sent" a un Guid déjà présent
+		// dans la liste "Inbox", alors on le supprime de la liste "Sent" pour éviter les doublons. Et pour cela il faut supprimer le "-nombre"
+		// à la fin du Guid mais uniquement dans la comparaison, pas dans les données stockées dans les Listes.
+		// Cela arrive dans le cas où un email est envoyé à soi-même
+
+		var inbox = await inboxTask;
+		var sent = await sentTask;
+
+		sent = [.. (await sentTask).Where(s => !((inbox).Select(i => _emailRepository.NormalizeGuid(i.Guid))
+			.ToHashSet()).Contains(_emailRepository.NormalizeGuid(s.Guid)))];
+		sentTask = Task.FromResult(sent);
 
 		await Task.WhenAll(inboxTask, sentTask);
 
@@ -93,7 +120,7 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 	{
 		if (account is AccountGmail accountGmail)
 		{
-			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail);
+			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail, false);
 
 			if (credential is null)
 				return;
@@ -105,7 +132,7 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 		if (account is AccountOther accountOther)
 		{
-			var connected = await PrepareOtherAccountAsync(accountOther);
+			var connected = await PrepareOtherAccountAsync(accountOther, false);
 
 			if (!connected)
 				return;
@@ -116,16 +143,21 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 	#region Other account helpers
 
-	private async Task<bool> PrepareOtherAccountAsync(AccountOther account)
+	private async Task<bool> PrepareOtherAccountAsync(AccountOther account, bool isCrypted)
 	{
+		AccountOther decryptedAccountOther = account;
+
+		if (isCrypted)
+			decryptedAccountOther = (AccountOther)await _addressesRepository.DecryptDataAsync(decryptedAccountOther);
+
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
 
 		if (password is null)
 			return false;
 
-		account.Password = password;
+		decryptedAccountOther.Password = password;
 
-		return await _otherCredentialService.ConnectAsync(account);
+		return await _otherCredentialService.ConnectAsync(decryptedAccountOther);
 	}
 
 	private async Task<DateTime?> GetCurrentAccountLastConnectionAsync()
