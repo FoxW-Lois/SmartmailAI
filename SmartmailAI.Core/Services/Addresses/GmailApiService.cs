@@ -15,6 +15,7 @@ using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Helpers;
 using SmartmailAI.Core.Models;
+using RtfPipe;
 
 namespace SmartmailAI.Core.Services.Addresses;
 
@@ -138,6 +139,8 @@ public class GmailApiService : IGmailApiService
 		});
 
 		string emailAddressOwner = await GetEmailAddressAsync(credential);
+
+		body = Rtf.ToHtml(body);
 
 		var mimeMessage = MimeHelper.CreateMimeMessage(emailAddressOwner, to, subject, body, attachments ?? [],
 			cc ?? [], bcc ?? []);

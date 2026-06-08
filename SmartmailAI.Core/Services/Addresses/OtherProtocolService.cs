@@ -10,6 +10,7 @@ using MailKit.Search;
 using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
+using RtfPipe;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Helpers;
@@ -143,6 +144,8 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 	public async Task SendEmailAsync(AccountOther account, IEnumerable<string> to, string subject, string body,
 		IEnumerable<MailAttachment>? attachments = null, IEnumerable<string>? cc = null, IEnumerable<string>? bcc = null)
 	{
+		body = Rtf.ToHtml(body);
+
 		var message = MimeHelper.CreateMimeMessage(account.Email, to, subject, body, attachments ?? [],
 			cc ?? [], bcc ?? []);
 

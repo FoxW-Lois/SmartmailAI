@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.Messengers;
 using Windows.Storage.Pickers;
@@ -11,6 +12,7 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class DetailsList_NewMailViewModel : ObservableObject
 {
+	private readonly IAddressesRepository _addressesRepository;
 	private readonly IAddressesService _addressesService;
 	private readonly IGmailApiService _gmailApiService;
 	private readonly IGmailCredentialService _gmailCredentialService;
@@ -23,10 +25,11 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	public ObservableCollection<MailAttachment> Attachments { get; } = [];
 	public bool HasAttachments => Attachments.Count > 0;
 
-	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
-		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
-		IDialogService dialogService)
+	public DetailsList_NewMailViewModel(IAddressesRepository addressesRepository, IAddressesService addressesService, IGmailApiService gmailApiService,
+		IGmailCredentialService gmailCredentialService, IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService,
+		IOtherTokenStore otherTokenStore, IDialogService dialogService)
 	{
+		_addressesRepository = addressesRepository;
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
 		_gmailCredentialService = gmailCredentialService;

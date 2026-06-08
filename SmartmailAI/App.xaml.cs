@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
@@ -72,6 +73,8 @@ public partial class App : Application
 
 		// Initialize the component
 		InitializeComponent();
+
+		Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 #if !DISABLE_XAML_GENERATED_MAIN
 				// Initialize core helpers
