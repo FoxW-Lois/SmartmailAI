@@ -34,6 +34,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 
 	public async Task StartAsync()
 	{
+		// TODO: En dèv/debug commenter tout le contenu de la méthode pour ne pas se faire harceler à chaque appel du thread
 		await _startLock.WaitAsync();
 		try
 		{
