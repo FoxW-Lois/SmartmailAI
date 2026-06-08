@@ -86,14 +86,14 @@
 				</NavigationViewItem>
 
 				<!--  TODO: Si besoin d'utiliser des données statiques, décommenter l'Item ↓  -->
-				<NavigationViewItem
+				<!--<NavigationViewItem
 					x:Uid="Shell_DetailsList"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.DetailsList_ViewModel"
 					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;" />
 					</NavigationViewItem.Icon>
-				</NavigationViewItem>
+				</NavigationViewItem>-->
 
 				<NavigationViewItem
 					x:Uid="Shell_MailAddresses"

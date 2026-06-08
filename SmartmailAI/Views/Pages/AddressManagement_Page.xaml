@@ -24,13 +24,18 @@
 								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" Text="{x:Bind Email}" />
+							<TextBlock
+								Grid.Column="0"
+								IsTextSelectionEnabled="True"
+								Text="{x:Bind Email}" />
 							<StackPanel
 								Grid.Column="1"
 								Orientation="Horizontal"
 								Spacing="2">
-								<TextBlock x:Uid="ManagementAddress_DateInfo" />
-								<TextBlock Text="{x:Bind ConnectedAt}" />
+								<TextBlock IsTextSelectionEnabled="True">
+									<Run x:Uid="ManagementAddress_DateInfo" />
+									<Run Text="{x:Bind ConnectedAt}" />
+								</TextBlock>
 							</StackPanel>
 
 							<Button
