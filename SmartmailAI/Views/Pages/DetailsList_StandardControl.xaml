@@ -108,6 +108,7 @@
 					x:Name="MailWebView"
 					Width="{Binding ElementName=RootStackPannel, Path=ActualWidth}"
 					Height="{Binding ElementName=RootStackPannel, Path=ActualHeight}"
+					MinWidth="320"
 					Margin="{StaticResource LargeTopMargin}"
 					Visibility="{x:Bind DetailsListMenuItem_Email.IsHtmlContent, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 
