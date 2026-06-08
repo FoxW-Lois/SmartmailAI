@@ -472,7 +472,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		var emails = mailboxType switch
 		{
 			MailboxType.Inbox => _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
-			MailboxType.Sent => _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+			MailboxType.Sent => _AllEmails.Where(e => e.MailboxType == MailboxType.Sent || e.SenderEmail == e.ReceiverEmail),
 			MailboxType.Snoozed => _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
 			MailboxType.Drafts => _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
 			MailboxType.Starred => _AllEmails.Where(e => e.IsStarred == true),
