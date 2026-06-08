@@ -58,7 +58,7 @@
 						<Image
 							Width="36"
 							Height="36"
-							Source="ms-appx:///Assets/Content/IMAP-SMTP-icon-48.png" />
+							Source="ms-appx:///Assets/Content/SMTP-IMAP-icon-48.png" />
 					</Button>
 				</Grid>
 
