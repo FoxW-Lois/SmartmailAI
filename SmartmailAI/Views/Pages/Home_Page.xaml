@@ -12,10 +12,16 @@
 	mc:Ignorable="d">
 
 	<Grid x:Name="ContentArea">
-		<TextBlock
+		<Image
+			Width="300"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			Source="ms-appx:///Assets/Content/Logo-Text.png" />
+
+		<!--<TextBlock
 			HorizontalAlignment="Center"
 			VerticalAlignment="Center"
 			Style="{ThemeResource PageTitleStyle}"
-			Text="{x:Bind ViewModel.AppDisplayName, Mode=OneTime}" />
+			Text="{x:Bind ViewModel.AppDisplayName, Mode=OneTime}" />-->
 	</Grid>
 </Page>
