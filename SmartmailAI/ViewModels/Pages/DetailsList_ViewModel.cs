@@ -297,7 +297,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		var fetchTasks = mailboxTypes.Select(async mailboxType =>
 		{
-			var emails = await _emailsService.GetEmailsByMailboxTypeAsync(mailboxType);
+			var emails = await _emailsService.GetEmailsByMailboxTypeAsync(mailboxType, addressAccount);
 			return (mailboxType, emails);
 		});
 
@@ -332,7 +332,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		if (SelectedCategory is null) return;
 
-		var refreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(SelectedCategory.MailboxType);
+		var refreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(SelectedCategory.MailboxType, addressAccount);
 
 		// Recharge les données sans casser le binding
 		SelectedCategory.ReplaceAllItems(refreshedEmails);

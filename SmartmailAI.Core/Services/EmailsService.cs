@@ -463,11 +463,14 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		return categories;
 	}
 
-	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType)
+	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType, string? addressAccount = null)
 	{
-		//_AllEmails = await _emailRepository.GetAllEmailsAsync();
-		// TODO: Si besoin d'utiliser des données statiques, commenter cette ligne ↑ et décommenter celle-là ↓
-		_AllEmails = hardcodedEmails;
+		if (addressAccount is null)
+			_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		else
+			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
+		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter celle-là ↓
+		//_AllEmails = hardcodedEmails;
 
 		var emails = mailboxType switch
 		{

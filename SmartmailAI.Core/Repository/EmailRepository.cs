@@ -148,9 +148,6 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		if (email.Subject != null) email.Subject = await _aesService.EncryptAsync(email.Subject);
 		if (email.Content != null) email.Content = await _aesService.EncryptAsync(email.Content);
 
-		// TODO: à voir pour le chiffrement de ownerAddress
-		//email.Owner = await _aesService.EncryptAsync(email.Owner);
-
 		if (email.Attachments.Count > 0)
 		{
 			var json = JsonSerializer.Serialize(email.Attachments);
@@ -184,9 +181,6 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		if (email.Bcc != null) email.Bcc = await _aesService.DecryptAsync(email.Bcc);
 		if (email.Subject != null) email.Subject = await _aesService.DecryptAsync(email.Subject);
 		if (email.Content != null) email.Content = await _aesService.DecryptAsync(email.Content);
-
-		// TODO: à voir pour le déchiffrement de ownerAddress
-		//email.Owner = await _aesService.DecryptAsync(email.Owner);
 
 		if (email.AttachmentsJson != null)
 		{

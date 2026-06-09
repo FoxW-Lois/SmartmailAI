@@ -8,7 +8,7 @@ public interface IEmailsService
 {
 	Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null);
 
-	Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType);
+	Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType, string? addressAccount = null);
 
 	Task MarkEmailAsStarredAsync(Email email);
 
