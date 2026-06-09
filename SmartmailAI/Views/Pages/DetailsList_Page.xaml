@@ -195,6 +195,7 @@
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
@@ -214,17 +215,31 @@
 				</StackPanel>
 			</Button>
 
+			<!--  Bouton de refresh des emails  -->
+			<Button
+				Grid.Column="1"
+				Width="50"
+				Height="40"
+				Margin="0 8 16 32"
+				Command="{x:Bind ViewModel.RefreshEmailListCommand}">
+				<FontIcon
+					Margin="0 0 0 0"
+					FontFamily="Segoe MDL2 Assets"
+					FontSize="25"
+					Glyph="&#xE895;" />
+			</Button>
+
 			<!--  Barre de recherche  -->
 			<TextBox
 				x:Uid="SearchbarMailTextBox"
-				Grid.Column="1"
+				Grid.Column="2"
 				Height="40"
 				Margin="0 8 16 32"
 				Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 			<!--  Contenu principal du bouton  -->
 			<SplitButton
-				Grid.Column="2"
+				Grid.Column="3"
 				Width="200"
 				Height="40"
 				Margin="0 8 16 32"

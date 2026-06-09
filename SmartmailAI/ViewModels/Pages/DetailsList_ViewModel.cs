@@ -127,6 +127,12 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedDetail = null;
 	}
 
+	[RelayCommand]
+	private async Task RefreshEmailListAsync()
+	{
+		await RefreshAllCategory();
+	}
+
 	#region Commandes de filtrage
 
 	[RelayCommand]
@@ -256,6 +262,14 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	// Event écoutant la demande de restauration de la sélection d'un email après le refresh de la liste
 	public event Action<Email>? RestoreSelectionRequested;
 
+	// --- Méthode pour Refresh la liste des emails affichés lors du clique sur le bouton de refresh ---
+	private async Task RefreshAllCategory()
+	{
+		var mailboxTypesToRefresh = ComputeMailboxTypesToRefresh(null, null, null);
+
+		await FetchAndApplyEmailsAsync(mailboxTypesToRefresh);
+	}
+
 	// --- Méthode pour Refresh la liste des emails affichés lors des actions clic droit ---
 	// emailToRestore : Email sur lequel l'action a été effectuée
 	private async Task RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType, Email? emailToRestore = null)
@@ -273,11 +287,25 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	}
 
 	// Calcul des catégories à rafraîchir
-	private HashSet<MailboxType> ComputeMailboxTypesToRefresh(MailboxType previousMailboxType, MailboxType newMailboxType, Email? email)
+	private HashSet<MailboxType> ComputeMailboxTypesToRefresh(MailboxType? previousMailboxType = null, MailboxType? newMailboxType = null,
+		Email? email = null)
 	{
+		HashSet<MailboxType> types = [];
+
+		// Si un des 2 paramètres MailboxType est null, on rafraîchit toutes les catégories
+		if (previousMailboxType == null || newMailboxType == null)
+		{
+			foreach (var mailboxType in Enum.GetValues<MailboxType>())
+			{
+				types.Add(mailboxType);
+			}
+
+			return types;
+		}
+
 		// On part toujours des deux catégories directement impliquées par l'action
 		// + AllMails est toujours concerné : tout changement d'état d'un email l'impacte
-		var types = new HashSet<MailboxType> { previousMailboxType, newMailboxType, MailboxType.AllMails };
+		types = [(MailboxType)previousMailboxType, (MailboxType)newMailboxType, MailboxType.AllMails];
 
 		if (email is null) return types;
 
