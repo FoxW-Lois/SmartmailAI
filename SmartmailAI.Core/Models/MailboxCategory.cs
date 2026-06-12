@@ -59,16 +59,12 @@ public partial class MailboxCategory : ObservableObject
 	}
 
 	// Méthode de filtrage des mails
-	public void ApplyFilter(string filter, MailboxType mailboxType)
+	public void ApplyFilter(string filter)
 	{
 		var filteredMails = _allItems.AsEnumerable();
 
 		if (string.IsNullOrWhiteSpace(filter))
-		{
-			foreach (var mail in _allItems)
-				ItemsCollection.Add(mail);
 			return;
-		}
 
 		// Regex pour des filtres spéciaux
 		var dateBeforeMatch = Regex.Match(filter, @"Date:Before:(\d{4}-\d{2}-\d{2})", RegexOptions.IgnoreCase);

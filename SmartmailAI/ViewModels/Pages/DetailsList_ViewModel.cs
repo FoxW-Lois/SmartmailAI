@@ -366,7 +366,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedCategory.ReplaceAllItems(refreshedEmails);
 
 		// Applique le filtre sur la collection observable
-		SelectedCategory.ApplyFilter(researchValue, SelectedCategory.MailboxType);
+		SelectedCategory.ApplyFilter(researchValue);
 	}
 
 	#endregion Méthodes de refresh

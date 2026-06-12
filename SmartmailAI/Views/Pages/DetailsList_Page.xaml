@@ -257,6 +257,7 @@
 					<MenuFlyout>
 						<MenuFlyoutItem x:Uid="Filter_Date_Before" Command="{x:Bind ViewModel.DateBeforeFilterCommand}" />
 						<MenuFlyoutItem x:Uid="Filter_Date_After" Command="{x:Bind ViewModel.DateAfterFilterCommand}" />
+						<MenuFlyoutSeparator />
 						<MenuFlyoutItem x:Uid="Filter_Attachments_Yes" Command="{x:Bind ViewModel.AttachmentYesFilterCommand}" />
 						<MenuFlyoutItem x:Uid="Filter_Attachments_No" Command="{x:Bind ViewModel.AttachmentNoFilterCommand}" />
 					</MenuFlyout>
