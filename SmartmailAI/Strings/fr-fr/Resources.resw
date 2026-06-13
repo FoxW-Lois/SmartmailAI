@@ -547,4 +547,19 @@
   <data name="ButtonForward.Text" xml:space="preserve">
     <value>Transférer</value>
   </data>
+  <data name="Dialog_Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Dialog_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Dialog_Agree" xml:space="preserve">
+    <value>Valider</value>
+  </data>
+  <data name="Dialog_Delete_Confirm_part1" xml:space="preserve">
+    <value>Vous vous apprêtez à supprimer tous les Emails du dossier </value>
+  </data>
+  <data name="Dialog_Delete_Confirm_part2" xml:space="preserve">
+    <value>. Confirmez-vous cette action ?</value>
+  </data>
 </root>

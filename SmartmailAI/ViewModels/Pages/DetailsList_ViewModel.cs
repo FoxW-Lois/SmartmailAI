@@ -3,12 +3,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SmartmailAI.Core.Models.Messengers;
+using Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
 public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAware
 {
 	private readonly IEmailsService _emailsService;
+	private readonly IDialogService _dialogService;
+	private readonly ResourceLoader resourceLoader = new();
 
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
@@ -36,6 +39,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[ObservableProperty]
 	private bool _isDatePickerOpen = false;
 
+	[ObservableProperty]
+	private bool _isValideCategory = false;
+
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
 
@@ -49,9 +55,18 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SearchText += formattedDate;
 	}
 
-	public DetailsList_ViewModel(IEmailsService emailsService)
+	partial void OnSelectedCategoryChanged(MailboxCategory? value)
+	{
+		if (value is null || SelectedCategory is null)
+			return;
+
+		IsValideCategory = SelectedCategory.MailboxType == MailboxType.Trash || SelectedCategory.MailboxType == MailboxType.PhishingSpam;
+	}
+
+	public DetailsList_ViewModel(IEmailsService emailsService, IDialogService dialogService)
 	{
 		_emailsService = emailsService;
+		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) => { IsComposing = !IsComposing; });
 
@@ -153,6 +168,28 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task RefreshEmailListAsync()
 	{
+		await RefreshAllCategory();
+	}
+
+	[RelayCommand]
+	private async Task DeleteAllMailsFromCurrentCategoryAsync()
+	{
+		if (SelectedCategory == null) return;
+
+		var dialogResult = await _dialogService.ShowTwoButtonDialogAsync(resourceLoader.GetString("Dialog_Confirmation"),
+			String.Concat(resourceLoader.GetString("Dialog_Delete_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_Delete_Confirm_part2")),
+			resourceLoader.GetString("Dialog_Agree"), resourceLoader.GetString("Dialog_Cancel"));
+
+		if (dialogResult != WidgetDialogResult.Left)
+			return;
+
+		var emailList = SelectedCategory.Items;
+
+		foreach (var item in emailList)
+		{
+			await DeleteItemAsync(item);
+		}
+
 		await RefreshAllCategory();
 	}
 
@@ -268,18 +305,23 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task DeleteMailAsync(Email email)
 	{
+		var previousMailboxType = email.MailboxType;
+
+		await DeleteItemAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
+
+	private async Task DeleteItemAsync(Email email)
+	{
 		if (email is null)
 			return;
-
-		var previousMailboxType = email.MailboxType;
 
 		if (email.MailboxType != MailboxType.Trash)
 			await _emailsService.MarkEmailAsTrashedAsync(email);
 		else
 			await _emailsService.DeleteEmailAsync(email);
-
-		var newMailboxType = email.MailboxType;
-		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
 	#endregion Commandes au clic droit

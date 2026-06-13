@@ -547,4 +547,19 @@
   <data name="ButtonForward.Text" xml:space="preserve">
     <value>Forward</value>
   </data>
+  <data name="Dialog_Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Dialog_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Dialog_Agree" xml:space="preserve">
+    <value>Agree</value>
+  </data>
+  <data name="Dialog_Delete_Confirm_part1" xml:space="preserve">
+    <value>You are about to delete all emails in  </value>
+  </data>
+  <data name="Dialog_Delete_Confirm_part2" xml:space="preserve">
+    <value> folder. Do you want to confirm this action?</value>
+  </data>
 </root>
