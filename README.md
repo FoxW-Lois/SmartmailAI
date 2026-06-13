@@ -1,7 +1,7 @@
 # SmartmailAI
   
 ## Description
-  Smarmail est une application de gestion de boite mails (sécurisée...) intégrant des outils IA tel que la traduction automatique, le résumé de contenu et la génération automatique de réponses.
+  Smarmail est une application de gestion de boite mails sécurisée intégrant des outils IA tel que la traduction automatique, le résumé de contenu et la génération automatique de réponses.
 
 ## Objectifs
   Concurencer les grosses sociétés (GAFAM) et proposer une solution abordable sécurisée et pérenne pour les TPE/PME.
@@ -34,7 +34,12 @@ Pour qu'un utilisateur puisse se connecter, il faut qu'une licence soit disponib
 ## Sécurité et RGPD
   - Double authentification  
   - Filtrage et détection de phishings  
-  A VENIR : hashage + cryptage de toutes les données présentes en BDD
+  - Hashage + salage du mot de passe des utilisateurs  
+  - Chiffrement de toutes les données sensibles/confidentielles dans la BDD locale SQLite :
+    - Numéros de téléphone associés aux comptes Smartmail
+    - Adresses emails connectées à l'application : l'Adresse Email, le TokenStorageKey, le GoogleUserId (dans le cas d'une connexion par les services de Google), ainsi que le UserName, ImapHost et SmtpHost (dans le cas d'une connexion via méthode IMAP/SMTP)
+    - Emails (messages) : l'Adresse Email et le Nom de l'envoyeur et du réceptionnaire, les Cc et Cci, l'Objet, le Contenu et si il y en a les Pièces Jointes associées
+  - Chiffrement SSL/TLS (même chose, juste 2 appellations) lors de l'envoi et de la réception d'Emails
   
 ## Équipe
   - Nicolas Thomas
