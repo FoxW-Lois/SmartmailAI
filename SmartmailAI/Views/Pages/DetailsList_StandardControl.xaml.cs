@@ -30,6 +30,8 @@ public sealed partial class DetailsList_StandardControl : UserControl
 	{
 		if (d is DetailsList_StandardControl control && e.NewValue is Email email)
 		{
+			control.ViewModel.CurrentEmail = email;
+
 			control.ForegroundElement.ChangeView(0, 0, 1);
 
 			control.DispatcherQueue.TryEnqueue(async () =>

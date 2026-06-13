@@ -37,7 +37,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		_emailsService = emailsService;
 
-		WeakReferenceMessenger.Default.Register<CloseComposeMessage>(this, (r, m) => { IsComposing = false; });
+		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) => { IsComposing = !IsComposing; });
 
 		// Quand reçoit une demande (ouverture des détails d'un email), envoi l'email connecté à la fenêtre des détails
 		WeakReferenceMessenger.Default.Register<RequestAddressAccountMessage>(this, (r, m) =>
@@ -55,6 +55,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		{
 			OnPropertyChanged(nameof(HalfWindowWidth));
 			OnPropertyChanged(nameof(ComposeMaxWidth));
+			OnPropertyChanged(nameof(HalfWindowHeight));
+			OnPropertyChanged(nameof(ComposeMaxHeight));
 		};
 	}
 
@@ -101,11 +103,16 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private static double WindowWidth => App.MainWindow.Bounds.Width;
 	private static double HalfWindowWidth => App.MainWindow.Bounds.Width / 2.5;
 
+	private static double WindowHeight => App.MainWindow.Bounds.Height;
+	private static double HalfWindowHeight => App.MainWindow.Bounds.Height / 1.95;
+
 	public double ComposeMaxWidth => IsComposeExpanded ? WindowWidth * 0.65 : HalfWindowWidth;
+	public double ComposeMaxHeight => IsComposeExpanded ? WindowHeight * 0.90 : HalfWindowHeight;
 
 	partial void OnIsComposeExpandedChanged(bool value)
 	{
 		OnPropertyChanged(nameof(ComposeMaxWidth));
+		OnPropertyChanged(nameof(ComposeMaxHeight));
 	}
 
 	#endregion Gestion de la taille du ComposeOverlay
@@ -117,7 +124,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		SelectedDetail = ComposeSentinel.Instance;
 
 		// Passe l'email connecté en tant qu'expéditeur à la fenêtre de composition
-		WeakReferenceMessenger.Default.Send(new OpenComposeMessage { SenderEmail = addressAccount });
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage { Mode = ComposeMode.New, SenderEmail = addressAccount });
 	}
 
 	[RelayCommand]

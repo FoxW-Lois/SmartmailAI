@@ -541,4 +541,10 @@
   <data name="BccTextBlock.Text" xml:space="preserve">
     <value>Cci</value>
   </data>
+  <data name="ButtonReply.Text" xml:space="preserve">
+    <value>Répondre</value>
+  </data>
+  <data name="ButtonForward.Text" xml:space="preserve">
+    <value>Transférer</value>
+  </data>
 </root>

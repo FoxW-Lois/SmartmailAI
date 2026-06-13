@@ -9,7 +9,7 @@
 	mc:Ignorable="d">
 
 	<Grid
-		MinHeight="480"
+		MinHeight="410"
 		Padding="12"
 		RowSpacing="8">
 
@@ -157,6 +157,7 @@
 			x:Uid="AddSubjectTextBox"
 			Grid.Row="3"
 			BorderThickness="0 0 0 1"
+			IsEnabled="{x:Bind ViewModel.IsSubjectEnable, Mode=OneWay}"
 			Text="{x:Bind ViewModel.Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 		<!--  Liste des pièces jointes  -->
@@ -212,7 +213,7 @@
 			<RichEditBox
 				x:Name="BodyEditor"
 				x:Uid="MessageAreaRichEditBox"
-				MinHeight="200"
+				MinHeight="240"
 				BorderThickness="0"
 				TextChanged="OnBodyChanged" />
 		</ScrollViewer>

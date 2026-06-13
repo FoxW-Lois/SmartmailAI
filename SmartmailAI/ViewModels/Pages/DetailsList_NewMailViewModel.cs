@@ -37,11 +37,18 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
 		{
+			ComposeMode = m.Mode;
 			_from = m.SenderEmail;
+			To = m.ReceiverEmail ?? string.Empty;
+			Subject = m.Subject ?? string.Empty;
+			Body = m.Body ?? string.Empty;
 		});
 
 		Attachments.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAttachments));
 	}
+
+	[ObservableProperty]
+	private ComposeMode _composeMode;
 
 	private string _from = string.Empty;
 
@@ -65,6 +72,13 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 	[ObservableProperty]
 	private bool _isBccVisible;
+
+	public bool IsSubjectEnable => ComposeMode == ComposeMode.New;
+
+	partial void OnComposeModeChanged(ComposeMode value)
+	{
+		OnPropertyChanged(nameof(IsSubjectEnable));
+	}
 
 	[RelayCommand]
 	private async Task SendAsync()
@@ -169,7 +183,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private void Discard()
 	{
 		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
-		WeakReferenceMessenger.Default.Send(new CloseComposeMessage());
+		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 		Reset();
 	}
 

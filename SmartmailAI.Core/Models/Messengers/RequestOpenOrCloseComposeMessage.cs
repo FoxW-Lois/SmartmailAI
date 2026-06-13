@@ -1,4 +1,4 @@
 ﻿namespace SmartmailAI.Core.Models.Messengers;
 
-public class CloseComposeMessage
+public class RequestOpenOrCloseComposeMessage
 { }

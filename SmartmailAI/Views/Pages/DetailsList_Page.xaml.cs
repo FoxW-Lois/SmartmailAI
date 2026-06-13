@@ -13,15 +13,12 @@ public sealed partial class DetailsList_Page : Page, INotifyPropertyChanged
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 
-	public double HalfWindowWidth => ActualWidth / 2;
-
 	public DetailsList_Page()
 	{
 		ViewModel = Ioc.Default.GetRequiredService<DetailsList_ViewModel>();
 		ViewModel.RestoreSelectionRequested += OnRestoreSelectionRequested;
 		DataContext = ViewModel;
 		InitializeComponent();
-		SizeChanged += (s, e) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HalfWindowWidth)));
 	}
 
 	private void OnViewStateChanged(object sender, ListDetailsViewState e)

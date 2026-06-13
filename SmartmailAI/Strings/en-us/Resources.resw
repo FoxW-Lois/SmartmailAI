@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-	<!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,185 +26,185 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-		<xsd:element name="root" msdata:IsDataSet="true">
-			<xsd:complexType>
-				<xsd:choice maxOccurs="unbounded">
-					<xsd:element name="metadata">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" />
-							</xsd:sequence>
-							<xsd:attribute name="name" use="required" type="xsd:string" />
-							<xsd:attribute name="type" type="xsd:string" />
-							<xsd:attribute name="mimetype" type="xsd:string" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="assembly">
-						<xsd:complexType>
-							<xsd:attribute name="alias" type="xsd:string" />
-							<xsd:attribute name="name" type="xsd:string" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="data">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-							<xsd:attribute ref="xml:space" />
-						</xsd:complexType>
-					</xsd:element>
-					<xsd:element name="resheader">
-						<xsd:complexType>
-							<xsd:sequence>
-								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-							</xsd:sequence>
-							<xsd:attribute name="name" type="xsd:string" use="required" />
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:choice>
-			</xsd:complexType>
-		</xsd:element>
-	</xsd:schema>
-	<resheader name="resmimetype">
-		<value>text/microsoft-resx</value>
-	</resheader>
-	<resheader name="version">
-		<value>2.0</value>
-	</resheader>
-	<resheader name="reader">
-		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<resheader name="writer">
-		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</resheader>
-	<data name="AppDisplayName" xml:space="preserve">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppDisplayName" xml:space="preserve">
     <value>SmartmailAI App</value>
   </data>
-	<data name="AppDisplayNameDebug" xml:space="preserve">
+  <data name="AppDisplayNameDebug" xml:space="preserve">
     <value>SmartmailAI App (Debug)</value>
   </data>
-	<data name="AppDescription" xml:space="preserve">
+  <data name="AppDescription" xml:space="preserve">
     <value>Mailbox project including AI tools for the Startup&amp;IT module in E5; with WinUI 3 and .NET 9.</value>
   </data>
-	<data name="Settings_About.Text" xml:space="preserve">
+  <data name="Settings_About.Text" xml:space="preserve">
     <value>About</value>
   </data>
-	<data name="Settings_AboutApp_Expander.Description" xml:space="preserve">
+  <data name="Settings_AboutApp_Expander.Description" xml:space="preserve">
     <value>Mailbox project including AI tools for the Startup&amp;IT module in E5; with WinUI 3 and .NET 9.</value>
   </data>
-	<data name="Settings_Appearance.Text" xml:space="preserve">
+  <data name="Settings_Appearance.Text" xml:space="preserve">
     <value>Apperance</value>
   </data>
-	<data name="Settings_Dependencies_Card.Description" xml:space="preserve">
+  <data name="Settings_Dependencies_Card.Description" xml:space="preserve">
     <value>Dependencies &amp; references</value>
   </data>
-	<data name="Settings_Theme_Card.Description" xml:space="preserve">
+  <data name="Settings_Theme_Card.Description" xml:space="preserve">
     <value>Select which app theme to display</value>
   </data>
-	<data name="Settings_Theme_Card.Header" xml:space="preserve">
+  <data name="Settings_Theme_Card.Header" xml:space="preserve">
     <value>Theme</value>
   </data>
-	<data name="Settings_Theme_Dark.Content" xml:space="preserve">
+  <data name="Settings_Theme_Dark.Content" xml:space="preserve">
     <value>Dark</value>
   </data>
-	<data name="Settings_Theme_Default.Content" xml:space="preserve">
+  <data name="Settings_Theme_Default.Content" xml:space="preserve">
     <value>Use system setting</value>
   </data>
-	<data name="Settings_Theme_Light.Content" xml:space="preserve">
+  <data name="Settings_Theme_Light.Content" xml:space="preserve">
     <value>Light</value>
   </data>
-	<data name="Settings_Backdrop_Card.Header" xml:space="preserve">
+  <data name="Settings_Backdrop_Card.Header" xml:space="preserve">
     <value>Backdrop</value>
   </data>
-	<data name="Settings_Backdrop_Card.Description" xml:space="preserve">
+  <data name="Settings_Backdrop_Card.Description" xml:space="preserve">
     <value>Select which app backdrop to display</value>
   </data>
-	<data name="Settings_Backdrop_None.Content" xml:space="preserve">
+  <data name="Settings_Backdrop_None.Content" xml:space="preserve">
     <value>None</value>
   </data>
-	<data name="Settings_Backdrop_Mica.Content" xml:space="preserve">
+  <data name="Settings_Backdrop_Mica.Content" xml:space="preserve">
     <value>Mica</value>
   </data>
-	<data name="Settings_Backdrop_Acrylic.Content" xml:space="preserve">
+  <data name="Settings_Backdrop_Acrylic.Content" xml:space="preserve">
     <value>Acrylic</value>
   </data>
-	<data name="Settings_Backdrop_Blur.Content" xml:space="preserve">
+  <data name="Settings_Backdrop_Blur.Content" xml:space="preserve">
     <value>Blur</value>
   </data>
-	<data name="Settings_Backdrop_Transparent.Content" xml:space="preserve">
+  <data name="Settings_Backdrop_Transparent.Content" xml:space="preserve">
     <value>Transparent</value>
   </data>
-	<data name="Shell_Home.Content" xml:space="preserve">
+  <data name="Shell_Home.Content" xml:space="preserve">
     <value>Home</value>
   </data>
-	<data name="TrayMenu_MenuFlyoutItem_ExitApp.Text" xml:space="preserve">
+  <data name="TrayMenu_MenuFlyoutItem_ExitApp.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
-	<data name="TrayMenu_MenuFlyoutItem_ShowWindow.Text" xml:space="preserve">
+  <data name="TrayMenu_MenuFlyoutItem_ShowWindow.Text" xml:space="preserve">
     <value>Show</value>
   </data>
-	<data name="Settings_RunStartup_Expander.Description" xml:space="preserve">
+  <data name="Settings_RunStartup_Expander.Description" xml:space="preserve">
     <value>Automatically launch app when you log in to Windows</value>
   </data>
-	<data name="Settings_RunStartup_Expander.Header" xml:space="preserve">
+  <data name="Settings_RunStartup_Expander.Header" xml:space="preserve">
     <value>Run at startup</value>
   </data>
-	<data name="Settings_RunStartup_Expander_Card.Header" xml:space="preserve">
+  <data name="Settings_RunStartup_Expander_Card.Header" xml:space="preserve">
     <value>Use logon task instead of startup entry</value>
   </data>
-	<data name="ButtonCancel.Content" xml:space="preserve">
+  <data name="ButtonCancel.Content" xml:space="preserve">
     <value>Cancel</value>
   </data>
-	<data name="ButtonOk.Content" xml:space="preserve">
+  <data name="ButtonOk.Content" xml:space="preserve">
     <value>Ok</value>
   </data>
-	<data name="Settings_Feedback_Card.Header" xml:space="preserve">
+  <data name="Settings_Feedback_Card.Header" xml:space="preserve">
     <value>File a bug or request new features</value>
   </data>
-	<data name="Settings_Repository_Card.Header" xml:space="preserve">
+  <data name="Settings_Repository_Card.Header" xml:space="preserve">
     <value>To view this repository</value>
   </data>
-	<data name="AppNotificationUnhandledExceptionPayload" xml:space="preserve">
+  <data name="AppNotificationUnhandledExceptionPayload" xml:space="preserve">
     <value>&lt;toast launch="action=ToastClick"&gt;
     &lt;visual&gt;
         &lt;binding template="ToastGeneric"&gt;
@@ -214,331 +214,337 @@
     &lt;/visual&gt;
 &lt;/toast&gt;</value>
   </data>
-	<data name="Shell_Settings.Content" xml:space="preserve">
+  <data name="Shell_Settings.Content" xml:space="preserve">
     <value>Settings</value>
   </data>
-	<data name="Settings_General.Text" xml:space="preserve">
+  <data name="Settings_General.Text" xml:space="preserve">
     <value>General</value>
   </data>
-	<data name="Settings_Language_Card.Header" xml:space="preserve">
+  <data name="Settings_Language_Card.Header" xml:space="preserve">
     <value>Language</value>
   </data>
-	<data name="Settings_Language_Card.Description" xml:space="preserve">
+  <data name="Settings_Language_Card.Description" xml:space="preserve">
     <value>Select which app language to display</value>
   </data>
-	<data name="AppLanguageItem_Default" xml:space="preserve">
+  <data name="AppLanguageItem_Default" xml:space="preserve">
     <value>Use system setting</value>
   </data>
-	<data name="TeachingTipRestart.Subtitle" xml:space="preserve">
+  <data name="TeachingTipRestart.Subtitle" xml:space="preserve">
     <value>The application needs to be restarted in order to apply these settings, would you like to restart the app?</value>
   </data>
-	<data name="ListDetails_NoSelection.Text" xml:space="preserve">
+  <data name="ListDetails_NoSelection.Text" xml:space="preserve">
     <value>Select an item from the list.</value>
   </data>
-	<data name="Shell_DetailsList.Content" xml:space="preserve">
+  <data name="Shell_DetailsList.Content" xml:space="preserve">
     <value>ListDetails</value>
   </data>
-	<data name="Mailbox_Inbox" xml:space="preserve">
+  <data name="Mailbox_Inbox" xml:space="preserve">
     <value>Inbox</value>
   </data>
-	<data name="Mailbox_Sent" xml:space="preserve">
+  <data name="Mailbox_Sent" xml:space="preserve">
     <value>Sent messages</value>
   </data>
-	<data name="Mailbox_Snoozed" xml:space="preserve">
+  <data name="Mailbox_Snoozed" xml:space="preserve">
     <value>Snoozed</value>
   </data>
-	<data name="Mailbox_Drafts" xml:space="preserve">
+  <data name="Mailbox_Drafts" xml:space="preserve">
     <value>Drafts</value>
   </data>
-	<data name="Mailbox_Trash" xml:space="preserve">
+  <data name="Mailbox_Trash" xml:space="preserve">
     <value>Trash</value>
   </data>
-	<data name="Mailbox_Starred" xml:space="preserve">
+  <data name="Mailbox_Starred" xml:space="preserve">
     <value>Starred</value>
   </data>
-	<data name="Mailbox_AllMails" xml:space="preserve">
+  <data name="Mailbox_AllMails" xml:space="preserve">
     <value>All Mails</value>
   </data>
-	<data name="Mailbox_Archives" xml:space="preserve">
+  <data name="Mailbox_Archives" xml:space="preserve">
     <value>Archives</value>
   </data>
-	<data name="Mailbox_PhishingSpam" xml:space="preserve">
+  <data name="Mailbox_PhishingSpam" xml:space="preserve">
     <value>Phishing &amp; Spams</value>
   </data>
-	<data name="Email_Action_Favorite.Text" xml:space="preserve">
+  <data name="Email_Action_Favorite.Text" xml:space="preserve">
     <value>Favorite</value>
   </data>
-	<data name="Email_Action_MarkAsRead.Text" xml:space="preserve">
+  <data name="Email_Action_MarkAsRead.Text" xml:space="preserve">
     <value>Mark as read</value>
   </data>
-	<data name="Email_Action_MarkAsUnread.Text" xml:space="preserve">
+  <data name="Email_Action_MarkAsUnread.Text" xml:space="preserve">
     <value>Mark as unread</value>
   </data>
-	<data name="Email_Action_Archive.Text" xml:space="preserve">
+  <data name="Email_Action_Archive.Text" xml:space="preserve">
     <value>Archive</value>
   </data>
-	<data name="Email_Action_Restore.Text" xml:space="preserve">
+  <data name="Email_Action_Restore.Text" xml:space="preserve">
     <value>Restore</value>
   </data>
-	<data name="Email_Action_Delete.Text" xml:space="preserve">
+  <data name="Email_Action_Delete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-	<data name="Mailbox_Unread" xml:space="preserve">
+  <data name="Mailbox_Unread" xml:space="preserve">
     <value>Unread</value>
   </data>
-	<data name="Filter_Date_Before.Text" xml:space="preserve">
+  <data name="Filter_Date_Before.Text" xml:space="preserve">
     <value>Date (Before)</value>
   </data>
-	<data name="Filter_Date_After.Text" xml:space="preserve">
+  <data name="Filter_Date_After.Text" xml:space="preserve">
     <value>Date (After)</value>
   </data>
-	<data name="Filter_Attachments_Yes.Text" xml:space="preserve">
+  <data name="Filter_Attachments_Yes.Text" xml:space="preserve">
     <value>Attachements</value>
   </data>
-	<data name="Filter_Attachments_No.Text" xml:space="preserve">
+  <data name="Filter_Attachments_No.Text" xml:space="preserve">
     <value>No Attachement</value>
   </data>
-	<data name="SearchbarMailTextBox.PlaceholderText" xml:space="preserve">
+  <data name="SearchbarMailTextBox.PlaceholderText" xml:space="preserve">
     <value>Search for an email…</value>
   </data>
-	<data name="AddFilterTextBlock.Text" xml:space="preserve">
+  <data name="AddFilterTextBlock.Text" xml:space="preserve">
     <value>Add a filter</value>
   </data>
-	<data name="Shell_Login.Content" xml:space="preserve">
+  <data name="Shell_Login.Content" xml:space="preserve">
     <value>Sign In</value>
   </data>
-	<data name="Shell_Register.Content" xml:space="preserve">
+  <data name="Shell_Register.Content" xml:space="preserve">
     <value>Sign Up</value>
   </data>
-	<data name="Account_Password.Header" xml:space="preserve">
+  <data name="Account_Password.Header" xml:space="preserve">
     <value>Password</value>
   </data>
-	<data name="Account_ConfirmPassword.Header" xml:space="preserve">
+  <data name="Account_ConfirmPassword.Header" xml:space="preserve">
     <value>Confirm password</value>
   </data>
-	<data name="Account_Cellphone_Number.Header" xml:space="preserve">
+  <data name="Account_Cellphone_Number.Header" xml:space="preserve">
     <value>Cellphone number</value>
   </data>
-	<data name="Account_Login.Header" xml:space="preserve">
+  <data name="Account_Login.Header" xml:space="preserve">
     <value>Login</value>
   </data>
-	<data name="Account_SignUp.Text" xml:space="preserve">
+  <data name="Account_SignUp.Text" xml:space="preserve">
     <value>Sign Up</value>
   </data>
-	<data name="Account_Create.Content" xml:space="preserve">
+  <data name="Account_Create.Content" xml:space="preserve">
     <value>Create an account</value>
   </data>
-	<data name="Account_Alreadyhave.Content" xml:space="preserve">
+  <data name="Account_Alreadyhave.Content" xml:space="preserve">
     <value>Already have an account?</value>
   </data>
-	<data name="Account_LogOn.Content" xml:space="preserve">
+  <data name="Account_LogOn.Content" xml:space="preserve">
     <value>Log on</value>
   </data>
-	<data name="Account_SignIn.Text" xml:space="preserve">
+  <data name="Account_SignIn.Text" xml:space="preserve">
     <value>Sign In</value>
   </data>
-	<data name="Error_LoginRequired" xml:space="preserve">
+  <data name="Error_LoginRequired" xml:space="preserve">
     <value>You must define a login.</value>
   </data>
-	<data name="Error_PhoneNumberRequired" xml:space="preserve">
+  <data name="Error_PhoneNumberRequired" xml:space="preserve">
     <value>You must define a cellphone number.</value>
   </data>
-	<data name="Error_PhoneNumberInvalid" xml:space="preserve">
+  <data name="Error_PhoneNumberInvalid" xml:space="preserve">
     <value>The cellphone number is invalid.</value>
   </data>
-	<data name="Error_PasswordInvalid" xml:space="preserve">
+  <data name="Error_PasswordInvalid" xml:space="preserve">
     <value>The password must contain at least 12 characters, one uppercase letter, one lowercase letter, one number, and one special character.</value>
   </data>
-	<data name="Error_ConfirmPasswordInvalid" xml:space="preserve">
+  <data name="Error_ConfirmPasswordInvalid" xml:space="preserve">
     <value>The passwords do not match.</value>
   </data>
-	<data name="Error_EmailOrPasswordInvalid" xml:space="preserve">
+  <data name="Error_EmailOrPasswordInvalid" xml:space="preserve">
     <value>Incorrect email address or password.</value>
   </data>
-	<data name="Error_AccountDisabled" xml:space="preserve">
+  <data name="Error_AccountDisabled" xml:space="preserve">
     <value>Your SmartmailAI account has been disabled. Please contact the administrator.</value>
   </data>
-	<data name="Shell_Logout.Content" xml:space="preserve">
+  <data name="Shell_Logout.Content" xml:space="preserve">
     <value>Logout</value>
   </data>
-	<data name="Account_SecurityCode.Header" xml:space="preserve">
+  <data name="Account_SecurityCode.Header" xml:space="preserve">
     <value>Security code</value>
   </data>
-	<data name="Account_Validate.Content" xml:space="preserve">
+  <data name="Account_Validate.Content" xml:space="preserve">
     <value>Validate</value>
   </data>
-	<data name="Settings_EnableDisable_TwoFactor.Description" xml:space="preserve">
+  <data name="Settings_EnableDisable_TwoFactor.Description" xml:space="preserve">
     <value>Enabling a second authentication factor using the Google Authenticator mobile app</value>
   </data>
-	<data name="Settings_EnableDisable_TwoFactor.Header" xml:space="preserve">
+  <data name="Settings_EnableDisable_TwoFactor.Header" xml:space="preserve">
     <value>Enable two-factor authentication</value>
   </data>
-	<data name="Settings_Account.Text" xml:space="preserve">
+  <data name="Settings_Account.Text" xml:space="preserve">
     <value>SmartmailAI account</value>
   </data>
-	<data name="Settings_NoAccountLoggedIn.Header" xml:space="preserve">
+  <data name="Settings_NoAccountLoggedIn.Header" xml:space="preserve">
     <value>Once you are logged in, all of your SmartmailAI account settings will be displayed here.</value>
   </data>
-	<data name="Account_Confirm.Content" xml:space="preserve">
+  <data name="Account_Confirm.Content" xml:space="preserve">
     <value>Confirm</value>
   </data>
-	<data name="Account_DoubleFactor.Text" xml:space="preserve">
+  <data name="Account_DoubleFactor.Text" xml:space="preserve">
     <value>Check your Google Authenticator app</value>
   </data>
-	<data name="Error_SecondFactorInvalid" xml:space="preserve">
+  <data name="Error_SecondFactorInvalid" xml:space="preserve">
     <value>Invalid Authenticator code. Please try again.</value>
   </data>
-	<data name="Shell_AddAddress.Content" xml:space="preserve">
+  <data name="Shell_AddAddress.Content" xml:space="preserve">
     <value>Add an address</value>
   </data>
-	<data name="AddAddress_New.Text" xml:space="preserve">
+  <data name="AddAddress_New.Text" xml:space="preserve">
     <value>Adding a new email address to the application</value>
   </data>
-	<data name="AddAddress_Email.Header" xml:space="preserve">
+  <data name="AddAddress_Email.Header" xml:space="preserve">
     <value>Email</value>
   </data>
-	<data name="AddAddress_Add.Content" xml:space="preserve">
+  <data name="AddAddress_Add.Content" xml:space="preserve">
     <value>Add</value>
   </data>
-	<data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
+  <data name="Error_LoginOrPasswordInvalid" xml:space="preserve">
     <value>Incorrect login or password.</value>
   </data>
-	<data name="AddAddress_OtherChoice.Text" xml:space="preserve">
+  <data name="AddAddress_OtherChoice.Text" xml:space="preserve">
     <value>SMTP/IMAP :</value>
   </data>
-	<data name="Shell_AddressManagement.Content" xml:space="preserve">
+  <data name="Shell_AddressManagement.Content" xml:space="preserve">
     <value>Manage addresses</value>
   </data>
-	<data name="Error_DeleteAddress" xml:space="preserve">
+  <data name="Error_DeleteAddress" xml:space="preserve">
     <value>Deleting the email address from the application failed. Please try again later.</value>
   </data>
-	<data name="ManagementAddress_Delete.Content" xml:space="preserve">
+  <data name="ManagementAddress_Delete.Content" xml:space="preserve">
     <value>Delete</value>
   </data>
-	<data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
+  <data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
     <value>Address connected on:</value>
   </data>
-	<data name="Error_EmailAccount_AlreadyExist" xml:space="preserve">
+  <data name="Error_EmailAccount_AlreadyExist" xml:space="preserve">
     <value>The email address you are trying to add already exists.</value>
   </data>
-	<data name="Shell_MailAddresses.Content" xml:space="preserve">
+  <data name="Shell_MailAddresses.Content" xml:space="preserve">
     <value>Email addresses</value>
   </data>
-	<data name="NewMessageButton.Text" xml:space="preserve">
+  <data name="NewMessageButton.Text" xml:space="preserve">
     <value>New message</value>
   </data>
-	<data name="ButtonSend.Content" xml:space="preserve">
+  <data name="ButtonSend.Content" xml:space="preserve">
     <value>Send</value>
   </data>
-	<data name="ToTextBlock.Text" xml:space="preserve">
+  <data name="ToTextBlock.Text" xml:space="preserve">
     <value>To</value>
   </data>
-	<data name="RecipientsTextBox.PlaceholderText" xml:space="preserve">
+  <data name="RecipientsTextBox.PlaceholderText" xml:space="preserve">
     <value>Recipients</value>
   </data>
-	<data name="ButtonBcc.Content" xml:space="preserve">
+  <data name="ButtonBcc.Content" xml:space="preserve">
     <value>Bcc</value>
   </data>
-	<data name="CcTextBlock.Text" xml:space="preserve">
+  <data name="CcTextBlock.Text" xml:space="preserve">
     <value>Cc</value>
   </data>
-	<data name="AddSubjectTextBox.PlaceholderText" xml:space="preserve">
+  <data name="AddSubjectTextBox.PlaceholderText" xml:space="preserve">
     <value>Add a subject</value>
   </data>
-	<data name="MessageAreaRichEditBox.PlaceholderText" xml:space="preserve">
+  <data name="MessageAreaRichEditBox.PlaceholderText" xml:space="preserve">
     <value>Write your message...</value>
   </data>
-	<data name="Email_Details_Attachments.Text" xml:space="preserve">
+  <data name="Email_Details_Attachments.Text" xml:space="preserve">
     <value>Attachments</value>
   </data>
-	<data name="Email_Details_Subject.Text" xml:space="preserve">
+  <data name="Email_Details_Subject.Text" xml:space="preserve">
     <value>Subject</value>
   </data>
-	<data name="Email_Details_The.Text" xml:space="preserve">
+  <data name="Email_Details_The.Text" xml:space="preserve">
     <value>The :</value>
   </data>
-	<data name="Email_Details_At.Text" xml:space="preserve">
+  <data name="Email_Details_At.Text" xml:space="preserve">
     <value> at :</value>
   </data>
-	<data name="Email_Details_DateSent.Text" xml:space="preserve">
+  <data name="Email_Details_DateSent.Text" xml:space="preserve">
     <value>Sent date</value>
   </data>
-	<data name="Email_Details_To.Text" xml:space="preserve">
+  <data name="Email_Details_To.Text" xml:space="preserve">
     <value>To :</value>
   </data>
-	<data name="Email_Details_Receiver.Text" xml:space="preserve">
+  <data name="Email_Details_Receiver.Text" xml:space="preserve">
     <value>Receiver</value>
   </data>
-	<data name="Email_Details_From.Text" xml:space="preserve">
+  <data name="Email_Details_From.Text" xml:space="preserve">
     <value>From :</value>
   </data>
-	<data name="Email_Details_Sender.Text" xml:space="preserve">
+  <data name="Email_Details_Sender.Text" xml:space="preserve">
     <value>Sender</value>
   </data>
-	<data name="Error_Title" xml:space="preserve">
+  <data name="Error_Title" xml:space="preserve">
     <value>Error</value>
   </data>
-	<data name="Error_AccountUnfound_Gmail" xml:space="preserve">
+  <data name="Error_AccountUnfound_Gmail" xml:space="preserve">
     <value>Gmail account unfound.</value>
   </data>
-	<data name="Error_AccountUnfound_Other" xml:space="preserve">
+  <data name="Error_AccountUnfound_Other" xml:space="preserve">
     <value>Email account (via SMTP/IMAP) unfound.</value>
   </data>
-	<data name="Error_AccountUnfound_Outlook" xml:space="preserve">
+  <data name="Error_AccountUnfound_Outlook" xml:space="preserve">
     <value>Outlook account unfound.</value>
   </data>
-	<data name="Error_CredentialsInvalidOrExpired_Gmail" xml:space="preserve">
+  <data name="Error_CredentialsInvalidOrExpired_Gmail" xml:space="preserve">
     <value>The Gmail credentials are invalid or have expired.</value>
   </data>
-	<data name="Error_CredentialsInvalidOrExpired_SMTP_IMAP_POP3" xml:space="preserve">
+  <data name="Error_CredentialsInvalidOrExpired_SMTP_IMAP_POP3" xml:space="preserve">
     <value>The Email (SMTP/IMAP/POP3) credentials are invalid or have expired.</value>
   </data>
-	<data name="Error_CredentialsInvalidOrExpired_Outlook" xml:space="preserve">
+  <data name="Error_CredentialsInvalidOrExpired_Outlook" xml:space="preserve">
     <value>The Outlook credentials are invalid or have expired.</value>
   </data>
-	<data name="Error_OrMessage" xml:space="preserve">
+  <data name="Error_OrMessage" xml:space="preserve">
     <value> or </value>
   </data>
-	<data name="Error_SaveAttachmentFailed" xml:space="preserve">
+  <data name="Error_SaveAttachmentFailed" xml:space="preserve">
     <value>The attachment failed to download.</value>
   </data>
-	<data name="Error_EmailSendingFailed" xml:space="preserve">
+  <data name="Error_EmailSendingFailed" xml:space="preserve">
     <value>The email could not be sent.</value>
   </data>
-	<data name="Email_Details_PhishingScore.Text" xml:space="preserve">
+  <data name="Email_Details_PhishingScore.Text" xml:space="preserve">
     <value>Phishing score : </value>
   </data>
-	<data name="Email_Details_Security.Text" xml:space="preserve">
+  <data name="Email_Details_Security.Text" xml:space="preserve">
     <value>Security</value>
   </data>
-	<data name="AddAddress_UserName.Header" xml:space="preserve">
+  <data name="AddAddress_UserName.Header" xml:space="preserve">
     <value>User name</value>
   </data>
-	<data name="AddAddress_ImapHost.Header" xml:space="preserve">
+  <data name="AddAddress_ImapHost.Header" xml:space="preserve">
     <value>IMAP Host</value>
   </data>
-	<data name="AddAddress_SmtpHost.Header" xml:space="preserve">
+  <data name="AddAddress_SmtpHost.Header" xml:space="preserve">
     <value>SMTP Host</value>
   </data>
-	<data name="AddAddress_ImapPort.Header" xml:space="preserve">
+  <data name="AddAddress_ImapPort.Header" xml:space="preserve">
     <value>IMAP Port</value>
   </data>
-	<data name="AddAddress_SmtpPort.Header" xml:space="preserve">
+  <data name="AddAddress_SmtpPort.Header" xml:space="preserve">
     <value>SMTP Port (587 or 465)</value>
   </data>
-	<data name="AddAddress_ImapUseSsl.Content" xml:space="preserve">
+  <data name="AddAddress_ImapUseSsl.Content" xml:space="preserve">
     <value>Use SSL for IMAP</value>
   </data>
-	<data name="AddAddress_SmtpUseSsl.Content" xml:space="preserve">
+  <data name="AddAddress_SmtpUseSsl.Content" xml:space="preserve">
     <value>Use SSL for SMTP</value>
   </data>
-	<data name="Error_RecoveryMailInvalid" xml:space="preserve">
+  <data name="Error_RecoveryMailInvalid" xml:space="preserve">
     <value>The connection of the Mail address to the application has failed. Please try again later.</value>
   </data>
-	<data name="ButtonCc.Content" xml:space="preserve">
+  <data name="ButtonCc.Content" xml:space="preserve">
     <value>Cc</value>
   </data>
-	<data name="BccTextBlock.Text" xml:space="preserve">
+  <data name="BccTextBlock.Text" xml:space="preserve">
     <value>Bcc</value>
+  </data>
+  <data name="ButtonReply.Text" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="ButtonForward.Text" xml:space="preserve">
+    <value>Forward</value>
   </data>
 </root>

@@ -15,6 +15,9 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
+	[ObservableProperty]
+	private Email? currentEmail;
+
 	[RelayCommand]
 	private async Task SaveAttachmentAsync((string emailGuid, MailAttachment attachment, string destinationFolder) args)
 	{
@@ -53,4 +56,75 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			return;
 		}
 	}
+
+	#region Réponse et Transfert
+
+	[RelayCommand]
+	private async Task ReplyAsync()
+	{
+		if (CurrentEmail is null)
+			return;
+
+		string? subject = $"Re: {CurrentEmail.Subject}";
+
+		var body = $"""
+
+			———— Message d'origine ————
+
+			De : {CurrentEmail.SenderEmail}
+			À : {CurrentEmail.ReceiverEmail}
+			Date : {CurrentEmail.DateSent:g}
+			Objet : {CurrentEmail.Subject}
+
+			{CurrentEmail.Content}
+			"""
+		;
+
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage
+		{
+			Mode = ComposeMode.Reply,
+			SenderEmail = CurrentEmail.ReceiverEmail!,
+			ReceiverEmail = CurrentEmail.SenderEmail,
+			Subject = subject,
+			Body = body
+		});
+
+		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
+		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
+	}
+
+	[RelayCommand]
+	private async Task TransferAsync()
+	{
+		if (CurrentEmail is null)
+			return;
+
+		string? subject = $"FW: {CurrentEmail.Subject}";
+
+		var body = $"""
+
+			———— Message transféré ————
+
+			De : {CurrentEmail.SenderEmail}
+			À : {CurrentEmail.ReceiverEmail}
+			Date : {CurrentEmail.DateSent:g}
+			Objet : {CurrentEmail.Subject}
+
+			{CurrentEmail.Content}
+			"""
+		;
+
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage
+		{
+			Mode = ComposeMode.Forward,
+			SenderEmail = CurrentEmail.ReceiverEmail!,
+			Subject = subject,
+			Body = body
+		});
+
+		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
+		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
+	}
+
+	#endregion Réponse et Transfert
 }

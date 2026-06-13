@@ -139,6 +139,42 @@
 					</ItemsRepeater.ItemTemplate>
 				</ItemsRepeater>
 			</StackPanel>
+			<Grid Margin="-50 50 0 0" HorizontalAlignment="Center">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+				<Button
+					Grid.Column="0"
+					Width="140"
+					Height="40"
+					Margin="58 8 16 32"
+					Command="{x:Bind ViewModel.ReplyCommand}">
+					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+						<FontIcon
+							Margin="0 0 8 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE97A;" />
+						<TextBlock x:Uid="ButtonReply" />
+					</StackPanel>
+				</Button>
+
+				<Button
+					Grid.Column="1"
+					Width="140"
+					Height="40"
+					Margin="58 8 16 32"
+					Command="{x:Bind ViewModel.TransferCommand}">
+					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+						<FontIcon
+							Margin="0 0 8 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE72D;" />
+						<TextBlock x:Uid="ButtonForward" />
+					</StackPanel>
+				</Button>
+			</Grid>
 		</StackPanel>
 	</ScrollViewer>
 </UserControl>
