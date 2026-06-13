@@ -40,6 +40,7 @@ Pour qu'un utilisateur puisse se connecter, il faut qu'une licence soit disponib
     - Adresses emails connectées à l'application : l'Adresse Email, le TokenStorageKey, le GoogleUserId (dans le cas d'une connexion par les services de Google), ainsi que le UserName, ImapHost et SmtpHost (dans le cas d'une connexion via méthode IMAP/SMTP)
     - Emails (messages) : l'Adresse Email et le Nom de l'envoyeur et du réceptionnaire, les Cc et Cci, l'Objet, le Contenu et si il y en a les Pièces Jointes associées
   - Chiffrement SSL/TLS (même chose, juste 2 appellations) lors de l'envoi et de la réception d'Emails
+  - La clé de chiffrement et la session (permettant de rester connecté un certain temps à l'application après fermeture) sont toutes deux chiffrées et stockées de manière sécurisé via le Windows DPAPI (impossible de déchiffrer si l'utilisateur ayant émis la clé et la session n'a pas déverouillé sa machine avec la bonne session utilisateur)
   
 ## Équipe
   - Nicolas Thomas
