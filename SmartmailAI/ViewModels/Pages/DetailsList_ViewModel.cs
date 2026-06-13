@@ -30,8 +30,24 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[ObservableProperty]
 	private object? _selectedDetail;
 
+	[ObservableProperty]
+	private DateTimeOffset? _datePicked;
+
+	[ObservableProperty]
+	private bool _isDatePickerOpen = false;
+
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
+
+	partial void OnDatePickedChanged(DateTimeOffset? value)
+	{
+		if (value is null)
+			return;
+
+		string formattedDate = value.Value.ToString("yyyy-MM-dd");
+
+		SearchText += formattedDate;
+	}
 
 	public DetailsList_ViewModel(IEmailsService emailsService)
 	{
@@ -150,6 +166,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task DateBeforeFilterAsync()
 	{
+		IsDatePickerOpen = true;
+
 		if (SearchText != null && SearchText.Length > 0)
 			SearchText += " ";
 		SearchText += "Date:Before:";
@@ -158,6 +176,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task DateAfterFilterAsync()
 	{
+		IsDatePickerOpen = true;
+
 		if (SearchText != null && SearchText.Length > 0)
 			SearchText += " ";
 		SearchText += "Date:After:";

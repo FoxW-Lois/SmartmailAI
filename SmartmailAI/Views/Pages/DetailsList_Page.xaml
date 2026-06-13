@@ -263,6 +263,14 @@
 					</MenuFlyout>
 				</SplitButton.Flyout>
 			</SplitButton>
+
+			<!--  Ce CalendarDatePicker est affiché uniquement lorsque l'utilisateur choisi un filtre DateBefore ou DateAfter  -->
+			<CalendarDatePicker
+				Grid.Column="3"
+				Width="0"
+				Height="0"
+				Date="{x:Bind ViewModel.DatePicked, Mode=TwoWay}"
+				IsCalendarOpen="{x:Bind ViewModel.IsDatePickerOpen, Mode=TwoWay}" />
 		</Grid>
 
 		<controls:ListDetailsView
