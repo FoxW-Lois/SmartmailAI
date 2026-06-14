@@ -600,6 +600,37 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		return Task.CompletedTask;
 	}
 
+	public Task MarkEmailAsPhishingSpamAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.PreviousMailboxType = email.MailboxType;
+		email.MailboxType = MailboxType.PhishingSpam;
+
+		if (email.Guid.StartsWith("Email_Hardcoded-"))
+			return Task.CompletedTask;
+
+		_emailRepository.UpdateEmailAsync(email);
+
+		return Task.CompletedTask;
+	}
+
+	public Task MarkEmailAsNotPhishingSpamAsync(Email email)
+	{
+		if (email is null)
+			return Task.CompletedTask;
+
+		email.MailboxType = MailboxType.Inbox;
+
+		if (email.Guid.StartsWith("Email_Hardcoded-"))
+			return Task.CompletedTask;
+
+		_emailRepository.UpdateEmailAsync(email);
+
+		return Task.CompletedTask;
+	}
+
 	#endregion Changement d'états des emails
 
 	#region Analyse de sécurité des emails
