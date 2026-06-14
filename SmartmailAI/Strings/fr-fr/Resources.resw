@@ -562,4 +562,10 @@
   <data name="Dialog_Delete_Confirm_part2" xml:space="preserve">
     <value>. Confirmez-vous cette action ?</value>
   </data>
+  <data name="Email_Action_MoveToPhishingSpam.Text" xml:space="preserve">
+    <value>Déplacer vers PhishingSpam</value>
+  </data>
+  <data name="Email_Action_RemoveFromPhishingSpam.Text" xml:space="preserve">
+    <value>Sortir de PhishingSpam</value>
+  </data>
 </root>

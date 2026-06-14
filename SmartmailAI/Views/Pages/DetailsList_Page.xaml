@@ -83,6 +83,24 @@
 
 						<MenuFlyoutSeparator />
 
+						<!--  Déplacement dans PhishingSpam  -->
+						<MenuFlyoutItem
+							x:Uid="Email_Action_MoveToPhishingSpam"
+							Command="{Binding DataContext.MoveMailToPhishingSpamCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Foreground="Orange"
+							Icon="ReportHacked" />
+
+						<!--  Sortie de PhishingSpam  -->
+						<MenuFlyoutItem
+							x:Uid="Email_Action_RemoveFromPhishingSpam"
+							Command="{Binding DataContext.RemoveMailFromPhishingSpamCommand, ElementName=RootPage}"
+							CommandParameter="{Binding}"
+							Foreground="LightGreen"
+							Icon="Back" />
+
+						<MenuFlyoutSeparator />
+
 						<!--  Supprimer  -->
 						<MenuFlyoutItem
 							x:Uid="Email_Action_Delete"

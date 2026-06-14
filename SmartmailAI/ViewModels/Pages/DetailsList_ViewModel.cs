@@ -300,7 +300,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
 
-	private static bool CanRestore(Email? email) => email is not null && (email.MailboxType == MailboxType.Trash || email.MailboxType == MailboxType.Archives);
+	private static bool CanRestore(Email? email) => email is not null && email.MailboxType is MailboxType.Trash or MailboxType.Archives;
 
 	[RelayCommand]
 	private async Task DeleteMailAsync(Email email)
@@ -323,6 +323,37 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		else
 			await _emailsService.DeleteEmailAsync(email);
 	}
+
+	[RelayCommand(CanExecute = nameof(CanMoveToPhishingSpam))]
+	private async Task MoveMailToPhishingSpamAsync(Email email)
+	{
+		if (email is null)
+			return;
+
+		var previousMailboxType = email.MailboxType;
+		await _emailsService.MarkEmailAsPhishingSpamAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
+
+	private static bool CanMoveToPhishingSpam(Email? email) => email is not null &&
+		!(email.MailboxType is MailboxType.Trash or MailboxType.Archives or MailboxType.Drafts or MailboxType.PhishingSpam);
+
+	[RelayCommand(CanExecute = nameof(CanRemoveFromPhishingSpam))]
+	private async Task RemoveMailFromPhishingSpam(Email email)
+	{
+		if (email is null)
+			return;
+
+		var previousMailboxType = email.MailboxType;
+		await _emailsService.MarkEmailAsNotPhishingSpamAsync(email);
+
+		var newMailboxType = email.MailboxType;
+		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+	}
+
+	private static bool CanRemoveFromPhishingSpam(Email? email) => email is not null && email.MailboxType == MailboxType.PhishingSpam;
 
 	#endregion Commandes au clic droit
 

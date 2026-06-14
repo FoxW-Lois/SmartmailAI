@@ -24,5 +24,9 @@ public interface IEmailsService
 
 	Task MarkEmailAsTrashedAsync(Email email);
 
+	Task MarkEmailAsPhishingSpamAsync(Email email);
+
+	Task MarkEmailAsNotPhishingSpamAsync(Email email);
+
 	Task ApplySecurityAnalysisAsync(Email email);
 }
