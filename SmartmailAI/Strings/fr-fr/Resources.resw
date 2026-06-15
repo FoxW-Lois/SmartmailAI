@@ -568,4 +568,16 @@
   <data name="Email_Action_RemoveFromPhishingSpam.Text" xml:space="preserve">
     <value>Sortir de PhishingSpam</value>
   </data>
+  <data name="ButtonAI_Summary.Text" xml:space="preserve">
+    <value>Résumé IA</value>
+  </data>
+  <data name="ButtonAI_Translation.Text" xml:space="preserve">
+    <value>Traduction IA</value>
+  </data>
+  <data name="ButtonAI_Suggestions.Text" xml:space="preserve">
+    <value>Suggestions IA</value>
+  </data>
+  <data name="ButtonAI_Sorting.Text" xml:space="preserve">
+    <value>Tri IA</value>
+  </data>
 </root>

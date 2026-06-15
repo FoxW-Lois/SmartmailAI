@@ -148,6 +148,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion Gestion de la taille du ComposeOverlay
 
+	#region Commandes boutons interface
+
 	[RelayCommand]
 	private async Task OpenNewMailAsync()
 	{
@@ -192,6 +194,32 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 		await RefreshAllCategory();
 	}
+
+	#endregion Commandes boutons interface
+
+	#region Commandes bouton IA
+
+	[RelayCommand]
+	private async Task SubmitAISummaryAsync()
+	{
+	}
+
+	[RelayCommand]
+	private async Task SubmitAITranslationAsync()
+	{
+	}
+
+	[RelayCommand]
+	private async Task SubmitAISortingAsync()
+	{
+	}
+
+	[RelayCommand]
+	private async Task SubmitAISuggestionsAsync()
+	{
+	}
+
+	#endregion Commandes bouton IA
 
 	#region Commandes de filtrage
 

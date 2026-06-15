@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 
 namespace SmartmailAI.Views.Pages;
@@ -64,5 +65,11 @@ public sealed partial class DetailsList_Page : Page, INotifyPropertyChanged
 		{
 			ViewModel.MarkAsReadCommand.Execute(email);
 		}
+	}
+
+	// Permet d'afficher le menu-déroulant au clic du "AI_Bouton"
+	private void AI_Button_Click(object sender, RoutedEventArgs e)
+	{
+		FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
 	}
 }

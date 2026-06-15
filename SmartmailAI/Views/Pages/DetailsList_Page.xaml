@@ -216,6 +216,7 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<!--  Bouton d'envoi  -->
 			<Button
@@ -289,6 +290,48 @@
 				Height="0"
 				Date="{x:Bind ViewModel.DatePicked, Mode=TwoWay}"
 				IsCalendarOpen="{x:Bind ViewModel.IsDatePickerOpen, Mode=TwoWay}" />
+
+			<!--  Bouton de l'onglet IA  -->
+			<Button
+				Grid.Column="4"
+				Width="50"
+				Height="200"
+				Margin="0 50 -50 -170"
+				Click="AI_Button_Click">
+				<FontIcon
+					Margin="0 0 0 0"
+					FontFamily="Segoe MDL2 Assets"
+					FontSize="25"
+					Glyph="&#xE99A;" />
+
+				<FlyoutBase.AttachedFlyout>
+					<MenuFlyout Placement="Bottom">
+						<MenuFlyoutItem x:Uid="ButtonAI_Summary" Command="{x:Bind ViewModel.SubmitAISummaryCommand}">
+							<MenuFlyoutItem.Icon>
+								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEA80;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+
+						<MenuFlyoutItem x:Uid="ButtonAI_Translation" Command="{x:Bind ViewModel.SubmitAITranslationCommand}">
+							<MenuFlyoutItem.Icon>
+								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE774;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+
+						<MenuFlyoutItem x:Uid="ButtonAI_Sorting" Command="{x:Bind ViewModel.SubmitAISortingCommand}">
+							<MenuFlyoutItem.Icon>
+								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8FD;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+
+						<MenuFlyoutItem x:Uid="ButtonAI_Suggestions" Command="{x:Bind ViewModel.SubmitAISuggestionsCommand}">
+							<MenuFlyoutItem.Icon>
+								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE787;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+					</MenuFlyout>
+				</FlyoutBase.AttachedFlyout>
+			</Button>
 		</Grid>
 
 		<controls:ListDetailsView
@@ -307,7 +350,7 @@
 			SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay}"
 			ViewStateChanged="OnViewStateChanged" />
 		<Button
-			Grid.Column="1"
+			Grid.Row="0"
 			Width="41"
 			Height="40"
 			Margin="272 70 0 -70"
