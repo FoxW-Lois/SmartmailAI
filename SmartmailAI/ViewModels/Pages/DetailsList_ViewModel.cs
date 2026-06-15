@@ -42,6 +42,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[ObservableProperty]
 	private bool _isValideCategory = false;
 
+	[ObservableProperty]
+	private bool _isAIinterfaceVisible = false;
+
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
 
@@ -88,6 +91,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			OnPropertyChanged(nameof(ComposeMaxWidth));
 			OnPropertyChanged(nameof(HalfWindowHeight));
 			OnPropertyChanged(nameof(ComposeMaxHeight));
+
+			OnPropertyChanged(nameof(AIinterfaceMaxWidth));
+			OnPropertyChanged(nameof(AIinterfaceMaxHeight));
 		};
 	}
 
@@ -148,6 +154,15 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion Gestion de la taille du ComposeOverlay
 
+	#region Gestion de la taille de l'AIinterface
+
+	// Ne pas mettre en static AIinterfaceMaxWidth et AIinterfaceMaxHeight car utilisées dans le .xaml
+
+	public double AIinterfaceMaxWidth => WindowWidth * 0.22;
+	public double AIinterfaceMaxHeight => WindowHeight * 0.90;
+
+	#endregion Gestion de la taille de l'AIinterface
+
 	#region Commandes boutons interface
 
 	[RelayCommand]
@@ -199,24 +214,30 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#region Commandes bouton IA
 
+	//TODO: Ajouter de l'interaction avec l'IA avec un "contexte" différent pour chaque RelayCommand
+
 	[RelayCommand]
 	private async Task SubmitAISummaryAsync()
 	{
+		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
 
 	[RelayCommand]
 	private async Task SubmitAITranslationAsync()
 	{
+		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
 
 	[RelayCommand]
 	private async Task SubmitAISortingAsync()
 	{
+		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
 
 	[RelayCommand]
 	private async Task SubmitAISuggestionsAsync()
 	{
+		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
 
 	#endregion Commandes bouton IA
