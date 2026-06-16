@@ -580,4 +580,10 @@
   <data name="ButtonAI_Sorting.Text" xml:space="preserve">
     <value>AI Sorting</value>
   </data>
+  <data name="AddPromptPlaceholder.PlaceholderText" xml:space="preserve">
+    <value>Request to be made...</value>
+  </data>
+  <data name="AIassistantName.Text" xml:space="preserve">
+    <value>Maily - AI Assistant</value>
+  </data>
 </root>

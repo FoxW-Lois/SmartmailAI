@@ -580,4 +580,10 @@
   <data name="ButtonAI_Sorting.Text" xml:space="preserve">
     <value>Tri IA</value>
   </data>
+  <data name="AddPromptPlaceholder.PlaceholderText" xml:space="preserve">
+    <value>Requête à effectuer...</value>
+  </data>
+  <data name="AIassistantName.Text" xml:space="preserve">
+    <value>Maily - Assistant IA</value>
+  </data>
 </root>

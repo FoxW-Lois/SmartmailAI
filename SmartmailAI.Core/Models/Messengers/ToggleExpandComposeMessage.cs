@@ -1,3 +1,4 @@
-﻿public sealed class ToggleExpandComposeMessage
-{
-}
+﻿namespace SmartmailAI.Core.Models.Messengers;
+
+public sealed class ToggleExpandComposeMessage
+{ }

@@ -375,7 +375,7 @@
 			<views:DetailsList_NewMailControl />
 		</Grid>
 		<StackPanel
-			x:Name="AIinterface"
+			x:Name="AIinterfaceOverlay"
 			Grid.Row="1"
 			Width="{Binding ElementName=ListDetailsViewControl, Path=ActualWidth}"
 			Height="{Binding ElementName=ListDetailsViewControl, Path=ActualHeight}"
@@ -386,7 +386,7 @@
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 			CornerRadius="15"
 			Visibility="{x:Bind ViewModel.IsAIinterfaceVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-			<views:DetailsList_NewMailControl />
+			<views:AIinterface_Control />
 		</StackPanel>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
