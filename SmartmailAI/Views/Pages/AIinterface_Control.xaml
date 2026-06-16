@@ -5,7 +5,6 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:models="using:SmartmailAI.Core.Models"
-	x:Name="RootControl"
 	mc:Ignorable="d">
 
 	<Grid
@@ -53,28 +52,31 @@
 			</StackPanel>
 		</Grid>
 
-		<!--  Conversation  -->
-		<ScrollViewer Grid.Row="1">
-			<ItemsControl Height="510" ItemsSource="{x:Bind ViewModel.Messages}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate x:DataType="models:AIMessage">
-						<Grid Margin="0 0 0 12">
-							<Border
-								MaxWidth="600"
-								Padding="16 12"
-								HorizontalAlignment="{Binding Alignment}"
-								Background="{Binding BubbleBrush}"
-								CornerRadius="18">
-								<TextBlock
-									IsTextSelectionEnabled="True"
-									Text="{Binding Content}"
-									TextWrapping="Wrap" />
-							</Border>
-						</Grid>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</ScrollViewer>
+		<ListView
+			Grid.Row="1"
+			Height="510"
+			IsItemClickEnabled="False"
+			IsTabStop="False"
+			ItemsSource="{x:Bind ViewModel.Messages}"
+			SelectionMode="None">
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="models:AIMessage">
+					<Grid Margin="0 0 0 12">
+						<Border
+							MaxWidth="600"
+							Padding="16 12"
+							HorizontalAlignment="{Binding Alignment}"
+							Background="{Binding BubbleBrush}"
+							CornerRadius="18">
+							<TextBlock
+								IsTextSelectionEnabled="True"
+								Text="{Binding Content}"
+								TextWrapping="Wrap" />
+						</Border>
+					</Grid>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
 
 		<!--  Zone de saisie  -->
 		<Border
