@@ -107,7 +107,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	{
 		Messages.Clear();
 
-		if (account == null)
+		if (account is null)
 			return;
 
 		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(true, account);
@@ -137,7 +137,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 			return false;
 		}
 
-		if (accountGmail == null)
+		if (accountGmail is null)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
@@ -196,7 +196,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 			return false;
 		}
 
-		if (accountOther == null)
+		if (accountOther is null)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;

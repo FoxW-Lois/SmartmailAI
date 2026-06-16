@@ -352,7 +352,7 @@ public partial class App : Application
 #endif
 
 		// Ensure the current window is active
-		if (MainWindow != null)
+		if (MainWindow is not null)
 		{
 			return;
 		}

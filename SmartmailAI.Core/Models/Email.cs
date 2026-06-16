@@ -82,7 +82,7 @@ public class Email
 	{
 		get
 		{
-			if (SenderProfileImage == null)
+			if (SenderProfileImage is null)
 				return new BitmapImage(new Uri("ms-appx:///Assets/Content/Default-Avatar-icon.jpg"));
 
 			return new BitmapImage(SenderProfileImage);
@@ -95,7 +95,7 @@ public class Email
 	{
 		get
 		{
-			if (ReceiverProfileImage == null)
+			if (ReceiverProfileImage is null)
 				return new BitmapImage(new Uri("ms-appx:///Assets/Content/Default-Avatar-icon.jpg"));
 
 			return new BitmapImage(ReceiverProfileImage);

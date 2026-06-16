@@ -104,7 +104,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 		// Update the selected NavigationViewItem based on the page type
 		var selectedItem = NavigationViewService.GetItem(e.SourcePageType);
-		if (selectedItem != null)
+		if (selectedItem is not null)
 		{
 			Selected = selectedItem;
 		}

@@ -47,7 +47,7 @@ public partial class Login_ViewModel(IAuthService authService, IMailReaderServic
 		if (!success && specificError == "Need_TwoFactor")
 			return (false, true, Login);
 
-		if (!success && specificError != null)
+		if (!success && specificError is not null)
 		{
 			ErrorMessage = resourceLoader.GetString(specificError);
 			return (false, false, null);

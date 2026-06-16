@@ -54,7 +54,7 @@ public class GmailApiService : IGmailApiService
 
 		var response = await request.ExecuteAsync();
 
-		if (response.Messages == null)
+		if (response.Messages is null)
 			return [];
 
 		var result = new List<EmailFromAddress>();
@@ -159,7 +159,7 @@ public class GmailApiService : IGmailApiService
 		if (!string.IsNullOrEmpty(message.Payload.Body?.Data))
 			return DecodeBase64(message.Payload.Body.Data);
 
-		if (message.Payload.Parts != null)
+		if (message.Payload.Parts is not null)
 		{
 			foreach (var part in message.Payload.Parts)
 			{
@@ -178,7 +178,7 @@ public class GmailApiService : IGmailApiService
 	{
 		var attachments = new List<MailAttachment>();
 
-		if (message.Payload.Parts == null)
+		if (message.Payload.Parts is null)
 			return attachments;
 
 		foreach (var part in message.Payload.Parts)

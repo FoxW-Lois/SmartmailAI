@@ -28,7 +28,7 @@ internal class NavigationViewService(IPageService pageService) : INavigationView
 
 	public void UnregisterEvents()
 	{
-		if (_navigationView != null)
+		if (_navigationView is not null)
 		{
 			_navigationView.BackRequested -= OnBackRequested;
 			_navigationView.ItemInvoked -= OnItemInvoked;
@@ -63,7 +63,7 @@ internal class NavigationViewService(IPageService pageService) : INavigationView
 
 	public NavigationViewItem? GetItem(Type pageType)
 	{
-		if (_navigationView != null)
+		if (_navigationView is not null)
 		{
 			if (pageType == _pageService.SettingPageType)
 			{

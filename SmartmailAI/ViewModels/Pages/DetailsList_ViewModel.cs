@@ -174,7 +174,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task DeleteAllMailsFromCurrentCategoryAsync()
 	{
-		if (SelectedCategory == null) return;
+		if (SelectedCategory is null) return;
 
 		var dialogResult = await _dialogService.ShowTwoButtonDialogAsync(resourceLoader.GetString("Dialog_Confirmation"),
 			String.Concat(resourceLoader.GetString("Dialog_Delete_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_Delete_Confirm_part2")),
@@ -205,7 +205,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		IsDatePickerOpen = true;
 
-		if (SearchText != null && SearchText.Length > 0)
+		if (SearchText is not null && SearchText.Length > 0)
 			SearchText += " ";
 		SearchText += "Date:Before:";
 	}
@@ -215,7 +215,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		IsDatePickerOpen = true;
 
-		if (SearchText != null && SearchText.Length > 0)
+		if (SearchText is not null && SearchText.Length > 0)
 			SearchText += " ";
 		SearchText += "Date:After:";
 	}
@@ -223,7 +223,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task AttachmentYesFilterAsync()
 	{
-		if (SearchText != null && SearchText.Length > 0)
+		if (SearchText is not null && SearchText.Length > 0)
 			SearchText += " ";
 		SearchText += "Attachment:Yes";
 	}
@@ -231,7 +231,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task AttachmentNoFilterAsync()
 	{
-		if (SearchText != null && SearchText.Length > 0)
+		if (SearchText is not null && SearchText.Length > 0)
 			SearchText += " ";
 		SearchText += "Attachment:No";
 	}
@@ -393,7 +393,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		HashSet<MailboxType> types = [];
 
 		// Si un des 2 paramètres MailboxType est null, on rafraîchit toutes les catégories
-		if (previousMailboxType == null || newMailboxType == null)
+		if (previousMailboxType is null || newMailboxType is null)
 		{
 			foreach (var mailboxType in Enum.GetValues<MailboxType>())
 			{

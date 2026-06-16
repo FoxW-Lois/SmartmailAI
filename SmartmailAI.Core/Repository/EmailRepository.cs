@@ -94,7 +94,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		   .ToListAsync();
 
 		var emailsToDelete = await EncryptEmailListAsync(emails);
-		emailsToDelete = [.. emailsToDelete.Where(e => account != null && e.Owner == account.Email)];
+		emailsToDelete = [.. emailsToDelete.Where(e => account is not null && e.Owner == account.Email)];
 
 		_context.Email.RemoveRange(emailsToDelete);
 		await _context.SaveChangesAsync();
@@ -141,12 +141,12 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		email.SenderEmail = await _aesService.EncryptAsync(email.SenderEmail);
 		email.SenderName = await _aesService.EncryptAsync(email.SenderName);
-		if (email.ReceiverEmail != null) email.ReceiverEmail = await _aesService.EncryptAsync(email.ReceiverEmail);
-		if (email.ReceiverName != null) email.ReceiverName = await _aesService.EncryptAsync(email.ReceiverName);
-		if (email.Cc != null) email.Cc = await _aesService.EncryptAsync(email.Cc);
-		if (email.Bcc != null) email.Bcc = await _aesService.EncryptAsync(email.Bcc);
-		if (email.Subject != null) email.Subject = await _aesService.EncryptAsync(email.Subject);
-		if (email.Content != null) email.Content = await _aesService.EncryptAsync(email.Content);
+		if (email.ReceiverEmail is not null) email.ReceiverEmail = await _aesService.EncryptAsync(email.ReceiverEmail);
+		if (email.ReceiverName is not null) email.ReceiverName = await _aesService.EncryptAsync(email.ReceiverName);
+		if (email.Cc is not null) email.Cc = await _aesService.EncryptAsync(email.Cc);
+		if (email.Bcc is not null) email.Bcc = await _aesService.EncryptAsync(email.Bcc);
+		if (email.Subject is not null) email.Subject = await _aesService.EncryptAsync(email.Subject);
+		if (email.Content is not null) email.Content = await _aesService.EncryptAsync(email.Content);
 
 		if (email.Attachments.Count > 0)
 		{
@@ -154,7 +154,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 			email.AttachmentsJson = await _aesService.EncryptAsync(json);
 		}
 
-		if (email.DetectedLinks != null) email.DetectedLinks = await _aesService.EncryptAsync(email.DetectedLinks);
+		if (email.DetectedLinks is not null) email.DetectedLinks = await _aesService.EncryptAsync(email.DetectedLinks);
 
 		return email;
 	}
@@ -175,20 +175,20 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		email.SenderEmail = await _aesService.DecryptAsync(email.SenderEmail);
 		email.SenderName = await _aesService.DecryptAsync(email.SenderName);
-		if (email.ReceiverEmail != null) email.ReceiverEmail = await _aesService.DecryptAsync(email.ReceiverEmail);
-		if (email.ReceiverName != null) email.ReceiverName = await _aesService.DecryptAsync(email.ReceiverName);
-		if (email.Cc != null) email.Cc = await _aesService.DecryptAsync(email.Cc);
-		if (email.Bcc != null) email.Bcc = await _aesService.DecryptAsync(email.Bcc);
-		if (email.Subject != null) email.Subject = await _aesService.DecryptAsync(email.Subject);
-		if (email.Content != null) email.Content = await _aesService.DecryptAsync(email.Content);
+		if (email.ReceiverEmail is not null) email.ReceiverEmail = await _aesService.DecryptAsync(email.ReceiverEmail);
+		if (email.ReceiverName is not null) email.ReceiverName = await _aesService.DecryptAsync(email.ReceiverName);
+		if (email.Cc is not null) email.Cc = await _aesService.DecryptAsync(email.Cc);
+		if (email.Bcc is not null) email.Bcc = await _aesService.DecryptAsync(email.Bcc);
+		if (email.Subject is not null) email.Subject = await _aesService.DecryptAsync(email.Subject);
+		if (email.Content is not null) email.Content = await _aesService.DecryptAsync(email.Content);
 
-		if (email.AttachmentsJson != null)
+		if (email.AttachmentsJson is not null)
 		{
 			var json = await _aesService.DecryptAsync(email.AttachmentsJson);
 			email.Attachments = JsonSerializer.Deserialize<List<MailAttachment>>(json) ?? [];
 		}
 
-		if (email.DetectedLinks != null) email.DetectedLinks = await _aesService.DecryptAsync(email.DetectedLinks);
+		if (email.DetectedLinks is not null) email.DetectedLinks = await _aesService.DecryptAsync(email.DetectedLinks);
 
 		return email;
 	}

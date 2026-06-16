@@ -34,7 +34,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
 
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
-		if (password == null) return [];
+		if (password is null) return [];
 
 		await client.AuthenticateAsync(account.Email, password);
 
@@ -112,7 +112,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
 
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
-		if (password == null) return;
+		if (password is null) return;
 
 		await client.AuthenticateAsync(account.Email, password);
 		await client.Inbox!.OpenAsync(FolderAccess.ReadOnly);
@@ -153,7 +153,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 			: SecureSocketOptions.StartTls);
 
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
-		if (password == null) return;
+		if (password is null) return;
 
 		await smtp.AuthenticateAsync(account.Email, password);
 

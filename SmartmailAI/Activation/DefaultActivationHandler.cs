@@ -9,7 +9,7 @@ internal class DefaultActivationHandler(INavigationService navigationService) : 
 	protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
 	{
 		// None of the ActivationHandlers has handled the activation.
-		return _navigationService.Frame?.Content == null;
+		return _navigationService.Frame?.Content is null;
 	}
 
 	protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)

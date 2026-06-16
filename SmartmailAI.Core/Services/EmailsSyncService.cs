@@ -92,7 +92,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 
 	public async Task SyncNewEmailsAsync(AccountMailBase account)
 	{
-		if (account == null)
+		if (account is null)
 			return;
 
 		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(false, account);
@@ -115,7 +115,7 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 	{
 		Stop();
 
-		if (_runningTask != null)
+		if (_runningTask is not null)
 			await _runningTask;
 
 		_cts.Dispose();

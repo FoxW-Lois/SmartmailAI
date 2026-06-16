@@ -207,7 +207,7 @@ public sealed partial class MainWindow : WindowEx
 				if (Content is not NavShell_Page shell)
 				{
 					shell = Ioc.Default.GetRequiredService<NavShell_Page>();
-					if (shell == null)
+					if (shell is null)
 					{
 						var frame = new Frame();
 						Content = frame;
