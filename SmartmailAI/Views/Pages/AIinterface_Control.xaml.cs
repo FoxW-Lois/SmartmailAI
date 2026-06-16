@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System.Collections.Specialized;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 
 namespace SmartmailAI.Views.Pages;
@@ -11,5 +12,20 @@ public sealed partial class AIinterface_Control : UserControl
 	{
 		ViewModel = Ioc.Default.GetRequiredService<AIinterface_ViewModel>();
 		InitializeComponent();
+
+		ViewModel.Messages.CollectionChanged += Messages_CollectionChanged;
+	}
+
+	private void Messages_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	{
+		if (e.Action != NotifyCollectionChangedAction.Add || e.NewItems == null || e.NewItems.Count <= 0)
+			return;
+
+		var item = e.NewItems![0];
+
+		DispatcherQueue.TryEnqueue(() =>
+		{
+			ConversationList.ScrollIntoView(item, ScrollIntoViewAlignment.Leading);
+		});
 	}
 }
