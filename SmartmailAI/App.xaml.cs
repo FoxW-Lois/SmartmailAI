@@ -251,6 +251,7 @@ public partial class App : Application
 				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
 				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
+				services.AddTransient<IMLDA_Repository, MLDA_Repository>();
 
 				#region (Email) Addresses Services
 
@@ -310,6 +311,13 @@ public partial class App : Application
 				});
 
 				services.AddDbContextFactory<AppDbContext_Email>(options =>
+				{
+					var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
+
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
+				services.AddDbContextFactory<AppDbContext_MLDA>(options =>
 				{
 					var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
 

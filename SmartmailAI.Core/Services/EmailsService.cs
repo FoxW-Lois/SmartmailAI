@@ -12,7 +12,7 @@ using SmartmailAI.Core.Models.Security;
 namespace SmartmailAI.Core.Services;
 
 public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainService redFlagDomainService, IVirusTotalService virusTotalService,
-	IDnsSecurityService dnsSecurityService) : IEmailsService
+	IDnsSecurityService dnsSecurityService, IMLDA_Repository mldaRepository) : IEmailsService
 {
 	// Pour l'utilisation de données de tests : ne surtout pas initialiser cette liste, que soit à la déclaration ou bien dans le constructeur
 	// Elle doit être initialisée uniquement dans GetAllCategoriesAsync en brute pour garantir que l'analyse de sécurité est appliquée
@@ -24,6 +24,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 	private readonly IRedFlagDomainService _redFlagDomainService = redFlagDomainService;
 	private readonly IVirusTotalService _virusTotalService = virusTotalService;
 	private readonly IDnsSecurityService _dnsSecurityService = dnsSecurityService;
+	private readonly IMLDA_Repository _mldaRepository = mldaRepository;
 
 	private readonly List<Email> hardcodedEmails = [
 	// ------ Inbox Emails ------
@@ -637,7 +638,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 
 	public async Task ApplySecurityAnalysisAsync(Email email)
 	{
-		if (email.MailboxType == MailboxType.Trash)
+		if (email.MailboxType == MailboxType.Trash || email.MailboxType == MailboxType.Sent)
 			return;
 
 		var reasons = new List<string>();
@@ -676,14 +677,15 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		int score = 0;
 
 		// 1. Domaine expéditeur suspect (RedFlagDomains + Levenshtein)
-		if (await IsSuspiciousEmailAsync(email.SenderEmail))
+		var (isSuspicious, bypass) = await IsSuspiciousEmailAsync(email.SenderEmail);
+		if (isSuspicious)
 		{
 			score += 40;
 			reasons.Add("Domaine expéditeur suspect ou imitant un domaine connu.");
 		}
 
 		// 2. Usurpation du nom d'affichage
-		if (IsDisplayNameSpoofing(email.SenderName, email.SenderEmail, out var spoofedBrand))
+		if (!bypass && IsDisplayNameSpoofing(email.SenderName, email.SenderEmail, out var spoofedBrand))
 		{
 			score += 35;
 			reasons.Add($"Usurpation d'identité détectée : le nom '{email.SenderName}' imite '{spoofedBrand}' mais le domaine expéditeur ne correspond pas.");
@@ -769,42 +771,67 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		return score;
 	}
 
-	private async Task<bool> IsSuspiciousEmailAsync(string senderEmail)
+	private async Task<(bool isSuspicious, bool bypassIsDisplayNameSpoofing)> IsSuspiciousEmailAsync(string senderEmail)
 	{
 		if (string.IsNullOrWhiteSpace(senderEmail) || !senderEmail.Contains('@'))
-			return false;
+			return (false, false);
+
+		senderEmail = senderEmail.Trim().ToLowerInvariant();
 
 		var parts = senderEmail.Split('@');
 		if (parts.Length != 2)
-			return false;
+			return (false, false);
 
-		var domain = parts[1].Trim().ToLowerInvariant();
+		var domain = parts[1];
 
-		var legitDomains = new[]
+		var mldaList = await _mldaRepository.GetAllMLDA_Async() ?? [];
+
+		var whitelistDomains = mldaList
+			.Where(x => x.IsDomain && x.IsWhitelist)
+			.Select(x => x.Value.ToLowerInvariant())
+			.ToHashSet();
+
+		var whitelistAddresses = mldaList
+			.Where(x => !x.IsDomain && x.IsWhitelist)
+			.Select(x => x.Value.ToLowerInvariant())
+			.ToHashSet();
+
+		var blacklistDomains = mldaList
+			.Where(x => x.IsDomain && !x.IsWhitelist)
+			.Select(x => x.Value.ToLowerInvariant())
+			.ToHashSet();
+
+		var blacklistAddresses = mldaList
+			.Where(x => !x.IsDomain && !x.IsWhitelist)
+			.Select(x => x.Value.ToLowerInvariant())
+			.ToHashSet();
+
+		// Blacklist -> suspect
+		if (blacklistDomains.Contains(domain) || blacklistAddresses.Contains(senderEmail))
 		{
-			"orange.fr",
-			"gmail.com",
-			"outlook.com",
-			"entreprise.com",
-			"exemple.com",
-			"microsoft.com"
-		};
+			return (true, false);
+		}
 
-		if (legitDomains.Contains(domain))
-			return false;
+		// Whitelist -> bypass
+		if (whitelistDomains.Contains(domain) || whitelistAddresses.Contains(senderEmail))
+		{
+			return (false, true);
+		}
 
 		// Vérification dans la liste de RedFlagDomains
 		if (await _redFlagDomainService.IsFlaggedDomainAsync(domain))
-			return true;
-
-		// Détection par similarité (TypoSquatting)
-		foreach (var legit in legitDomains)
 		{
-			if (AreDomainsSimilar(domain, legit))
-				return true;
+			return (true, false);
 		}
 
-		return false;
+		// Détection par similarité (TypoSquatting)
+		foreach (var legitDomain in whitelistDomains)
+		{
+			if (AreDomainsSimilar(domain, legitDomain))
+				return (true, false);
+		}
+
+		return (false, false);
 	}
 
 	private static bool AreDomainsSimilar(string a, string b)

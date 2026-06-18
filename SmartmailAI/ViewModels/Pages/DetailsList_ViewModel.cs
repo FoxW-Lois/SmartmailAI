@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models.Messengers;
+using SmartmailAI.Core.Models.Security;
 using Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -10,6 +12,8 @@ namespace SmartmailAI.ViewModels.Pages;
 public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAware
 {
 	private readonly IEmailsService _emailsService;
+	private readonly IEmailRepository _emailRepository;
+	private readonly IMLDA_Repository _mldaRepository;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
@@ -63,9 +67,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		IsValideCategory = SelectedCategory.MailboxType == MailboxType.Trash || SelectedCategory.MailboxType == MailboxType.PhishingSpam;
 	}
 
-	public DetailsList_ViewModel(IEmailsService emailsService, IDialogService dialogService)
+	public DetailsList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository, IDialogService dialogService)
 	{
 		_emailsService = emailsService;
+		_emailRepository = emailRepository;
+		_mldaRepository = mldaRepository;
 		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) => { IsComposing = !IsComposing; });
@@ -335,6 +341,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 		var newMailboxType = email.MailboxType;
 		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+
+		var emailDecrypted = await _emailRepository.DecryptDataAsync(email);
+		await UpdateMLDAlist(emailDecrypted.SenderEmail, false, false);
 	}
 
 	private static bool CanMoveToPhishingSpam(Email? email) => email is not null &&
@@ -351,9 +360,27 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 		var newMailboxType = email.MailboxType;
 		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+
+		var emailDecrypted = await _emailRepository.DecryptDataAsync(email);
+		await UpdateMLDAlist(emailDecrypted.SenderEmail, false, true);
 	}
 
 	private static bool CanRemoveFromPhishingSpam(Email? email) => email is not null && email.MailboxType == MailboxType.PhishingSpam;
+
+	private async Task UpdateMLDAlist(string senderEmail, bool isDomain, bool isWhitelist)
+	{
+		ManualLegitDomainsAndAddresses? mlda = new()
+		{
+			Value = senderEmail,
+			IsDomain = isDomain,
+			IsWhitelist = isWhitelist
+		};
+
+		if (await _mldaRepository.MLDAExistsAsync(senderEmail))
+			await _mldaRepository.UpdateMLDA_Async(mlda);
+		else
+			await _mldaRepository.AddMLDA_Async(mlda);
+	}
 
 	#endregion Commandes au clic droit
 
