@@ -32,7 +32,7 @@ public class GmailApiService : IGmailApiService
 		return profile.EmailAddress;
 	}
 
-	public async Task<List<EmailFromAddress>> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress,
+	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress,
 		int? maxResults = 50, DateTime? lastConnection = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer
@@ -52,7 +52,16 @@ public class GmailApiService : IGmailApiService
 			request.Q = $"after:{unixSeconds}";
 		}
 
-		var response = await request.ExecuteAsync();
+		ListMessagesResponse response;
+
+		try // On cherche surtout à tester si il y a une absence/perte de connexion internet au moment de la récupération d'emails
+		{
+			response = await request.ExecuteAsync();
+		}
+		catch (Exception) // Si ça plante alors ça vient généralement d'une absence d'internet : System.Net.Http.HttpRequestException
+		{
+			return null;
+		}
 
 		if (response.Messages is null)
 			return [];
@@ -96,7 +105,7 @@ public class GmailApiService : IGmailApiService
 			}
 		}
 
-		return result;
+		return result ?? [];
 	}
 
 	public async Task SaveAttachmentAsync(UserCredential credential, string messageId, MailAttachment attachment, string destinationFolder)

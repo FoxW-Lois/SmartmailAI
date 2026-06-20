@@ -92,10 +92,10 @@ public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
 
 	public async Task SyncNewEmailsAsync(AccountMailBase account)
 	{
-		if (account is null)
-			return;
-
 		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(false, account);
+
+		if (mails is null)
+			return;
 
 		foreach (var email in mails)
 			await _emailRepository.AddEmailAsync(email);

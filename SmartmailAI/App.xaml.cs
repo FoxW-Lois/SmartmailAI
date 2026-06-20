@@ -248,6 +248,7 @@ public partial class App : Application
 
 				#endregion Services anti-phishing
 
+				services.AddTransient<IEmailLoaderService, EmailLoaderService>();
 				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
 				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();

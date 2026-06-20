@@ -28,13 +28,21 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 	private readonly IAddressesRepository _addressesRepository = addressesRepository;
 	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
-	public async Task<IReadOnlyList<Email>> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase account)
+	public async Task<IReadOnlyList<Email>?> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase account)
 	{
+		if (!await InternetCheckService.HasInternetConnectionAsync())
+		{
+			// Il est strictement interdit (et impossible) de gérer l'affichage d'une erreur de manque de connexion internet au sein du sous-projet
+			// .Core, l'abscence de connexion de internet est donc remontée par le 'null' aux couches supérieurs appellant
+			// GetLastMessagesFromAccountAsync(). Ces dernières doivent elles gérer l'affichage du message d'erreur
+			return null;
+		}
+
 		const int NumMails = 3;
 
 		var lastConnection = await GetCurrentAccountLastConnectionAsync();
 
-		List<EmailFromAddress> rawEmails;
+		List<EmailFromAddress>? rawEmails;
 
 		if (account is AccountGmail accountGmail)
 			rawEmails = await GetGmailMessagesAsync(accountGmail, isAddingNewAddress, NumMails, lastConnection);
@@ -43,6 +51,9 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		else
 			return [];
 		// TODO: ajouter un check account is AccountOutlook accountOutlook
+
+		if (rawEmails is null) // Peut arriver si il y a une perte de connexion pendant la récupération d'emails, ou lorsque le réseau est lent
+			return null;
 
 		List<Email> emailsRecovered = await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmails);
 
@@ -55,7 +66,7 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 	#region Getting emails helpers
 
-	private async Task<List<EmailFromAddress>> GetGmailMessagesAsync(AccountGmail account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
+	private async Task<List<EmailFromAddress>?> GetGmailMessagesAsync(AccountGmail account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
 	{
 		var credential = await _gmailCredentialService.GetCredentialAsync(account, isAddingNewAddress);
 
@@ -72,19 +83,22 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		// dans la liste "Inbox", alors on le supprime de la liste "Sent" pour éviter les doublons.
 		// Cela arrive dans le cas où un email est envoyé à soi-même
 
+		if (await inboxTask is null || await sentTask is null)
+			return null;
+
 		var inbox = await inboxTask;
 		var sent = await sentTask;
 
-		sent = [.. (await sentTask).Where(s => !((inbox).Select(i => i.Guid)
+		sent = [.. (await sentTask)!.Where(s => !((inbox!).Select(i => i.Guid)
 			.ToHashSet()).Contains(s.Guid))];
-		sentTask = Task.FromResult(sent);
+		sentTask = Task.FromResult(sent)!;
 
 		await Task.WhenAll(inboxTask, sentTask);
 
-		return [.. await inboxTask, .. await sentTask];
+		return [.. (await inboxTask)!, .. (await sentTask)!];
 	}
 
-	private async Task<List<EmailFromAddress>> GetOtherMessagesAsync(AccountOther account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
+	private async Task<List<EmailFromAddress>?> GetOtherMessagesAsync(AccountOther account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
 	{
 		var connected = await PrepareOtherAccountAsync(account, isAddingNewAddress);
 
@@ -102,16 +116,19 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		// à la fin du Guid mais uniquement dans la comparaison, pas dans les données stockées dans les Listes.
 		// Cela arrive dans le cas où un email est envoyé à soi-même
 
+		if (inboxTask is null || sentTask is null)
+			return null;
+
 		var inbox = await inboxTask;
 		var sent = await sentTask;
 
-		sent = [.. (await sentTask).Where(s => !((inbox).Select(i => _emailRepository.NormalizeGuid(i.Guid))
+		sent = [.. (await sentTask)!.Where(s => !((inbox!).Select(i => _emailRepository.NormalizeGuid(i.Guid))
 			.ToHashSet()).Contains(_emailRepository.NormalizeGuid(s.Guid)))];
-		sentTask = Task.FromResult(sent);
+		sentTask = Task.FromResult(sent)!;
 
 		await Task.WhenAll(inboxTask, sentTask);
 
-		return [.. await inboxTask, .. await sentTask];
+		return [.. (await inboxTask)!, .. (await sentTask)!];
 	}
 
 	#endregion Getting emails helpers

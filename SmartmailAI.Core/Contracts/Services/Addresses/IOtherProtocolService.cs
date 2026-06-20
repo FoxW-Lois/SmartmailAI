@@ -7,9 +7,7 @@ namespace SmartmailAI.Core.Contracts.Services.Addresses;
 
 public interface IOtherProtocolService
 {
-	Task<string> GetEmailAddressAsync(AccountOther account);
-
-	Task<List<EmailFromAddress>> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress, int? maxResults = 50,
+	Task<List<EmailFromAddress>?> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress, int? maxResults = 50,
 		DateTime? lastConnection = null);
 
 	Task SaveAttachmentAsync(AccountOther account, string messageId, MailAttachment attachment, string destinationFolder);

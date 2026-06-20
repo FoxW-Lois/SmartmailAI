@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -20,18 +21,20 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
-	public IAuthService _authService { get; }
-	public IAddressesRepository _addressesRepository { get; }
-	public IAddressesService _addressesService { get; }
-	public IEmailsSyncService _emailsSyncService { get; }
-	public ILocalSessionService _localSessionService { get; }
-	public Login_ViewModel _login_ViewModel { get; }
+	private readonly IAuthService _authService;
+	private readonly IAddressesRepository _addressesRepository;
+	private readonly IAddressesService _addressesService;
+	private readonly IEmailsSyncService _emailsSyncService;
+	private readonly ILocalSessionService _localSessionService;
+	private readonly IDialogService _dialogService;
+	private readonly IEmailLoaderService _emailLoaderService;
+	private readonly ResourceLoader resourceLoader = new();
 
 	#endregion Interfaces declaration
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
 		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService,
-		ILocalSessionService localSessionService, Login_ViewModel login_ViewModel)
+		ILocalSessionService localSessionService, IDialogService dialogService, IEmailLoaderService emailLoaderService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
@@ -41,7 +44,8 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		_addressesService = addressesService;
 		_emailsSyncService = emailsSyncService;
 		_localSessionService = localSessionService;
-		_login_ViewModel = login_ViewModel;
+		_dialogService = dialogService;
+		_emailLoaderService = emailLoaderService;
 
 		// Tente de restaurer la session locale
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
@@ -62,9 +66,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			UpdateVisibility();
 
 			if (hasAny)
-			{
 				await _emailsSyncService.StartAsync();
-			}
 			else
 				_emailsSyncService.Stop();
 		};
@@ -74,6 +76,12 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public async Task InitializeAsync()
 	{
+		while (!await InternetCheckService.HasInternetConnectionAsync())
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_HasNoInternet"));
+		}
+
 		// Charge/recharge les adresses emails connectées dans le service au lancement de l'application
 		await _addressesService.RefreshAddressesListAsync();
 		HasLinkedAddresses = _addressesService.HasAny;
@@ -86,7 +94,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 			foreach (var account in accounts)
 			{
-				await _login_ViewModel.LoadMessagesAsync(account);
+				await _emailLoaderService.LoadMessagesAsync(false, account);
 			}
 
 			await LoadAccountsAsync();
