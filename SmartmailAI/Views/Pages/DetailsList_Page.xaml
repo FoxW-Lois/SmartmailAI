@@ -297,40 +297,12 @@
 				Width="50"
 				Height="200"
 				Margin="0 50 -50 -170"
-				Click="AI_Button_Click">
+				Command="{x:Bind ViewModel.SubmitAICommand}">
 				<FontIcon
 					Margin="0 0 0 0"
 					FontFamily="Segoe MDL2 Assets"
 					FontSize="25"
 					Glyph="&#xE99A;" />
-
-				<FlyoutBase.AttachedFlyout>
-					<MenuFlyout Placement="Bottom">
-						<MenuFlyoutItem x:Uid="ButtonAI_Summary" Command="{x:Bind ViewModel.SubmitAISummaryCommand}">
-							<MenuFlyoutItem.Icon>
-								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEA80;" />
-							</MenuFlyoutItem.Icon>
-						</MenuFlyoutItem>
-
-						<MenuFlyoutItem x:Uid="ButtonAI_Translation" Command="{x:Bind ViewModel.SubmitAITranslationCommand}">
-							<MenuFlyoutItem.Icon>
-								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE774;" />
-							</MenuFlyoutItem.Icon>
-						</MenuFlyoutItem>
-
-						<MenuFlyoutItem x:Uid="ButtonAI_Sorting" Command="{x:Bind ViewModel.SubmitAISortingCommand}">
-							<MenuFlyoutItem.Icon>
-								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE8FD;" />
-							</MenuFlyoutItem.Icon>
-						</MenuFlyoutItem>
-
-						<MenuFlyoutItem x:Uid="ButtonAI_Suggestions" Command="{x:Bind ViewModel.SubmitAISuggestionsCommand}">
-							<MenuFlyoutItem.Icon>
-								<FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE787;" />
-							</MenuFlyoutItem.Icon>
-						</MenuFlyoutItem>
-					</MenuFlyout>
-				</FlyoutBase.AttachedFlyout>
 			</Button>
 		</Grid>
 

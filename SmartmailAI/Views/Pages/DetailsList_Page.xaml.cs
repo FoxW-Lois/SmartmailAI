@@ -66,10 +66,4 @@ public sealed partial class DetailsList_Page : Page, INotifyPropertyChanged
 			ViewModel.MarkAsReadCommand.Execute(email);
 		}
 	}
-
-	// Permet d'afficher le menu-déroulant au clic du "AI_Bouton"
-	private void AI_Button_Click(object sender, RoutedEventArgs e)
-	{
-		FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
-	}
 }

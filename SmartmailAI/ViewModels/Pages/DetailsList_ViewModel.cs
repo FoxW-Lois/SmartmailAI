@@ -235,35 +235,13 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion Commandes boutons interface
 
-	#region Commandes bouton IA
-
-	//TODO: Ajouter de l'interaction avec l'IA avec un "contexte" différent pour chaque RelayCommand
+	//TODO: Ajouter un "contexte" dans le RelayCommand pour les appels IA
 
 	[RelayCommand]
-	private async Task SubmitAISummaryAsync()
+	private async Task SubmitAIAsync()
 	{
 		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
-
-	[RelayCommand]
-	private async Task SubmitAITranslationAsync()
-	{
-		IsAIinterfaceVisible = !IsAIinterfaceVisible;
-	}
-
-	[RelayCommand]
-	private async Task SubmitAISortingAsync()
-	{
-		IsAIinterfaceVisible = !IsAIinterfaceVisible;
-	}
-
-	[RelayCommand]
-	private async Task SubmitAISuggestionsAsync()
-	{
-		IsAIinterfaceVisible = !IsAIinterfaceVisible;
-	}
-
-	#endregion Commandes bouton IA
 
 	#region Commandes de filtrage
 
