@@ -5,6 +5,7 @@ namespace SmartmailAI.Styles;
 
 public partial class BoolToFontWeightConverter : IValueConverter
 {
+	// Pour Mode=OneWay
 	public object Convert(object value, Type targetType, object parameter, string language)
 	{
 		if (value is bool isRead)
@@ -15,5 +16,6 @@ public partial class BoolToFontWeightConverter : IValueConverter
 		return FontWeights.Normal;
 	}
 
+	// Pour Mode=TwoWay
 	public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
 }

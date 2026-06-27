@@ -1,6 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-
-namespace SmartmailAI.Contracts.Services;
+﻿namespace SmartmailAI.Contracts.Services;
 
 public interface IDialogService
 {

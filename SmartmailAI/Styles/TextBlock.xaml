@@ -44,5 +44,4 @@
 		<Setter Property="FontWeight" Value="Normal" />
 		<Setter Property="FontSize" Value="18" />
 	</Style>
-
 </ResourceDictionary>
