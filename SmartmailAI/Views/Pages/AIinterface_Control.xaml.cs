@@ -13,10 +13,10 @@ public sealed partial class AIinterface_Control : UserControl
 		ViewModel = Ioc.Default.GetRequiredService<AIinterface_ViewModel>();
 		InitializeComponent();
 
-		ViewModel.Messages.CollectionChanged += Messages_CollectionChanged;
+		ViewModel.Conversation.CollectionChanged += Conversation_CollectionChanged;
 	}
 
-	private void Messages_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	private void Conversation_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 	{
 		if (e.Action != NotifyCollectionChangedAction.Add || e.NewItems == null || e.NewItems.Count <= 0)
 			return;

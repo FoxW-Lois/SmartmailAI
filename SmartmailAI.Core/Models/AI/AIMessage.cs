@@ -2,11 +2,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 
-namespace SmartmailAI.Core.Models;
+namespace SmartmailAI.Core.Models.AI;
 
 public class AIMessage
 {
-	public string Content { get; set; } = string.Empty;
+	public string Content { get; set; } = "";
 
 	public bool IsUser { get; set; }
 
