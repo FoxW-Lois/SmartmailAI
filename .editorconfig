@@ -146,8 +146,11 @@ csharp_prefer_system_threading_lock = true:suggestion
 # VB Coding Conventions       #
 ###############################
 
-# SYSLIB1045: Convertissez en 'GeneratedRegexAttribute'.
-dotnet_diagnostic.SYSLIB1045.severity = none
+# IL2026: Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+dotnet_diagnostic.IL2026.severity = none
+
+# IL3050: Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+dotnet_diagnostic.IL3050.severity = none
 
 [*.vb]
 # Modifier preferences

@@ -216,6 +216,7 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<!--  Bouton d'envoi  -->
 			<Button
@@ -289,6 +290,20 @@
 				Height="0"
 				Date="{x:Bind ViewModel.DatePicked, Mode=TwoWay}"
 				IsCalendarOpen="{x:Bind ViewModel.IsDatePickerOpen, Mode=TwoWay}" />
+
+			<!--  Bouton de l'onglet IA  -->
+			<Button
+				Grid.Column="4"
+				Width="50"
+				Height="200"
+				Margin="0 50 -50 -170"
+				Command="{x:Bind ViewModel.SubmitAICommand}">
+				<FontIcon
+					Margin="0 0 0 0"
+					FontFamily="Segoe MDL2 Assets"
+					FontSize="25"
+					Glyph="&#xE99A;" />
+			</Button>
 		</Grid>
 
 		<controls:ListDetailsView
@@ -307,7 +322,7 @@
 			SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay}"
 			ViewStateChanged="OnViewStateChanged" />
 		<Button
-			Grid.Column="1"
+			Grid.Row="0"
 			Width="41"
 			Height="40"
 			Margin="272 70 0 -70"
@@ -327,9 +342,24 @@
 			HorizontalAlignment="Right"
 			VerticalAlignment="Bottom"
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+			CornerRadius="15"
 			Visibility="{x:Bind ViewModel.IsComposing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
 			<views:DetailsList_NewMailControl />
 		</Grid>
+		<StackPanel
+			x:Name="AIinterfaceOverlay"
+			Grid.Row="1"
+			Width="{Binding ElementName=ListDetailsViewControl, Path=ActualWidth}"
+			Height="{Binding ElementName=ListDetailsViewControl, Path=ActualHeight}"
+			MaxWidth="{x:Bind ViewModel.AIinterfaceMaxWidth, Mode=OneWay}"
+			MaxHeight="{x:Bind ViewModel.AIinterfaceMaxHeight, Mode=OneWay}"
+			Margin="0 0 -5 0"
+			HorizontalAlignment="Right"
+			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+			CornerRadius="15"
+			Visibility="{x:Bind ViewModel.IsAIinterfaceVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+			<views:AIinterface_Control />
+		</StackPanel>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState>

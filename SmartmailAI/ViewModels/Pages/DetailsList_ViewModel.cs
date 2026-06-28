@@ -29,10 +29,10 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private string? searchText;
 
 	[ObservableProperty]
-	private bool _isComposing;
+	private bool _isComposing = false;
 
 	[ObservableProperty]
-	private bool _isComposeExpanded;
+	private bool _isComposeExpanded = false;
 
 	[ObservableProperty]
 	private object? _selectedDetail;
@@ -45,6 +45,12 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	[ObservableProperty]
 	private bool _isValideCategory = false;
+
+	[ObservableProperty]
+	private bool _isAIinterfaceVisible = false;
+
+	[ObservableProperty]
+	private bool _isAIinterfaceExpanded = false;
 
 	// Pas de private/public car utilisé uniquement par la partial method
 	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
@@ -74,7 +80,10 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		_mldaRepository = mldaRepository;
 		_dialogService = dialogService;
 
-		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) => { IsComposing = !IsComposing; });
+		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) =>
+		{
+			IsComposing = !IsComposing;
+		});
 
 		// Quand reçoit une demande (ouverture des détails d'un email), envoi l'email connecté à la fenêtre des détails
 		WeakReferenceMessenger.Default.Register<RequestAddressAccountMessage>(this, (r, m) =>
@@ -88,12 +97,26 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			IsComposeExpanded = !IsComposeExpanded;
 		});
 
+		WeakReferenceMessenger.Default.Register<RequestCloseIAinterfaceMessage>(this, (r, m) =>
+		{
+			IsAIinterfaceVisible = !IsAIinterfaceVisible;
+		});
+
+		// Quand reçoit une demande de redimmentionnement de l'IAinterface, change l'état d'expansion de l'IAinterface
+		WeakReferenceMessenger.Default.Register<ToggleExpandIAinterfaceMessage>(this, (_, _) =>
+		{
+			IsAIinterfaceExpanded = !IsAIinterfaceExpanded;
+		});
+
 		App.MainWindow.SizeChanged += (_, _) =>
 		{
 			OnPropertyChanged(nameof(HalfWindowWidth));
 			OnPropertyChanged(nameof(ComposeMaxWidth));
 			OnPropertyChanged(nameof(HalfWindowHeight));
 			OnPropertyChanged(nameof(ComposeMaxHeight));
+
+			OnPropertyChanged(nameof(AIinterfaceMaxWidth));
+			OnPropertyChanged(nameof(AIinterfaceMaxHeight));
 		};
 	}
 
@@ -154,6 +177,23 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion Gestion de la taille du ComposeOverlay
 
+	#region Gestion de la taille de l'AIinterfaceOverlay
+
+	// Ne pas mettre AIinterfaceMaxWidth et AIinterfaceMaxHeight en static car utilisés dans le .xaml
+
+	public double AIinterfaceMaxWidth => IsAIinterfaceExpanded ? WindowWidth * 0.65 : WindowWidth * 0.23;
+	public double AIinterfaceMaxHeight => WindowHeight * 0.90;
+
+	partial void OnIsAIinterfaceExpandedChanged(bool value)
+	{
+		OnPropertyChanged(nameof(AIinterfaceMaxWidth));
+		OnPropertyChanged(nameof(AIinterfaceMaxHeight));
+	}
+
+	#endregion Gestion de la taille de l'AIinterfaceOverlay
+
+	#region Commandes boutons interface
+
 	[RelayCommand]
 	private async Task OpenNewMailAsync()
 	{
@@ -197,6 +237,15 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		}
 
 		await RefreshAllCategory();
+	}
+
+	#endregion Commandes boutons interface
+
+	// Affiche/masque l'interface de l'assistant IA
+	[RelayCommand]
+	private async Task SubmitAIAsync()
+	{
+		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
 
 	#region Commandes de filtrage

@@ -1,6 +1,6 @@
 ﻿namespace SmartmailAI.Core.Models.Messengers;
 
-public class OpenComposeMessage
+public sealed class OpenComposeMessage
 {
 	public ComposeMode Mode { get; init; }
 
