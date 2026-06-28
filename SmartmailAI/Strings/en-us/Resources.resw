@@ -568,6 +568,12 @@
   <data name="Email_Action_RemoveFromPhishingSpam.Text" xml:space="preserve">
     <value>Remove from PhishingSpam</value>
   </data>
+  <data name="AddPromptPlaceholder.PlaceholderText" xml:space="preserve">
+    <value>Request to be made...</value>
+  </data>
+  <data name="AIassistantName.Text" xml:space="preserve">
+    <value>Maily - AI Assistant</value>
+  </data>
   <data name="Error_HasNoInternet" xml:space="preserve">
     <value>An internet connection is required to use the SmartmailAI app. Please try again once you are connected.</value>
   </data>
