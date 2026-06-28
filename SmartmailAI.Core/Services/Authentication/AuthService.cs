@@ -108,7 +108,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 	{
 		string currentAccountLogin = CurrentAccountLogin;
 		var currentAccount = await _accountRepository.GetAccountByLoginAsync(currentAccountLogin);
-		if (currentAccount == null) return;
+		if (currentAccount is null) return;
 
 		currentAccount = new Account
 		{

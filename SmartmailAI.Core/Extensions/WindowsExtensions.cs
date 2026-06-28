@@ -128,7 +128,7 @@ public static class WindowsExtensions
 
 	public static async Task CloseWindowAsync(Window window)
 	{
-		if (window == null)
+		if (window is null)
 		{
 			return;
 		}

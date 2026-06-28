@@ -158,7 +158,7 @@ public class StartupHelper
 
 		using var taskService = new TaskService();
 		var task = taskService.RootFolder.AllTasks.FirstOrDefault(t => t.Name == NonMsixLogonTaskName);
-		if (task != null)
+		if (task is not null)
 		{
 			try
 			{
@@ -246,7 +246,7 @@ public class StartupHelper
 		{
 			var startup = false;
 			var path = root.OpenSubKey(RegistryPath, true);
-			if (path == null)
+			if (path is null)
 			{
 				var key2 = root.CreateSubKey("SOFTWARE");
 				var key3 = key2.CreateSubKey("Microsoft");
@@ -271,7 +271,7 @@ public class StartupHelper
 							path.SetValue(NonMsixRegistryKey, $@"""{@appPath}"" {NonMsixStartupTag}");
 							path.Close();
 							path = root.OpenSubKey(ApprovalPath, true);
-							if (path != null)
+							if (path is not null)
 							{
 								path.SetValue(NonMsixRegistryKey, ApprovalValue1);
 								path.Close();
@@ -286,7 +286,7 @@ public class StartupHelper
 			{
 				path?.Close();
 				path = root.OpenSubKey(ApprovalPath, false);
-				if (path != null)
+				if (path is not null)
 				{
 					keyNames = path.GetValueNames();
 					foreach (var keyName in keyNames)
@@ -327,7 +327,7 @@ public class StartupHelper
 		try
 		{
 			var path = root.OpenSubKey(RegistryPath, true);
-			if (path == null)
+			if (path is null)
 			{
 				var key2 = root.CreateSubKey("SOFTWARE");
 				var key3 = key2.CreateSubKey("Microsoft");
@@ -343,7 +343,7 @@ public class StartupHelper
 				path.Close();
 				// set the startup approval key to approval status
 				path = root.OpenSubKey(ApprovalPath, true);
-				if (path != null)
+				if (path is not null)
 				{
 					path.SetValue(NonMsixRegistryKey, ApprovalValue1);
 					path.Close();
@@ -364,7 +364,7 @@ public class StartupHelper
 				}
 				// delete the startup approval key
 				path = root.OpenSubKey(ApprovalPath, true);
-				if (path != null)
+				if (path is not null)
 				{
 					path.DeleteValue(NonMsixRegistryKey);
 					path.Close();

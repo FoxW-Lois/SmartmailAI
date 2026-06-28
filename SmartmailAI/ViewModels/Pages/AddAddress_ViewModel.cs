@@ -1,22 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
-using SmartmailAI.Core.Contracts.Repository;
-using SmartmailAI.Core.Contracts.Services.Addresses;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddAddress_ViewModel(IAddressesService addressesService, IMailReaderService mailReaderService,
-	IEmailRepository emailRepository, IAuthService authService) : ObservableRecipient
+public partial class AddAddress_ViewModel(IAddressesService addressesService, IDialogService dialogService, IEmailLoaderService emailLoaderService)
+	: ObservableRecipient
 {
 	[ObservableProperty]
 	public partial bool IsOtherChoice { get; set; }
 
 	private readonly IAddressesService _addressesService = addressesService;
-	private readonly IMailReaderService _mailReaderService = mailReaderService;
-	private readonly IEmailRepository _emailRepository = emailRepository;
-	private readonly IAuthService _authService = authService;
+	private readonly IDialogService _dialogService = dialogService;
+	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
@@ -101,27 +97,16 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
-	public ObservableCollection<EmailFromAddress> Messages { get; } = [];
-
-	private async Task LoadMessagesAsync(AccountMailBase account)
-	{
-		Messages.Clear();
-
-		if (account == null)
-			return;
-
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(true, account);
-
-		foreach (var email in mails)
-			await _emailRepository.AddEmailAsync(email);
-
-		await _authService.UpdateLastConnection();
-	}
-
 	#region Add methods for diffrent Addresses type/domain/source
 
 	public async Task<bool> AddOAuth2Async()
 	{
+		while (!await InternetCheckService.HasInternetConnectionAsync())
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_HasNoInternet"));
+		}
+
 		ErrorMessage = string.Empty;
 
 		(bool success, AccountGmail? accountGmail, string? specificError) = await _addressesService.AddGmailAccountAsync();
@@ -137,20 +122,26 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 			return false;
 		}
 
-		if (accountGmail == null)
+		if (accountGmail is null)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
-		await LoadMessagesAsync(accountGmail);
+		await _emailLoaderService.LoadMessagesAsync(true, accountGmail);
 		return true;
 	}
 
 	// TODO: ajouter méthode de connexion pour Outlook (via Microsoft Graph API ?)
 	public async Task<bool> OnAddOutlookAsync()
 	{
+		while (!await InternetCheckService.HasInternetConnectionAsync())
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_HasNoInternet"));
+		}
+
 		ErrorMessage = string.Empty;
 
 		bool success = await _addressesService.AddOutlookAsync();
@@ -168,6 +159,12 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 	public async Task<bool> AddOtherAddressAsync(string userName, string password, string imapHost, int imapPort, bool imapUseSsl,
 		string smtpHost, int smtpPort, bool smtpUseSsl)
 	{
+		while (!await InternetCheckService.HasInternetConnectionAsync())
+		{
+			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
+				resourceLoader.GetString("Error_HasNoInternet"));
+		}
+
 		ErrorMessage = string.Empty;
 
 		AddOtherAddressRequest request = new()
@@ -196,14 +193,14 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, IM
 			return false;
 		}
 
-		if (accountOther == null)
+		if (accountOther is null)
 		{
 			ErrorMessage = resourceLoader.GetString("Error_RecoveryMailInvalid");
 			return false;
 		}
 
 		await _addressesService.RefreshAddressesListAsync();
-		await LoadMessagesAsync(accountOther);
+		await _emailLoaderService.LoadMessagesAsync(true, accountOther);
 		return true;
 	}
 

@@ -1,19 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
-using SmartmailAI.Core.Contracts.Repository;
-using SmartmailAI.Core.Contracts.Services.Addresses;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class Login_ViewModel(IAuthService authService, IMailReaderService mailReaderService, IEmailRepository emailRepository,
-	IAddressesService addressesService, ILocalSessionService localSessionService) : ObservableRecipient
+public partial class Login_ViewModel(IAuthService authService, IAddressesService addressesService, IEmailLoaderService emailLoaderService,
+	ILocalSessionService localSessionService) : ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
-	private readonly IMailReaderService _mailReaderService = mailReaderService;
-	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IAddressesService _addressesService = addressesService;
+	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private readonly ILocalSessionService _localSessionService = localSessionService;
 
 	private string _login = string.Empty;
@@ -47,7 +43,7 @@ public partial class Login_ViewModel(IAuthService authService, IMailReaderServic
 		if (!success && specificError == "Need_TwoFactor")
 			return (false, true, Login);
 
-		if (!success && specificError != null)
+		if (!success && specificError is not null)
 		{
 			ErrorMessage = resourceLoader.GetString(specificError);
 			return (false, false, null);
@@ -63,25 +59,11 @@ public partial class Login_ViewModel(IAuthService authService, IMailReaderServic
 
 		foreach (var account in listAccountsLinked)
 		{
-			await LoadMessagesAsync(account);
+			await _emailLoaderService.LoadMessagesAsync(false, account);
 		}
 
 		_localSessionService.CreateSession();
 
 		return (true, false, null);
-	}
-
-	public ObservableCollection<EmailFromAddress> Messages { get; } = [];
-
-	public async Task LoadMessagesAsync(AccountMailBase account)
-	{
-		Messages.Clear();
-
-		var mails = await _mailReaderService.GetLastMessagesFromAccountAsync(false, account);
-
-		foreach (var email in mails)
-			await _emailRepository.AddEmailAsync(email);
-
-		await _authService.UpdateLastConnection();
 	}
 }

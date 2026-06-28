@@ -249,9 +249,11 @@ public partial class App : Application
 
 				#endregion Services anti-phishing
 
+				services.AddTransient<IEmailLoaderService, EmailLoaderService>();
 				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
 				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
+				services.AddTransient<IMLDA_Repository, MLDA_Repository>();
 
 				#region (Email) Addresses Services
 
@@ -317,6 +319,13 @@ public partial class App : Application
 					options.UseSqlite($"Data Source={dbPath}");
 				});
 
+				services.AddDbContextFactory<AppDbContext_MLDA>(options =>
+				{
+					var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
+
+					options.UseSqlite($"Data Source={dbPath}");
+				});
+
 				#endregion DbContext
 			})
 			.Build();
@@ -353,7 +362,7 @@ public partial class App : Application
 #endif
 
 		// Ensure the current window is active
-		if (MainWindow != null)
+		if (MainWindow is not null)
 		{
 			return;
 		}

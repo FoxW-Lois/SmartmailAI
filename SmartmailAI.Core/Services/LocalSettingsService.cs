@@ -60,7 +60,7 @@ public class LocalSettingsService : ILocalSettingsService
 		{
 			InitializeSettings();
 
-			if (_settings != null && _settings.TryGetValue(key, out var obj))
+			if (_settings is not null && _settings.TryGetValue(key, out var obj))
 			{
 				return JsonHelper.ToObject<T>(JsonHelper.ConvertToString(obj));
 			}
@@ -87,7 +87,7 @@ public class LocalSettingsService : ILocalSettingsService
 		{
 			await InitializeSettingsAsync();
 
-			if (_settings != null && _settings.TryGetValue(key, out var obj))
+			if (_settings is not null && _settings.TryGetValue(key, out var obj))
 			{
 				return await JsonHelper.ToObjectAsync<T>(JsonHelper.ConvertToString(obj));
 			}
@@ -114,7 +114,7 @@ public class LocalSettingsService : ILocalSettingsService
 		{
 			await InitializeSettingsAsync();
 
-			if (_settings != null && _settings.TryGetValue(key, out var obj) &&
+			if (_settings is not null && _settings.TryGetValue(key, out var obj) &&
 				JsonHelper.ConvertToString(obj) == stringValue)
 			{
 				return;

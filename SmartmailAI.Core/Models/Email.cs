@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
+using System.Net;
+using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 
@@ -82,7 +84,7 @@ public class Email
 	{
 		get
 		{
-			if (SenderProfileImage == null)
+			if (SenderProfileImage is null)
 				return new BitmapImage(new Uri("ms-appx:///Assets/Content/Default-Avatar-icon.jpg"));
 
 			return new BitmapImage(SenderProfileImage);
@@ -95,7 +97,7 @@ public class Email
 	{
 		get
 		{
-			if (ReceiverProfileImage == null)
+			if (ReceiverProfileImage is null)
 				return new BitmapImage(new Uri("ms-appx:///Assets/Content/Default-Avatar-icon.jpg"));
 
 			return new BitmapImage(ReceiverProfileImage);
@@ -110,7 +112,14 @@ public class Email
 		{
 			if (string.IsNullOrWhiteSpace(Content)) return string.Empty;
 
-			string cleaned = System.Text.RegularExpressions.Regex.Replace(Content, @"\s+", " ").Trim();
+			string cleaned = Content;
+			var doc = new HtmlDocument();
+			doc.LoadHtml(Content);
+
+			if (IsHtmlContent)
+				cleaned = WebUtility.HtmlDecode(doc.DocumentNode.InnerText);
+
+			cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
 
 			// Prend les 100 premiers caractères
 			return cleaned[..Math.Min(100, cleaned.Length)];

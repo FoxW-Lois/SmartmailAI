@@ -88,7 +88,7 @@ public sealed partial class DetailsList_StandardControl : UserControl
 		var picker = new FolderPicker(windowId);
 
 		var folder = await picker.PickSingleFolderAsync();
-		if (folder == null)
+		if (folder is null)
 			return;
 
 		await ViewModel.SaveAttachmentCommand.ExecuteAsync((DetailsListMenuItem_Email!.Guid, attachment, folder.Path));

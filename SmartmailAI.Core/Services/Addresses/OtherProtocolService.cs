@@ -21,35 +21,40 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 {
 	private readonly IOtherTokenStore _otherTokenStore = otherTokenStore;
 
-	public async Task<string> GetEmailAddressAsync(AccountOther account)
-	{
-		return await Task.FromResult(account.Email);
-	}
-
-	public async Task<List<EmailFromAddress>> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress, int? maxResults = 50,
-		DateTime? lastConnection = null)
+	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress,
+		int? maxResults = 50, DateTime? lastConnection = null)
 	{
 		using var client = new ImapClient();
+		IMailFolder? folder;
+		List<UniqueId>? latestUids = [];
 
-		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
-
-		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
-		if (password == null) return [];
-
-		await client.AuthenticateAsync(account.Email, password);
-
-		var folder = await GetFolderAsync(client, mailboxType);
-		await folder.OpenAsync(FolderAccess.ReadOnly);
-
-		var query = SearchQuery.All;
-
-		if (lastConnection is not null && !isAddingNewAddress)
+		try // On cherche surtout à tester si il y a une absence/perte de connexion internet au moment de la récupération d'emails
 		{
-			query = query.And(SearchQuery.DeliveredAfter(lastConnection.Value));
+			await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
+
+			string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
+			if (password is null) return [];
+
+			await client.AuthenticateAsync(account.Email, password);
+
+			folder = await GetFolderAsync(client, mailboxType);
+			await folder.OpenAsync(FolderAccess.ReadOnly);
+
+			var query = SearchQuery.All;
+
+			if (lastConnection is not null && !isAddingNewAddress)
+			{
+				query = query.And(SearchQuery.DeliveredAfter(lastConnection.Value));
+			}
+
+			var uids = await folder.SearchAsync(query);
+			latestUids = [.. uids.TakeLast(maxResults ?? 50).Reverse()];
+		}
+		catch (Exception) // Si ça plante alors ça vient généralement d'une absence d'internet : System.Net.Http.HttpRequestException
+		{
+			return null;
 		}
 
-		var uids = await folder.SearchAsync(query);
-		var latestUids = uids.TakeLast(maxResults ?? 50).Reverse().ToList();
 		var result = new List<EmailFromAddress>();
 
 		foreach (var uid in latestUids)
@@ -102,7 +107,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 
 		await client.DisconnectAsync(true);
 
-		return result;
+		return result ?? [];
 	}
 
 	public async Task SaveAttachmentAsync(AccountOther account, string messageId, MailAttachment attachment, string destinationFolder)
@@ -112,7 +117,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 		await client.ConnectAsync(account.ImapHost, account.ImapPort, account.ImapUseSsl);
 
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
-		if (password == null) return;
+		if (password is null) return;
 
 		await client.AuthenticateAsync(account.Email, password);
 		await client.Inbox!.OpenAsync(FolderAccess.ReadOnly);
@@ -153,7 +158,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 			: SecureSocketOptions.StartTls);
 
 		string? password = await _otherTokenStore.GetPasswordAsync(account.TokenStorageKey);
-		if (password == null) return;
+		if (password is null) return;
 
 		await smtp.AuthenticateAsync(account.Email, password);
 

@@ -10,7 +10,7 @@ public partial class BackdropHelper
 {
 	public static void SetRequestedBackdropAsync(Window window, BackdropType type)
 	{
-		if (window != null)
+		if (window is not null)
 		{
 			window.SystemBackdrop = type switch
 			{

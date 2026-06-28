@@ -39,7 +39,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 		var userKey = Guid.NewGuid().ToString();
 
 		var credential = await _gmailCredentialService.ConnectAsync(userKey);
-		if (credential == null)
+		if (credential is null)
 			return (false, null, null); // null en 3ème position car déjà traité en cas par défaut par l'appelant
 
 		var email = await _gmailApiService.GetEmailAddressAsync(credential);

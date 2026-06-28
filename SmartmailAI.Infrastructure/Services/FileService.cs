@@ -67,7 +67,7 @@ public class FileService : IFileService
 	public bool Delete(string folderPath, string fileName)
 	{
 		var path = GetPath(folderPath, fileName);
-		if (fileName != null && File.Exists(path))
+		if (fileName is not null && File.Exists(path))
 		{
 			try
 			{

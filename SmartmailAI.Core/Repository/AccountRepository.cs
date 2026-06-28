@@ -21,7 +21,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory, 
 		var account = await _context.Account
 			.FirstOrDefaultAsync(a => a.Login == login);
 
-		if (account == null) return null;
+		if (account is null) return null;
 
 		account = await DecryptDataAsync(account);
 

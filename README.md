@@ -33,7 +33,8 @@ Pour qu'un utilisateur puisse se connecter, il faut qu'une licence soit disponib
   
 ## Sécurité et RGPD
   - Double authentification  
-  - Filtrage et détection de phishings  
+  - Filtrage et détection de phishings
+  - Il est possible de déplacer/sortir manuellement par clic droit un email vers/de 'PhishingSpam'. Lorsque ces actions sont effectués, l'adresse email du message de l'envoyeur est ainsi notée en base de données comme appartenant à une whitelist ou blacklist. L'appartenance à la whitelist permet d'ignorer l'étape de check du spoofing du nom affiché, et la blacklist permet de directement passer ce check avec la certitude qu'il y ait spoofing.
   - Hashage + salage du mot de passe des utilisateurs  
   - Chiffrement de toutes les données sensibles/confidentielles dans la BDD locale SQLite :
     - Numéros de téléphone associés aux comptes Smartmail

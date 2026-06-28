@@ -17,6 +17,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 	[ObservableProperty]
 	public Visibility noAccountLoggedInVisibility = Visibility.Visible;
+
 	[ObservableProperty]
 	public Visibility accountLoggedInVisibility = Visibility.Collapsed;
 
@@ -86,7 +87,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		BackdropTypeIndex = (int)_appSettingsService.BackdropType;
 
 		var account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
-		if (account != null)
+		if (account is not null)
 		{
 			var stateTwoFactor = account.TwoFactorEnabled;
 			EnableDisableTwoFactor = stateTwoFactor;
@@ -109,7 +110,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		NoAccountLoggedInVisibility = isAuthenticated ? Visibility.Collapsed : Visibility.Visible;
 	}
 
-	#endregion
+	#endregion UI Elements Update
 
 	#region INavigationAware
 

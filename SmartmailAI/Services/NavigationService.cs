@@ -21,7 +21,7 @@ internal class NavigationService(INavigationViewService navigationViewService, I
 	{
 		get
 		{
-			if (_frame == null)
+			if (_frame is null)
 			{
 				_frame = App.MainWindow.Content as Frame;
 				RegisterFrameEvents();
@@ -39,7 +39,7 @@ internal class NavigationService(INavigationViewService navigationViewService, I
 	}
 
 	[MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
-	public bool CanGoBack => Frame != null && Frame.CanGoBack;
+	public bool CanGoBack => Frame is not null && Frame.CanGoBack;
 
 	private void RegisterFrameEvents()
 	{
@@ -72,7 +72,7 @@ internal class NavigationService(INavigationViewService navigationViewService, I
 	{
 		var pageType = _pageService.GetPageType(pageKey);
 
-		if (_frame != null && (_frame.Content?.GetType() != pageType || (parameter != null && !parameter.Equals(_lastParameter))))
+		if (_frame is not null && (_frame.Content?.GetType() != pageType || (parameter is not null && !parameter.Equals(_lastParameter))))
 		{
 			_frame.Tag = clearNavigation;
 			var vmBeforeNavigation = _frame.GetPageViewModel();
@@ -101,7 +101,7 @@ internal class NavigationService(INavigationViewService navigationViewService, I
 	public string? GetCurrentPageKey()
 	{
 		var type = GetCurrentPageType();
-		if (type != null)
+		if (type is not null)
 		{
 			return _pageService.GetPageKey(type);
 		}
@@ -129,16 +129,16 @@ internal class NavigationService(INavigationViewService navigationViewService, I
 
 		// Update the contained NavigationViewItem based on the page type
 		var currentPageType = GetCurrentPageType();
-		if (currentPageType != null)
+		if (currentPageType is not null)
 		{
 			var containedPageKey = _pageService.GetSubpageKey(currentPageType);
-			if (containedPageKey != null)
+			if (containedPageKey is not null)
 			{
 				var currentItem = _navigationViewService.GetSelectedItem();
-				if (currentItem != null)
+				if (currentItem is not null)
 				{
 					var currentItemKey = NavigationHelper.GetNavigateTo(currentItem);
-					if (currentItemKey != null && currentItemKey != containedPageKey)
+					if (currentItemKey is not null && currentItemKey != containedPageKey)
 					{
 						_navigationViewService.SetNavigateTo(containedPageKey);
 					}

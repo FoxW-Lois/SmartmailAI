@@ -44,5 +44,4 @@
 
 	<!--  Setting Page  -->
 	<x:Double x:Key="SettingsCardSpacing">3</x:Double>
-
 </ResourceDictionary>

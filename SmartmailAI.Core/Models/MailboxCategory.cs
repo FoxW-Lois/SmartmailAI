@@ -88,13 +88,13 @@ public partial class MailboxCategory : ObservableObject
 
 		if (attachmentYesMatch.Success)
 		{
-			filteredMails = filteredMails.Where(m => m.Attachments != null && m.Attachments.Count > 0);
+			filteredMails = filteredMails.Where(m => m.Attachments is not null && m.Attachments.Count > 0);
 			filter = filter.Replace(attachmentYesMatch.Value, "");
 		}
 
 		if (attachmentNoMatch.Success)
 		{
-			filteredMails = filteredMails.Where(m => m.Attachments != null && m.Attachments.Count == 0);
+			filteredMails = filteredMails.Where(m => m.Attachments is not null && m.Attachments.Count == 0);
 			filter = filter.Replace(attachmentNoMatch.Value, "");
 		}
 
