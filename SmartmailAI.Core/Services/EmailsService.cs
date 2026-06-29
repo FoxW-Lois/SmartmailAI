@@ -426,7 +426,8 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			{
 				Title = _resources.GetString("Mailbox_Unread"),
 				Icon = "\uE8A8", // MailFill
-				Items = _AllEmails.Where(e => e.IsRead == false),
+				Items = _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash 
+					&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
 				MailboxType = MailboxType.Unread
 			},
 			new MailboxCategory
