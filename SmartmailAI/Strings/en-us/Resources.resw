@@ -577,4 +577,25 @@
   <data name="Error_HasNoInternet" xml:space="preserve">
     <value>An internet connection is required to use the SmartmailAI app. Please try again once you are connected.</value>
   </data>
+  <data name="AIAssistance.Text" xml:space="preserve">
+    <value>AI assistance</value>
+  </data>
+  <data name="AIAssistance_Writing.Text" xml:space="preserve">
+    <value>Writing</value>
+  </data>
+  <data name="AIAssistance_Translation.Text" xml:space="preserve">
+    <value>Translate</value>
+  </data>
+  <data name="AIAssistance_Correction.Text" xml:space="preserve">
+    <value>Correction</value>
+  </data>
+  <data name="AIAssistance_Reformulation.Text" xml:space="preserve">
+    <value>Rephrase</value>
+  </data>
+  <data name="Button_AITranslation.Content" xml:space="preserve">
+    <value>Translate the email</value>
+  </data>
+  <data name="Button_AISummarize.Content" xml:space="preserve">
+    <value>Summarize the email</value>
+  </data>
 </root>

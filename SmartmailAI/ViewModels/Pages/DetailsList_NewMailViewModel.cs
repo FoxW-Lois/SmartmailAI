@@ -217,6 +217,34 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		IsBccVisible = false;
 	}
 
+	#region Commandes d'assistance IA (nouveau email)
+
+	[RelayCommand]
+	private async Task AIWritingAsync()
+	{
+		// TODO
+	}
+
+	[RelayCommand]
+	private async Task AITranslationAsync()
+	{
+		// TODO
+	}
+
+	[RelayCommand]
+	private async Task AIReformulationAsync()
+	{
+		// TODO
+	}
+
+	[RelayCommand]
+	private async Task AICorrectionAsync()
+	{
+		// TODO
+	}
+
+	#endregion Commandes d'assistance IA (nouveau email)
+
 	#region Commandes de rédaction d'email
 
 	[RelayCommand]

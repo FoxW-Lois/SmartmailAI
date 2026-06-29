@@ -47,9 +47,37 @@
 				<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE723;" />
 			</Button>
 
+			<!--  Envoyer un message avec assistance IA  -->
+			<SplitButton
+				Grid.Column="2"
+				Margin="8 0 0 0"
+				Command="{x:Bind ViewModel.AttachFileCommand}">
+				<StackPanel
+					HorizontalAlignment="Center"
+					Orientation="Horizontal"
+					Spacing="8">
+					<FontIcon
+						Margin="0 0 0 0"
+						FontFamily="Segoe MDL2 Assets"
+						FontSize="20"
+						Glyph="&#xE99A;" />
+					<TextBlock x:Uid="AIAssistance" />
+				</StackPanel>
+
+				<!--  Menu déroulant du bouton  -->
+				<SplitButton.Flyout>
+					<MenuFlyout>
+						<MenuFlyoutItem x:Uid="AIAssistance_Writing" Command="{x:Bind ViewModel.AIWritingCommand}" />
+						<MenuFlyoutItem x:Uid="AIAssistance_Translation" Command="{x:Bind ViewModel.AITranslationCommand}" />
+						<MenuFlyoutItem x:Uid="AIAssistance_Reformulation" Command="{x:Bind ViewModel.AIReformulationCommand}" />
+						<MenuFlyoutItem x:Uid="AIAssistance_Correction" Command="{x:Bind ViewModel.AICorrectionCommand}" />
+					</MenuFlyout>
+				</SplitButton.Flyout>
+			</SplitButton>
+
 			<!--  Actions secondaires  -->
 			<StackPanel
-				Grid.Column="3"
+				Grid.Column="4"
 				Orientation="Horizontal"
 				Spacing="8">
 

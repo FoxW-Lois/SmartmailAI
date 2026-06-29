@@ -57,6 +57,18 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 		}
 	}
 
+	[RelayCommand]
+	private async Task AITranslationAsync()
+	{
+		// TODO
+	}
+
+	[RelayCommand]
+	private async Task AISummarizeAsync()
+	{
+		// TODO
+	}
+
 	#region Réponse et Transfert
 
 	[RelayCommand]
