@@ -206,16 +206,12 @@
 		</ItemsRepeater>
 
 		<!--  Corps  -->
-		<ScrollViewer
+		<RichEditBox
+			x:Name="BodyEditor"
+			x:Uid="MessageAreaRichEditBox"
 			Grid.Row="5"
 			Margin="0 8 0 0"
-			VerticalScrollMode="Enabled">
-			<RichEditBox
-				x:Name="BodyEditor"
-				x:Uid="MessageAreaRichEditBox"
-				MinHeight="240"
-				BorderThickness="0"
-				TextChanged="OnBodyChanged" />
-		</ScrollViewer>
+			BorderThickness="0"
+			TextChanged="OnBodyChanged" />
 	</Grid>
 </UserControl>
