@@ -100,6 +100,20 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		await _context.SaveChangesAsync();
 	}
 
+	public async Task DeleteEmailByGuidAsync(string guid)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		var email = await _context.Email.FirstOrDefaultAsync(e => e.Guid == guid);
+		if (email is null)
+			return;
+
+		email = await EncryptDataAsync(email);
+
+		_context.Email.Remove(email);
+		await _context.SaveChangesAsync();
+	}
+
 	public async Task<IReadOnlyList<Email>> KeepOnlyNewEmailsAsync(string ownerAddress, List<Email> newEmails, bool isFromOtherAddress)
 	{
 		using var _context = _factory.CreateDbContext();

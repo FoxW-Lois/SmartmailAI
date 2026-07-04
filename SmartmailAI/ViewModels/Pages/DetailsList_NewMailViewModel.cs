@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.Messengers;
 using Windows.Storage.Pickers;
@@ -16,6 +17,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IGmailCredentialService _gmailCredentialService;
 	private readonly IOtherProtocolService _otherProtocolService;
 	private readonly IOtherCredentialService _otherCredentialService;
+	private readonly IEmailRepository _emailsRepository;
+	private readonly IEmailsService _emailsService;
 	private readonly IOtherTokenStore _otherTokenStore;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
@@ -24,20 +27,23 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	public bool HasAttachments => Attachments.Count > 0;
 
 	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
-		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
-		IDialogService dialogService)
+		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IEmailRepository emailsRepository,
+		IEmailsService emailsService, IOtherTokenStore otherTokenStore, IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
 		_gmailCredentialService = gmailCredentialService;
 		_otherProtocolService = otherProtocolService;
 		_otherCredentialService = otherCredentialService;
+		_emailsRepository = emailsRepository;
+		_emailsService = emailsService;
 		_otherTokenStore = otherTokenStore;
 		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
 		{
 			ComposeMode = m.Mode;
+			_guid = m.Guid;
 			_from = m.SenderEmail;
 			To = m.ReceiverEmail ?? string.Empty;
 			Subject = m.Subject ?? string.Empty;
@@ -49,6 +55,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 	[ObservableProperty]
 	private ComposeMode _composeMode;
+
+	private string? _guid;
 
 	private string _from = string.Empty;
 
@@ -73,7 +81,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	[ObservableProperty]
 	private bool _isBccVisible;
 
-	public bool IsSubjectEnable => ComposeMode == ComposeMode.New;
+	public bool IsSubjectEnable => ComposeMode is ComposeMode.New or ComposeMode.Edit;
 
 	partial void OnComposeModeChanged(ComposeMode value)
 	{
@@ -119,6 +127,9 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 			// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
 			Discard();
+
+			if (_guid is not null)
+				await _emailsRepository.DeleteEmailByGuidAsync(_guid);
 		}
 		catch (Exception)
 		{
@@ -185,6 +196,20 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
 		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 		Reset();
+	}
+
+	[RelayCommand]
+	private async Task DraftedAsync()
+	{
+		// Récupère le contenu de tous les champs, puis les enregistre en base dans un objet Email avec la catégorie "Drafts"
+		await _emailsService.ScribbleEmailAsync(_guid, _from, To, Subject, Body, Cc, Bcc);
+
+		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
+		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
+		Reset();
+
+		// Notifie DetailsList_ViewModel de refresh la liste des emails
+		WeakReferenceMessenger.Default.Send(new RequestRefreshEmailsMessage());
 	}
 
 	[RelayCommand]

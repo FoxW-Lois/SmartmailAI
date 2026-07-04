@@ -457,6 +457,9 @@
   <data name="Email_Details_At.Text" xml:space="preserve">
     <value> at :</value>
   </data>
+  <data name="Email_Details_DateEdit.Text" xml:space="preserve">
+    <value>Latest modification</value>
+  </data>
   <data name="Email_Details_DateSent.Text" xml:space="preserve">
     <value>Sent date</value>
   </data>
@@ -573,5 +576,11 @@
   </data>
   <data name="Error_HasNoInternet" xml:space="preserve">
     <value>An internet connection is required to use the SmartmailAI app. Please try again once you are connected.</value>
+  </data>
+  <data name="ButtonEdit.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Button_EditDraft.Content" xml:space="preserve">
+    <value>Edit the draft</value>
   </data>
 </root>

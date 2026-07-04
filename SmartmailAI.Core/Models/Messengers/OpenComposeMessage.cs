@@ -4,6 +4,8 @@ public sealed class OpenComposeMessage
 {
 	public ComposeMode Mode { get; init; }
 
+	public string? Guid { get; set; }
+
 	public string SenderEmail { get; init; } = string.Empty;
 
 	public string? ReceiverEmail { get; init; } = string.Empty;

@@ -457,6 +457,9 @@
   <data name="Email_Details_At.Text" xml:space="preserve">
     <value> à :</value>
   </data>
+  <data name="Email_Details_DateEdit.Text" xml:space="preserve">
+    <value>Dernière modification</value>
+  </data>
   <data name="Email_Details_DateSent.Text" xml:space="preserve">
     <value>Date d'envoi</value>
   </data>
@@ -573,5 +576,11 @@
   </data>
   <data name="Error_HasNoInternet" xml:space="preserve">
     <value>La connexion à internet est indispensable pour utiliser l'application SmartmailAI. Veuillez réessayer une fois celle-ci établie.</value>
+  </data>
+  <data name="ButtonEdit.Text" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="Button_EditDraft.Content" xml:space="preserve">
+    <value>Modifier le brouillon</value>
   </data>
 </root>

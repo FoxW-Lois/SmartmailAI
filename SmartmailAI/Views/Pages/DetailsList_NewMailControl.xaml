@@ -58,6 +58,11 @@
 					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;" />
 				</Button>
 
+				<!--  Brouillon  -->
+				<Button Command="{x:Bind ViewModel.DraftedCommand}">
+					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7C3;" />
+				</Button>
+
 				<!--  Ouvrir en plein écran  -->
 				<Button Command="{x:Bind ViewModel.ExpandCommand}">
 					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A7;" />
