@@ -135,8 +135,8 @@
   <data name="Settings_Appearance.Text" xml:space="preserve">
     <value>Apperance</value>
   </data>
-  <data name="Settings_Dependencies_Card.Description" xml:space="preserve">
-    <value>Dependencies &amp; references</value>
+  <data name="Settings_Acknowledgements_references_Card.Description" xml:space="preserve">
+    <value>Acknowledgements &amp; references</value>
   </data>
   <data name="Settings_Theme_Card.Description" xml:space="preserve">
     <value>Select which app theme to display</value>

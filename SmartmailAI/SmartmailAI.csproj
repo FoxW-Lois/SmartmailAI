@@ -18,7 +18,7 @@
         <Product>$(AssemblyName)</Product>
         <Description>Projet de Boîte mail incluant des outils d'IA pour le module Startup&amp;IT en E5 ; avec WinUI 3 et .NET 9.</Description>
         <Company>$(Title) Team</Company>
-        <Authors>$(Company). FoxW-Lois, Sariarii.</Authors>
+        <Authors>$(Company). FoxW-Lois.</Authors>
         <Copyright>Copyright © 2025-2026 $(Company)</Copyright>
         <!-- Package Properties -->
         <PackageIcon Condition="'$(Configuration)'=='Debug'">Assets\Debug\PackageIcon.png</PackageIcon>
