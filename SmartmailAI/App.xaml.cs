@@ -254,6 +254,7 @@ public partial class App : Application
 				services.AddTransient<IAccountRepository, AccountRepository>();
 				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
 				services.AddTransient<IMLDA_Repository, MLDA_Repository>();
+				services.AddTransient<I_AIService, AIService>();
 
 				#region (Email) Addresses Services
 
