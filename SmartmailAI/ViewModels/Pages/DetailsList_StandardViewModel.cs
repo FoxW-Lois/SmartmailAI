@@ -57,6 +57,8 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 		}
 	}
 
+	#region Commandes d'assistance IA sur les emails ouverts
+
 	[RelayCommand]
 	private async Task AITranslationAsync()
 	{
@@ -68,6 +70,8 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 	{
 		// TODO
 	}
+
+	#endregion Commandes d'assistance IA sur les emails ouverts
 
 	#region Réponse et Transfert
 
