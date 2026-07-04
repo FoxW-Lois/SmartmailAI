@@ -4,7 +4,6 @@ public enum MailboxType
 {
 	Inbox,
 	Sent,
-	Snoozed,
 	Drafts,
 	Starred,
 	Unread,

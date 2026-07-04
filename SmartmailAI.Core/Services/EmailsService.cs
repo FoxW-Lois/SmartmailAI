@@ -133,39 +133,6 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		MailboxType = MailboxType.Sent,
 		IsRead = true
 	},
-	//------ Snoozed Emails ------
-	new Email
-	{
-		Guid = "Email_Hardcoded-" + Guid.NewGuid().ToString(),
-		SenderName = "Service Comptabilité",
-		SenderEmail = "compta@entreprise.com",
-		SenderProfileImage = new Uri("https://randomuser.me/api/portraits/women/60.jpg"),
-		ReceiverName = "Jean Dupont",
-		ReceiverEmail = "jean.dupont@exemple.com",
-		ReceiverProfileImage = new Uri("https://randomuser.me/api/portraits/men/32.jpg"),
-		Subject = "Note de frais à valider",
-		Content = "Bonjour Jean,\n\nMerci de valider la note de frais du mois dernier avant la fin de semaine.\n\nCordialement,\nComptabilité",
-		DateSent = DateTime.Now.AddDays(-3),
-		Attachments = [],
-		MailboxType = MailboxType.Snoozed,
-		IsRead = false
-	},
-	new Email
-	{
-		Guid = "Email_Hardcoded-" + Guid.NewGuid().ToString(),
-		SenderName = "Claire Bernard",
-		SenderEmail = "claire.bernard@client.com",
-		SenderProfileImage = new Uri("https://randomuser.me/api/portraits/women/51.jpg"),
-		ReceiverName = "Jean Dupont",
-		ReceiverEmail = "jean.dupont@exemple.com",
-		ReceiverProfileImage = new Uri("https://randomuser.me/api/portraits/men/32.jpg"),
-		Subject = "Retour sur la proposition",
-		Content = "Bonjour Jean,\n\nJe reviens vers toi concernant la proposition envoyée la semaine dernière.\n\nÀ bientôt,\nClaire",
-		DateSent = DateTime.Now.AddDays(-4),
-		Attachments = [],
-		MailboxType = MailboxType.Snoozed,
-		IsRead = false
-	},
 	//------ Drafts Emails ------
 	new Email
 	{
@@ -403,13 +370,6 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			},
 			new MailboxCategory
 			{
-				Title = _resources.GetString("Mailbox_Snoozed"),
-				Icon = "\uE823", // Clock
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
-				MailboxType = MailboxType.Snoozed
-			},
-			new MailboxCategory
-			{
 				Title = _resources.GetString("Mailbox_Drafts"),
 				Icon = "\uE7C3", // Document
 			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
@@ -426,7 +386,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			{
 				Title = _resources.GetString("Mailbox_Unread"),
 				Icon = "\uE8A8", // MailFill
-				Items = _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash 
+				Items = _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash
 					&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
 				MailboxType = MailboxType.Unread
 			},
@@ -479,7 +439,6 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		{
 			MailboxType.Inbox => _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
 			MailboxType.Sent => _AllEmails.Where(e => e.MailboxType == MailboxType.Sent || e.SenderEmail == e.ReceiverEmail),
-			MailboxType.Snoozed => _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
 			MailboxType.Drafts => _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
 			MailboxType.Starred => _AllEmails.Where(e => e.IsStarred == true),
 			MailboxType.Unread => _AllEmails.Where(e => e.IsRead == false),
