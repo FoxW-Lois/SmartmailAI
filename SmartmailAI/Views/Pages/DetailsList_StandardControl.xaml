@@ -31,7 +31,7 @@
 								Margin="8 0 8 0"
 								FontFamily="Segoe MDL2 Assets"
 								Glyph="&#xE99A;" />
-							<TextBlock Text="Traduire" />
+							<TextBlock x:Uid="AI_Assistance_Translation" />
 							<FontIcon
 								Margin="8 0 8 0"
 								FontFamily="Segoe MDL2 Assets"
@@ -51,7 +51,7 @@
 								Margin="8 0 8 0"
 								FontFamily="Segoe MDL2 Assets"
 								Glyph="&#xE99A;" />
-							<TextBlock Text="Résumer" />
+							<TextBlock x:Uid="AI_Assistance_Summarize" />
 							<FontIcon
 								Margin="8 0 8 0"
 								FontFamily="Segoe MDL2 Assets"

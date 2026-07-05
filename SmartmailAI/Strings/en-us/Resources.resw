@@ -637,4 +637,31 @@
   <data name="Button_EditDraft.Content" xml:space="preserve">
     <value>Edit the draft</value>
   </data>
+  <data name="AI_Assistance_Summarize.Text" xml:space="preserve">
+    <value>Summarize</value>
+  </data>
+  <data name="Button_Delete.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Button_Drafted.Content" xml:space="preserve">
+    <value>Save as a draft</value>
+  </data>
+  <data name="Button_Expand.Content" xml:space="preserve">
+    <value>Expand/reduce</value>
+  </data>
+  <data name="Button_AddAttachment.Content" xml:space="preserve">
+    <value>Add an attachment</value>
+  </data>
+  <data name="Button_Refresh.Content" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Button_AIinterface.Content" xml:space="preserve">
+    <value>AI Assistant Interface</value>
+  </data>
+  <data name="Button_Hide.Content" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="Button_Send.Content" xml:space="preserve">
+    <value>Send the prompt</value>
+  </data>
 </root>

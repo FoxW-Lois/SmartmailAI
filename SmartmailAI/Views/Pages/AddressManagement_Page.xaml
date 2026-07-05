@@ -26,10 +26,12 @@
 
 							<TextBlock
 								Grid.Column="0"
+								VerticalAlignment="Center"
 								IsTextSelectionEnabled="True"
 								Text="{x:Bind Email}" />
 							<StackPanel
 								Grid.Column="1"
+								VerticalAlignment="Center"
 								Orientation="Horizontal"
 								Spacing="2">
 								<TextBlock IsTextSelectionEnabled="True">
@@ -41,6 +43,7 @@
 							<Button
 								x:Uid="ManagementAddress_Delete"
 								Grid.Column="2"
+								VerticalAlignment="Center"
 								Click="OnAddressDeleteClicked"
 								CommandParameter="{x:Bind}"
 								FontSize="14"

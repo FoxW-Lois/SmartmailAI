@@ -241,6 +241,9 @@
 				Height="40"
 				Margin="0 8 16 32"
 				Command="{x:Bind ViewModel.RefreshEmailListCommand}">
+				<ToolTipService.ToolTip>
+					<ToolTip x:Uid="Button_Refresh" />
+				</ToolTipService.ToolTip>
 				<FontIcon
 					Margin="0 0 0 0"
 					FontFamily="Segoe MDL2 Assets"
@@ -298,6 +301,9 @@
 				Height="200"
 				Margin="0 50 -50 -170"
 				Command="{x:Bind ViewModel.SubmitAICommand}">
+				<ToolTipService.ToolTip>
+					<ToolTip x:Uid="Button_AIinterface" />
+				</ToolTipService.ToolTip>
 				<FontIcon
 					Margin="0 0 0 0"
 					FontFamily="Segoe MDL2 Assets"

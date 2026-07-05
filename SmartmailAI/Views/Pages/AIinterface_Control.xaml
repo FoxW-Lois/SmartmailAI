@@ -41,16 +41,25 @@
 
 				<!--  Supprimer  -->
 				<Button Command="{x:Bind ViewModel.DeleteCommand}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_Delete" />
+					</ToolTipService.ToolTip>
 					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;" />
 				</Button>
 
 				<!--  Fermer/cacher  -->
 				<Button Command="{x:Bind ViewModel.DiscardCommand}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_Hide" />
+					</ToolTipService.ToolTip>
 					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE921;" />
 				</Button>
 
 				<!--  Ouvrir en plein écran  -->
 				<Button Command="{x:Bind ViewModel.ExpandCommand}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_Expand" />
+					</ToolTipService.ToolTip>
 					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A7;" />
 				</Button>
 			</StackPanel>
@@ -117,6 +126,9 @@
 					Margin="0 0 0 -4"
 					Command="{x:Bind ViewModel.SendPromptCommand}"
 					Style="{StaticResource AccentButtonStyle}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_Send" />
+					</ToolTipService.ToolTip>
 					<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE724;" />
 				</Button>
 			</Grid>
