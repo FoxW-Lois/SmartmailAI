@@ -1,10 +1,13 @@
 ﻿using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
+using Windows.Globalization.Fonts;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -17,6 +20,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IOtherProtocolService _otherProtocolService;
 	private readonly IOtherCredentialService _otherCredentialService;
 	private readonly IOtherTokenStore _otherTokenStore;
+	private readonly I_AIService _aiService;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
@@ -25,7 +29,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
 		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
-		IDialogService dialogService)
+		I_AIService aiService, IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
@@ -33,6 +37,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		_otherProtocolService = otherProtocolService;
 		_otherCredentialService = otherCredentialService;
 		_otherTokenStore = otherTokenStore;
+		_aiService = aiService;
 		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
@@ -217,7 +222,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		IsBccVisible = false;
 	}
 
-	#region Commandes d'assistance IA (nouveau email)
+	#region Commandes d'assistance IA (écriture d'email)
 
 	[RelayCommand]
 	private async Task AIWritingAsync()
@@ -232,18 +237,64 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	}
 
 	[RelayCommand]
-	private async Task AIReformulationAsync()
+	private async Task AIRephrasingAsync()
 	{
-		// TODO
+		if (string.IsNullOrWhiteSpace(Body))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Rephrasing") + "\n\n" + Body;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
 	}
 
 	[RelayCommand]
 	private async Task AICorrectionAsync()
 	{
-		// TODO
+		if (string.IsNullOrWhiteSpace(Body))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Correction") + "\n\n" + Body;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
 	}
 
-	#endregion Commandes d'assistance IA (nouveau email)
+	#endregion Commandes d'assistance IA (écriture d'email)
 
 	#region Commandes de rédaction d'email
 
@@ -268,7 +319,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		Attachments.Remove(attachment);
 	}
 
-	public void AddAttachment(string path, string name)
+	private void AddAttachment(string path, string name)
 	{
 		if (Attachments.Any(a => a.FilePath == path))
 			return;

@@ -58,16 +58,16 @@
 						FontFamily="Segoe MDL2 Assets"
 						FontSize="20"
 						Glyph="&#xE99A;" />
-					<TextBlock x:Uid="AIAssistance" />
+					<TextBlock x:Uid="AI_Assistance" />
 				</StackPanel>
 
 				<!--  Menu déroulant du bouton  -->
 				<SplitButton.Flyout>
 					<MenuFlyout>
-						<MenuFlyoutItem x:Uid="AIAssistance_Writing" Command="{x:Bind ViewModel.AIWritingCommand}" />
-						<MenuFlyoutItem x:Uid="AIAssistance_Translation" Command="{x:Bind ViewModel.AITranslationCommand}" />
-						<MenuFlyoutItem x:Uid="AIAssistance_Reformulation" Command="{x:Bind ViewModel.AIReformulationCommand}" />
-						<MenuFlyoutItem x:Uid="AIAssistance_Correction" Command="{x:Bind ViewModel.AICorrectionCommand}" />
+						<MenuFlyoutItem x:Uid="AI_Assistance_Writing" Command="{x:Bind ViewModel.AIWritingCommand}" />
+						<MenuFlyoutItem x:Uid="AI_Assistance_Translation" Command="{x:Bind ViewModel.AITranslationCommand}" />
+						<MenuFlyoutItem x:Uid="AI_Assistance_Rephrasing" Command="{x:Bind ViewModel.AIRephrasingCommand}" />
+						<MenuFlyoutItem x:Uid="AI_Assistance_Correction" Command="{x:Bind ViewModel.AICorrectionCommand}" />
 					</MenuFlyout>
 				</SplitButton.Flyout>
 			</SplitButton>
