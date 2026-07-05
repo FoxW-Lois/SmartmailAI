@@ -24,6 +24,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
+	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
 	public ObservableCollection<MailAttachment> Attachments { get; } = [];
 	public bool HasAttachments => Attachments.Count > 0;
 
