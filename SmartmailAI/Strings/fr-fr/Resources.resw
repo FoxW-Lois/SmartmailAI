@@ -664,4 +664,25 @@
   <data name="Button_Send.Content" xml:space="preserve">
     <value>Envoyer le prompt</value>
   </data>
+  <data name="AI_Assistance_SecurityCheck.Text" xml:space="preserve">
+    <value>Check de sécurité</value>
+  </data>
+  <data name="Button_AISecurityCheck.Content" xml:space="preserve">
+    <value>Vérifier la sécurité de l'email</value>
+  </data>
+  <data name="AI_Instruction_SecurityCheck" xml:space="preserve">
+    <value>Soit neutre et objectif pour cette demande. Est-ce que cet email te semble être frauduleux, douteux, un phishing ou bien un spam ? :</value>
+  </data>
+  <data name="AI_Instruction_PartSubject" xml:space="preserve">
+    <value>Objet : </value>
+  </data>
+  <data name="AI_Instruction_PartFrom" xml:space="preserve">
+    <value>De : </value>
+  </data>
+  <data name="AI_Instruction_PartBody" xml:space="preserve">
+    <value>Corps : </value>
+  </data>
+  <data name="AI_Instruction_PartAttachments" xml:space="preserve">
+    <value>Pièces jointes : </value>
+  </data>
 </root>

@@ -141,6 +141,44 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 		}
 	}
 
+	[RelayCommand]
+	private async Task AISecurityCheckAsync()
+	{
+		if (CurrentEmail is null || string.IsNullOrWhiteSpace(CurrentEmail.Content))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_SecurityCheck") + "\n\n"
+			+ resourceLoader.GetString("AI_Instruction_PartFrom") + CurrentEmail!.SenderEmail + "\n\n"
+			+ resourceLoader.GetString("AI_Instruction_PartSubject") + CurrentEmail.Subject + "\n\n"
+			+ resourceLoader.GetString("AI_Instruction_PartBody") + CurrentEmail.Content;
+
+		if (CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0)
+		{
+			prompt += "\n\n" + resourceLoader.GetString("AI_Instruction_PartAttachments")
+				+ string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName));
+		}
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			CurrentEmailContentAIAssist = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
 	#endregion Commandes d'assistance IA sur les emails ouverts
 
 	[RelayCommand]
