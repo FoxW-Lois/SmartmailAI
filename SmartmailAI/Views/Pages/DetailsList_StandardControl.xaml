@@ -17,12 +17,47 @@
 				Padding="0 0 0 15"
 				HorizontalAlignment="Stretch"
 				Orientation="Horizontal"
-				Spacing="8"
-				Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+				Spacing="8">
+				<Button
+					Width="80"
+					Height="40"
+					Command="{x:Bind ViewModel.AITranslationCommand}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_AITranslation" />
+					</ToolTipService.ToolTip>
+					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+						<FontIcon
+							Margin="8 0 8 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE99A;" />
+						<FontIcon
+							Margin="8 0 8 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE774;" />
+					</StackPanel>
+				</Button>
+
+				<Button
+					Width="80"
+					Height="40"
+					Command="{x:Bind ViewModel.AISummarizeCommand}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_AISummarize" />
+					</ToolTipService.ToolTip>
+					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+						<FontIcon
+							Margin="8 0 8 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE99A;" />
+						<FontIcon
+							Margin="8 0 8 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE736;" />
 				<Button
 					Width="110"
 					Height="40"
-					Command="{x:Bind ViewModel.EditDraftedEmailCommand}">
+					Command="{x:Bind ViewModel.EditDraftedEmailCommand}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
 					<ToolTipService.ToolTip>
 						<ToolTip x:Uid="Button_EditDraft" />
 					</ToolTipService.ToolTip>
@@ -49,6 +84,7 @@
 					Style="{ThemeResource TitleTextBlockStyle}"
 					Text="{x:Bind DetailsListMenuItem_Email.SenderName, Mode=OneWay}" />
 			</StackPanel>
+
 			<StackPanel Padding="0 15 0 0">
 				<TextBlock x:Uid="Email_Details_Sender" Style="{StaticResource DetailSubTitleStyle}" />
 				<TextBlock IsTextSelectionEnabled="True" Style="{StaticResource DetailBodyBaseMediumStyle}">
@@ -133,12 +169,27 @@
 					<Run Text="/100" />
 				</TextBlock>
 
-				<TextBlock
-					Margin="{StaticResource LargeTopMargin}"
-					IsTextSelectionEnabled="True"
-					Style="{StaticResource DetailBodyStyle}"
-					Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}"
-					Visibility="{x:Bind DetailsListMenuItem_Email.IsHtmlContent, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+				<StackPanel Visibility="{x:Bind DetailsListMenuItem_Email.IsHtmlContent, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					<StackPanel Visibility="{x:Bind ViewModel.HasAnAIResult, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+						<TextBlock
+							Margin="{StaticResource LargeTopMargin}"
+							IsTextSelectionEnabled="True"
+							Style="{StaticResource DetailBodyStyle}"
+							Text="{x:Bind ViewModel.CurrentEmailContentAIAssist, Mode=OneWay}" />
+						<TextBlock
+							Margin="{StaticResource LargeTopMargin}"
+							FontStyle="Italic"
+							FontWeight="Bold"
+							Style="{StaticResource DetailBodyStyle}"
+							Text="——————— ↓ Original ↓ ———————" />
+					</StackPanel>
+
+					<TextBlock
+						Margin="{StaticResource LargeTopMargin}"
+						IsTextSelectionEnabled="True"
+						Style="{StaticResource DetailBodyStyle}"
+						Text="{x:Bind DetailsListMenuItem_Email.Content, Mode=OneWay}" />
+				</StackPanel>
 				<WebView2
 					x:Name="MailWebView"
 					Width="{Binding ElementName=RootStackPannel, Path=ActualWidth}"

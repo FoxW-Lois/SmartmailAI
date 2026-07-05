@@ -571,12 +571,65 @@
   <data name="AddPromptPlaceholder.PlaceholderText" xml:space="preserve">
     <value>Request to be made...</value>
   </data>
-  <data name="AIassistantName.Text" xml:space="preserve">
+  <data name="AI_AssistantName.Text" xml:space="preserve">
     <value>Maily - AI Assistant</value>
   </data>
   <data name="Error_HasNoInternet" xml:space="preserve">
     <value>An internet connection is required to use the SmartmailAI app. Please try again once you are connected.</value>
   </data>
+  <data name="AI_Assistance.Text" xml:space="preserve">
+    <value>AI assistance</value>
+  </data>
+  <data name="AI_Assistance_Writing.Text" xml:space="preserve">
+    <value>Writing</value>
+  </data>
+  <data name="AI_Assistance_Translation.Text" xml:space="preserve">
+    <value>Translate</value>
+  </data>
+  <data name="AI_Assistance_Correction.Text" xml:space="preserve">
+    <value>Spelling correction</value>
+  </data>
+  <data name="AI_Assistance_Rephrasing.Text" xml:space="preserve">
+    <value>Rephrase</value>
+  </data>
+  <data name="Button_AITranslation.Content" xml:space="preserve">
+    <value>Translate the email</value>
+  </data>
+  <data name="Button_AISummarize.Content" xml:space="preserve">
+    <value>Summarize the email</value>
+  </data>
+  <data name="AI_Instruction_Translation" xml:space="preserve">
+    <value>I don't want any comments from you. Just translate this email into </value>
+  </data>
+  <data name="AI_Instruction_Summarize" xml:space="preserve">
+    <value>I don't want any comments from you. Just summarize this email in English:</value>
+  </data>
+  <data name="AI_Instruction_Writing" xml:space="preserve">
+    <value>I don't want any comments from you. Just write an email based on these instructions and requirements:</value>
+  </data>
+  <data name="AI_Instruction_Rephrasing" xml:space="preserve">
+    <value>I don't want any comments from you. Just rewrite this email:</value>
+  </data>
+  <data name="AI_Instruction_Correction" xml:space="preserve">
+    <value>I don't want any comments from you. Just correct the spelling, grammar, and agreement errors in this email:</value>
+  </data>
+  <data name="AI_Title_Translation" xml:space="preserve">
+    <value>Translation by AI</value>
+  </data>
+  <data name="Preferred_language" xml:space="preserve">
+    <value>Preferred language:</value>
+  </data>
+  <data name="Writing_instructions" xml:space="preserve">
+    <value>Writing instructions:</value>
+  </data>
+  <data name="AI_Title_Writing" xml:space="preserve">
+    <value>Writing by AI</value>
+  </data>
+  <data name="AI_Button_Writing" xml:space="preserve">
+    <value>Writing</value>
+  </data>
+  <data name="AI_Button_Translate" xml:space="preserve">
+    <value>Translate</value>
   <data name="ButtonEdit.Text" xml:space="preserve">
     <value>Edit</value>
   </data>

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 using Windows.Storage.Pickers;
 
@@ -20,15 +21,19 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly IEmailRepository _emailsRepository;
 	private readonly IEmailsService _emailsService;
 	private readonly IOtherTokenStore _otherTokenStore;
+	private readonly I_AIService _aiService;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
+	private string? userInstructions { get; set; } = null;
 
 	public ObservableCollection<MailAttachment> Attachments { get; } = [];
 	public bool HasAttachments => Attachments.Count > 0;
 
 	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
-		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IEmailRepository emailsRepository,
-		IEmailsService emailsService, IOtherTokenStore otherTokenStore, IDialogService dialogService)
+		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
+    IEmailRepository emailsRepository, IEmailsService emailsService, I_AIService aiService, IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
@@ -38,6 +43,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		_emailsRepository = emailsRepository;
 		_emailsService = emailsService;
 		_otherTokenStore = otherTokenStore;
+		_aiService = aiService;
 		_dialogService = dialogService;
 
 		WeakReferenceMessenger.Default.Register<OpenComposeMessage>(this, (r, m) =>
@@ -242,6 +248,135 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		IsBccVisible = false;
 	}
 
+	#region Commandes d'assistance IA (écriture d'email)
+
+	[RelayCommand]
+	private async Task AIWritingAsync()
+	{
+		userInstructions = await _dialogService.ShowTwoButtonDialogWithRichEditboxAsync(resourceLoader.GetString("AI_Title_Writing"),
+			resourceLoader.GetString("Writing_instructions"), resourceLoader.GetString("AI_Button_Writing")) ?? null;
+
+		if (string.IsNullOrWhiteSpace(userInstructions))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Writing") + "\n\n" + userInstructions;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	[RelayCommand]
+	private async Task AITranslationAsync()
+	{
+		if (string.IsNullOrWhiteSpace(Body))
+			return;
+
+		userInstructions = await _dialogService.ShowTwoButtonDialogWithTextboxAsync(resourceLoader.GetString("AI_Title_Translation"),
+			resourceLoader.GetString("Preferred_language"), resourceLoader.GetString("AI_Button_Translate")) ?? null;
+
+		if (string.IsNullOrWhiteSpace(userInstructions))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Translation") + userInstructions + ":\n\n" + Body;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	[RelayCommand]
+	private async Task AIRephrasingAsync()
+	{
+		if (string.IsNullOrWhiteSpace(Body))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Rephrasing") + "\n\n" + Body;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	[RelayCommand]
+	private async Task AICorrectionAsync()
+	{
+		if (string.IsNullOrWhiteSpace(Body))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Correction") + "\n\n" + Body;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	#endregion Commandes d'assistance IA (écriture d'email)
+
 	#region Commandes de rédaction d'email
 
 	[RelayCommand]
@@ -265,7 +400,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		Attachments.Remove(attachment);
 	}
 
-	public void AddAttachment(string path, string name)
+	private void AddAttachment(string path, string name)
 	{
 		if (Attachments.Any(a => a.FilePath == path))
 			return;

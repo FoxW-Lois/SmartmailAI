@@ -1,7 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,10 +7,9 @@ using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AIinterface_ViewModel : ObservableObject
+public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableObject
 {
-	private readonly string prompt_system_path = Path.Combine(AppContext.BaseDirectory, "Prompt-system-Smartmail.txt");
-	private readonly HttpClient client = new();
+	private readonly I_AIService _aiService = aiService;
 
 	public ObservableCollection<AIMessage> Conversation { get; } = [];
 
@@ -56,52 +52,23 @@ public partial class AIinterface_ViewModel : ObservableObject
 			IsUser = true
 		});
 
-		#region AI interaction
-
-		var request = new
-		{
-			model = "mistralai/ministral-3-3b",
-			messages = Conversation.Select(m => new
-			{
-				role = m.IsUser ? "user" : "assistant",
-				content = m.Content
-			})
-			.Prepend(new
-			{
-				role = "system",
-				content = await File.ReadAllTextAsync(prompt_system_path)
-			}),
-			temperature = 0.7
-		};
-
+		object request = await _aiService.AIConversationAsync(Conversation);
 		Reset();
 
-		string json = JsonSerializer.Serialize(request);
-
-		var response = await client.PostAsync(
-			"http://localhost:1234/v1/chat/completions",
-			new StringContent(json, Encoding.UTF8, "application/json"
-		));
-
-		string result = await response.Content.ReadAsStringAsync();
-
-		if (!response.IsSuccessStatusCode)
+		try
 		{
-			string error = await response.Content.ReadAsStringAsync();
-			Debug.WriteLine(error);
-			return;
+			string answer = await _aiService.AIRequestAsync(request);
+
+			Conversation.Add(new AIMessage()
+			{
+				Content = answer,
+				IsUser = false
+			});
 		}
-
-		var chat = JsonSerializer.Deserialize<ChatResponse>(result);
-		string answer = chat?.Choices[0].Message.Content ?? "Une erreur est survenue.";
-
-		#endregion AI interaction
-
-		Conversation.Add(new AIMessage()
+		catch (Exception)
 		{
-			Content = answer,
-			IsUser = false
-		});
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
 	}
 
 	private void Reset(bool resetMessageCollection = false)

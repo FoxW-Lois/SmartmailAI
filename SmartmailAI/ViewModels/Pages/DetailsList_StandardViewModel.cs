@@ -1,22 +1,46 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class DetailsList_StandardViewModel(IMailReaderService mailReaderService, IAddressesService addressesService,
+public partial class DetailsList_StandardViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
 	IDialogService dialogService) : ObservableRecipient
 {
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
 	private readonly IAddressesService _addressesService = addressesService;
+	private readonly I_AIService _aiService = aiService;
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
+	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
+
 	[ObservableProperty]
 	private Email? currentEmail;
+
+	[ObservableProperty]
+	private string? currentEmailContentAIAssist;
+
+	partial void OnCurrentEmailChanged(Email? value)
+	{
+		if (value is not null)
+		{
+			CurrentEmailContentAIAssist = null;
+		}
+	}
+
+	[ObservableProperty]
+	private bool hasAnAIResult = false;
+
+	partial void OnCurrentEmailContentAIAssistChanged(string? value)
+	{
+		HasAnAIResult = !string.IsNullOrWhiteSpace(value);
+	}
 
 	[RelayCommand]
 	private async Task SaveAttachmentAsync((string emailGuid, MailAttachment attachment, string destinationFolder) args)
@@ -56,6 +80,68 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			return;
 		}
 	}
+
+	#region Commandes d'assistance IA sur les emails ouverts
+
+	[RelayCommand]
+	private async Task AITranslationAsync()
+	{
+		if (CurrentEmail is null || string.IsNullOrWhiteSpace(CurrentEmail.Content))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Translation") + "\n\n" + CurrentEmail?.Content;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			CurrentEmailContentAIAssist = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	[RelayCommand]
+	private async Task AISummarizeAsync()
+	{
+		if (CurrentEmail is null || string.IsNullOrWhiteSpace(CurrentEmail.Content))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Summarize") + "\n\n" + CurrentEmail?.Content;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			CurrentEmailContentAIAssist = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	#endregion Commandes d'assistance IA sur les emails ouverts
 
 	[RelayCommand]
 	private async Task EditDraftedEmailAsync()

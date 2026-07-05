@@ -571,12 +571,65 @@
   <data name="AddPromptPlaceholder.PlaceholderText" xml:space="preserve">
     <value>Requête à effectuer...</value>
   </data>
-  <data name="AIassistantName.Text" xml:space="preserve">
+  <data name="AI_AssistantName.Text" xml:space="preserve">
     <value>Maily - Assistant IA</value>
   </data>
   <data name="Error_HasNoInternet" xml:space="preserve">
     <value>La connexion à internet est indispensable pour utiliser l'application SmartmailAI. Veuillez réessayer une fois celle-ci établie.</value>
   </data>
+  <data name="AI_Assistance.Text" xml:space="preserve">
+    <value>Assistance IA</value>
+  </data>
+  <data name="AI_Assistance_Writing.Text" xml:space="preserve">
+    <value>Rédiger</value>
+  </data>
+  <data name="AI_Assistance_Translation.Text" xml:space="preserve">
+    <value>Traduire</value>
+  </data>
+  <data name="AI_Assistance_Correction.Text" xml:space="preserve">
+    <value>Correction orthographique</value>
+  </data>
+  <data name="AI_Assistance_Rephrasing.Text" xml:space="preserve">
+    <value>Reformuler</value>
+  </data>
+  <data name="Button_AITranslation.Content" xml:space="preserve">
+    <value>Traduire l'email</value>
+  </data>
+  <data name="Button_AISummarize.Content" xml:space="preserve">
+    <value>Résumer l'email</value>
+  </data>
+  <data name="AI_Instruction_Translation" xml:space="preserve">
+    <value>Je ne veux aucun commentaire de ta part. Traduis uniquement cet email en </value>
+  </data>
+  <data name="AI_Instruction_Summarize" xml:space="preserve">
+    <value>Je ne veux aucun commentaire de ta part. Résume uniquement cet email en français :</value>
+  </data>
+  <data name="AI_Instruction_Writing" xml:space="preserve">
+    <value>Je ne veux aucun commentaire de ta part. Écris uniquement un email en fonction de ces instructions et besoins :</value>
+  </data>
+  <data name="AI_Instruction_Rephrasing" xml:space="preserve">
+    <value>Je ne veux aucun commentaire de ta part. Reformule uniquement cet email :</value>
+  </data>
+  <data name="AI_Instruction_Correction" xml:space="preserve">
+    <value>Je ne veux aucun commentaire de ta part. Corrige uniquement les fautes d'orthographe, de grammaire et d'accords de cet email :</value>
+  </data>
+  <data name="AI_Title_Translation" xml:space="preserve">
+    <value>Traduction par IA</value>
+  </data>
+  <data name="Preferred_language" xml:space="preserve">
+    <value>Langue souhaitée :</value>
+  </data>
+  <data name="Writing_instructions" xml:space="preserve">
+    <value>Instructions pour l'écriture :</value>
+  </data>
+  <data name="AI_Title_Writing" xml:space="preserve">
+    <value>Rédaction par IA</value>
+  </data>
+  <data name="AI_Button_Writing" xml:space="preserve">
+    <value>Rédiger</value>
+  </data>
+  <data name="AI_Button_Translate" xml:space="preserve">
+    <value>Traduire</value>
   <data name="ButtonEdit.Text" xml:space="preserve">
     <value>Modifier</value>
   </data>
