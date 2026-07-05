@@ -136,27 +136,70 @@
 						Text="{x:Bind ViewModel.Version, Mode=OneTime}" />
 					<controls:SettingsExpander.Items>
 						<controls:SettingsCard x:Uid="Settings_Repository_Card">
-							<HyperlinkButton Content="https://github.com/FoxW-Lois/SmartmailAI" NavigateUri="https://github.com/FoxW-Lois/SmartmailAI" />
+							<HyperlinkButton
+								Content="https://github.com/FoxW-Lois/SmartmailAI"
+								Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+								NavigateUri="https://github.com/FoxW-Lois/SmartmailAI" />
 						</controls:SettingsCard>
 						<controls:SettingsCard x:Uid="Settings_Feedback_Card">
-							<HyperlinkButton Content="https://github.com/FoxW-Lois/SmartmailAI/issues" NavigateUri="https://github.com/FoxW-Lois/SmartmailAI/issues" />
+							<HyperlinkButton
+								Content="https://github.com/FoxW-Lois/SmartmailAI/issues"
+								Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+								NavigateUri="https://github.com/FoxW-Lois/SmartmailAI/issues" />
 						</controls:SettingsCard>
 						<controls:SettingsCard
-							x:Uid="Settings_Dependencies_Card"
+							x:Uid="Settings_Acknowledgements_references_Card"
 							HorizontalContentAlignment="Left"
 							ContentAlignment="Vertical">
-							<StackPanel Margin="-12 0 0 0" Orientation="Vertical">
-								<HyperlinkButton Content="Files" NavigateUri="https://github.com/files-community/Files" />
-								<HyperlinkButton Content="fluentui-system-icons" NavigateUri="https://github.com/microsoft/fluentui-system-icons" />
-								<HyperlinkButton Content="H.NotifyIcon" NavigateUri="https://github.com/HavenDV/H.NotifyIcon" />
-								<HyperlinkButton Content="ICONS8" NavigateUri="https://icons8.com/icons" />
-								<HyperlinkButton Content="Template Studio for WinUI (C#)" NavigateUri="https://github.com/microsoft/TemplateStudio" />
-								<HyperlinkButton Content="terminal" NavigateUri="https://github.com/microsoft/terminal" />
-								<HyperlinkButton Content="WinUI3Windows" NavigateUri="https://github.com/smourier/WinUI3Windows" />
-								<HyperlinkButton Content="WinUI3-Template" NavigateUri="https://github.com/Jack251970/WinUI3-Template" />
-								<HyperlinkButton Content="WindowedContentDialog" NavigateUri="https://github.com/SuGar0218/WindowedContentDialog" />
-								<HyperlinkButton Content="Windows Community Toolkit" NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit" />
-								<HyperlinkButton Content="WinUIEx" NavigateUri="https://github.com/dotMorten/WinUIEx" />
+							<StackPanel Margin="0 0 0 0" Orientation="Vertical">
+								<HyperlinkButton
+									Content="WinUI3-Windows"
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/microsoft/microsoft-ui-XAML" />
+								<HyperlinkButton
+									Content="WinUI3-Template"
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/FoxW-Lois/WinUI3-Template" />
+								<HyperlinkButton
+									Content="Thomas C."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/CalmettesT" />
+								<HyperlinkButton
+									Content="Benoit A."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/BenoitAvenelPro" />
+								<HyperlinkButton
+									Content="Loïs P.T."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/FoxW-Lois" />
+								<HyperlinkButton
+									Content="Nicolas T."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/Sariarii" />
+								<HyperlinkButton
+									Content="Matis M."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/MatisMissana" />
+								<HyperlinkButton
+									Content="Tom G."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/PadakorAvecToi" />
+								<HyperlinkButton
+									Content="Alexandre R."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/Alexandre-Ribes" />
+								<HyperlinkButton
+									Content="Léo M."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/asurazoma" />
+								<HyperlinkButton
+									Content="Nicolas H."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/NicolasNicz" />
+								<HyperlinkButton
+									Content="Damien A."
+									Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+									NavigateUri="https://github.com/DamienAlessandrin" />
 							</StackPanel>
 						</controls:SettingsCard>
 						<controls:SettingsCard

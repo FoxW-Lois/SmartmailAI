@@ -53,6 +53,20 @@
 							Margin="8 0 8 0"
 							FontFamily="Segoe MDL2 Assets"
 							Glyph="&#xE736;" />
+				<Button
+					Width="110"
+					Height="40"
+					Command="{x:Bind ViewModel.EditDraftedEmailCommand}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+					<ToolTipService.ToolTip>
+						<ToolTip x:Uid="Button_EditDraft" />
+					</ToolTipService.ToolTip>
+					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+						<TextBlock x:Uid="ButtonEdit" />
+						<FontIcon
+							Margin="8 0 0 0"
+							FontFamily="Segoe MDL2 Assets"
+							Glyph="&#xE7C3;" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
@@ -111,11 +125,18 @@
 					<Run Text="{x:Bind DetailsListMenuItem_Email.Bcc, Mode=OneWay}" />
 				</TextBlock>
 
+				<!--  Masqué pour les emails brouillons  -->
 				<TextBlock
 					x:Uid="Email_Details_DateSent"
 					Margin="{StaticResource MediumTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"
-					Text="Date d'envoi" />
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+				<!--  Affiché pour les emails brouillons  -->
+				<TextBlock
+					x:Uid="Email_Details_DateEdit"
+					Margin="{StaticResource MediumTopMargin}"
+					Style="{StaticResource DetailSubTitleStyle}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
 				<TextBlock IsTextSelectionEnabled="True" Style="{StaticResource DetailBodyBaseMediumStyle}">
 					<Run x:Uid="Email_Details_The" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.DaySent, Mode=OneWay}" />
@@ -132,12 +153,17 @@
 					Style="{StaticResource DetailBodyBaseMediumStyle}"
 					Text="{x:Bind DetailsListMenuItem_Email.Subject, Mode=OneWay}" />
 
+				<!--  Masqué pour les emails écris par l'utilisateur  -->
 				<TextBlock
 					x:Uid="Email_Details_Security"
 					Margin="{StaticResource MediumTopMargin}"
-					Style="{StaticResource DetailSubTitleStyle}" />
-				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Text="{x:Bind DetailsListMenuItem_Email.SecurityWarning, Mode=OneWay}" />
-				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}">
+					Style="{StaticResource DetailSubTitleStyle}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsSentByUser, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+				<TextBlock
+					Style="{StaticResource DetailBodyBaseMediumStyle}"
+					Text="{x:Bind DetailsListMenuItem_Email.SecurityWarning, Mode=OneWay}"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsSentByUser, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+				<TextBlock Style="{StaticResource DetailBodyBaseMediumStyle}" Visibility="{x:Bind DetailsListMenuItem_Email.IsSentByUser, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<Run x:Uid="Email_Details_PhishingScore" />
 					<Run Text="{x:Bind DetailsListMenuItem_Email.PhishingScore, Mode=OneWay}" />
 					<Run Text="/100" />
@@ -199,7 +225,10 @@
 					</ItemsRepeater.ItemTemplate>
 				</ItemsRepeater>
 			</StackPanel>
-			<Grid Margin="-50 50 0 0" HorizontalAlignment="Center">
+			<Grid
+				Margin="-50 50 0 0"
+				HorizontalAlignment="Center"
+				Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />

@@ -33,7 +33,7 @@ public class Email
 	[Column("Content")] public string? Content { get; set; }
 	[Column("Owner")] public string Owner { get; set; } = default!;
 
-	[Column("DateSent")] public DateTime? DateSent { get; set; }
+	[Column("DateSent")] public DateTime? DateSent { get; set; } = DateTime.Now;
 
 	// La sérialisation / dé-sérialisation Json se fait maintenant dans le EmailRepository afin d'appliquer un chiffrement sur les pièces jointes
 	[Column("Attachments")] public string? AttachmentsJson { get; set; }
@@ -155,6 +155,10 @@ public class Email
 		|| Content.Contains("<p", StringComparison.OrdinalIgnoreCase)
 		|| Content.Contains("<span", StringComparison.OrdinalIgnoreCase)
 		);
+
+	[NotMapped] public bool IsSentByUser => SenderEmail == Owner;
+
+	[NotMapped] public bool IsDraft => MailboxType == MailboxType.Drafts;
 
 	#endregion Propriétés dédiées à l'affichage
 }

@@ -24,7 +24,7 @@
     
   <Properties>
     <DisplayName>SmartmailAI App</DisplayName>
-    <PublisherDisplayName>FoxW-Lois, Sariarii</PublisherDisplayName>
+    <PublisherDisplayName>FoxW-Lois</PublisherDisplayName>
     <Logo>Assets\Logos\StoreLogo.png</Logo>
     <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
   </Properties>

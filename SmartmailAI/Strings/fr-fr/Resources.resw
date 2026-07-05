@@ -135,8 +135,8 @@
   <data name="Settings_Appearance.Text" xml:space="preserve">
     <value>Apparence</value>
   </data>
-  <data name="Settings_Dependencies_Card.Description" xml:space="preserve">
-    <value>Dépendances et références</value>
+  <data name="Settings_Acknowledgements_references_Card.Description" xml:space="preserve">
+    <value>Remerciements et références</value>
   </data>
   <data name="Settings_Theme_Card.Description" xml:space="preserve">
     <value>Sélectionnez le thème de l'application à afficher.</value>
@@ -243,9 +243,6 @@
   </data>
   <data name="Mailbox_Sent" xml:space="preserve">
     <value>Messages envoyés</value>
-  </data>
-  <data name="Mailbox_Snoozed" xml:space="preserve">
-    <value>En attente</value>
   </data>
   <data name="Mailbox_Drafts" xml:space="preserve">
     <value>Brouillons</value>
@@ -460,6 +457,9 @@
   <data name="Email_Details_At.Text" xml:space="preserve">
     <value> à :</value>
   </data>
+  <data name="Email_Details_DateEdit.Text" xml:space="preserve">
+    <value>Dernière modification</value>
+  </data>
   <data name="Email_Details_DateSent.Text" xml:space="preserve">
     <value>Date d'envoi</value>
   </data>
@@ -630,5 +630,10 @@
   </data>
   <data name="AI_Button_Translate" xml:space="preserve">
     <value>Traduire</value>
+  <data name="ButtonEdit.Text" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="Button_EditDraft.Content" xml:space="preserve">
+    <value>Modifier le brouillon</value>
   </data>
 </root>

@@ -10,6 +10,8 @@ public interface IEmailsService
 
 	Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType, string? addressAccount = null);
 
+	Task ScribbleEmailAsync(string? guid, string from, string? to, string? subject, string? body, string? cc, string? bcc);
+
 	Task MarkEmailAsStarredAsync(Email email);
 
 	Task MarkEmailAsReadAsync(Email email);

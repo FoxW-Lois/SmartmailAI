@@ -143,6 +143,26 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 
 	#endregion Commandes d'assistance IA sur les emails ouverts
 
+	[RelayCommand]
+	private async Task EditDraftedEmailAsync()
+	{
+		if (CurrentEmail is null)
+			return;
+
+		WeakReferenceMessenger.Default.Send(new OpenComposeMessage
+		{
+			Mode = ComposeMode.Edit,
+			Guid = CurrentEmail.Guid,
+			SenderEmail = CurrentEmail.SenderEmail,
+			ReceiverEmail = CurrentEmail.ReceiverEmail,
+			Subject = CurrentEmail.Subject,
+			Body = CurrentEmail.Content
+		});
+
+		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
+		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
+	}
+
 	#region Réponse et Transfert
 
 	[RelayCommand]

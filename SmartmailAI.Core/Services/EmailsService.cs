@@ -133,39 +133,6 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		MailboxType = MailboxType.Sent,
 		IsRead = true
 	},
-	//------ Snoozed Emails ------
-	new Email
-	{
-		Guid = "Email_Hardcoded-" + Guid.NewGuid().ToString(),
-		SenderName = "Service Comptabilité",
-		SenderEmail = "compta@entreprise.com",
-		SenderProfileImage = new Uri("https://randomuser.me/api/portraits/women/60.jpg"),
-		ReceiverName = "Jean Dupont",
-		ReceiverEmail = "jean.dupont@exemple.com",
-		ReceiverProfileImage = new Uri("https://randomuser.me/api/portraits/men/32.jpg"),
-		Subject = "Note de frais à valider",
-		Content = "Bonjour Jean,\n\nMerci de valider la note de frais du mois dernier avant la fin de semaine.\n\nCordialement,\nComptabilité",
-		DateSent = DateTime.Now.AddDays(-3),
-		Attachments = [],
-		MailboxType = MailboxType.Snoozed,
-		IsRead = false
-	},
-	new Email
-	{
-		Guid = "Email_Hardcoded-" + Guid.NewGuid().ToString(),
-		SenderName = "Claire Bernard",
-		SenderEmail = "claire.bernard@client.com",
-		SenderProfileImage = new Uri("https://randomuser.me/api/portraits/women/51.jpg"),
-		ReceiverName = "Jean Dupont",
-		ReceiverEmail = "jean.dupont@exemple.com",
-		ReceiverProfileImage = new Uri("https://randomuser.me/api/portraits/men/32.jpg"),
-		Subject = "Retour sur la proposition",
-		Content = "Bonjour Jean,\n\nJe reviens vers toi concernant la proposition envoyée la semaine dernière.\n\nÀ bientôt,\nClaire",
-		DateSent = DateTime.Now.AddDays(-4),
-		Attachments = [],
-		MailboxType = MailboxType.Snoozed,
-		IsRead = false
-	},
 	//------ Drafts Emails ------
 	new Email
 	{
@@ -398,15 +365,8 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			{
 				Title = _resources.GetString("Mailbox_Sent"),
 				Icon = "\uE122", // Send
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent),
+			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent || e.SenderEmail == e.ReceiverEmail),
 				MailboxType = MailboxType.Sent
-			},
-			new MailboxCategory
-			{
-				Title = _resources.GetString("Mailbox_Snoozed"),
-				Icon = "\uE823", // Clock
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
-				MailboxType = MailboxType.Snoozed
 			},
 			new MailboxCategory
 			{
@@ -426,7 +386,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			{
 				Title = _resources.GetString("Mailbox_Unread"),
 				Icon = "\uE8A8", // MailFill
-				Items = _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash 
+				Items = _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash
 					&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
 				MailboxType = MailboxType.Unread
 			},
@@ -441,8 +401,9 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			{
 				Title = _resources.GetString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
-				// ↑ Tous les mails sauf Corbeille & Phishings/Spams
+			    Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Drafts && e.MailboxType != MailboxType.Trash
+					&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
+				// ↑ Tous les mails sauf Brouillons, Corbeille & Phishings/Spams
 				MailboxType = MailboxType.AllMails
 			},
 			new MailboxCategory
@@ -461,7 +422,6 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			}
 		};
 
-		await Task.CompletedTask;
 		return categories;
 	}
 
@@ -479,158 +439,184 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		{
 			MailboxType.Inbox => _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
 			MailboxType.Sent => _AllEmails.Where(e => e.MailboxType == MailboxType.Sent || e.SenderEmail == e.ReceiverEmail),
-			MailboxType.Snoozed => _AllEmails.Where(e => e.MailboxType == MailboxType.Snoozed),
 			MailboxType.Drafts => _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
 			MailboxType.Starred => _AllEmails.Where(e => e.IsStarred == true),
-			MailboxType.Unread => _AllEmails.Where(e => e.IsRead == false),
+			MailboxType.Unread => _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash
+				&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
+
 			MailboxType.Trash => _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
 			MailboxType.Archives => _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
 			MailboxType.PhishingSpam => _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
-			_ => _AllEmails.Where(e => e.MailboxType != MailboxType.Trash && e.MailboxType != MailboxType.PhishingSpam),
+
+			_ => _AllEmails.Where(e => e.MailboxType != MailboxType.Drafts && e.MailboxType != MailboxType.Trash
+				&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam)
 		};
 
-		await Task.CompletedTask;
 		return emails;
+	}
+
+	public async Task ScribbleEmailAsync(string? guid, string from, string? to, string? subject, string? body, string? cc, string? bcc)
+	{
+		Email email = new()
+		{
+			Guid = guid ?? Guid.NewGuid().ToString(),
+			SenderEmail = from,
+			SenderName = from,
+			ReceiverEmail = to,
+			ReceiverName = to,
+			Subject = subject,
+			Content = body,
+			Owner = from,
+			Cc = cc,
+			Bcc = bcc,
+			MailboxType = MailboxType.Drafts,
+			IsRead = true
+		};
+
+		if (guid is null)
+			await _emailRepository.AddEmailAsync(email);
+		else
+			await _emailRepository.UpdateEmailAsync(email);
 	}
 
 	#region	Changement d'états des emails
 
-	public Task MarkEmailAsStarredAsync(Email email)
+	public async Task MarkEmailAsStarredAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.IsStarred = !email.IsStarred;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task MarkEmailAsReadAsync(Email email)
+	public async Task MarkEmailAsReadAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.IsRead = true;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task MarkEmailAsUnreadAsync(Email email)
+	public async Task MarkEmailAsUnreadAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.IsRead = false;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task MarkEmailAsArchivedAsync(Email email)
+	public async Task MarkEmailAsArchivedAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Archives;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task RestoreEmailAsync(Email email)
+	public async Task RestoreEmailAsync(Email email)
 	{
 		if (email is null || email.PreviousMailboxType is null)
-			return Task.CompletedTask;
+			return;
 
 		email.MailboxType = (MailboxType)email.PreviousMailboxType;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task DeleteEmailAsync(Email email)
+	public async Task DeleteEmailAsync(Email email)
 	{
 		if (email is null || _AllEmails is null)
-			return Task.CompletedTask;
+			return;
 
 		_AllEmails.Remove(email);
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.DeleteEmailAsync(email);
+		await _emailRepository.DeleteEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task MarkEmailAsTrashedAsync(Email email)
+	public async Task MarkEmailAsTrashedAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.Trash;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task MarkEmailAsPhishingSpamAsync(Email email)
+	public async Task MarkEmailAsPhishingSpamAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.PreviousMailboxType = email.MailboxType;
 		email.MailboxType = MailboxType.PhishingSpam;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
-	public Task MarkEmailAsNotPhishingSpamAsync(Email email)
+	public async Task MarkEmailAsNotPhishingSpamAsync(Email email)
 	{
 		if (email is null)
-			return Task.CompletedTask;
+			return;
 
 		email.MailboxType = MailboxType.Inbox;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
-			return Task.CompletedTask;
+			return;
 
-		_emailRepository.UpdateEmailAsync(email);
+		await _emailRepository.UpdateEmailAsync(email);
 
-		return Task.CompletedTask;
+		return;
 	}
 
 	#endregion Changement d'états des emails
@@ -639,7 +625,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 
 	public async Task ApplySecurityAnalysisAsync(Email email)
 	{
-		if (email.MailboxType == MailboxType.Trash || email.MailboxType == MailboxType.Sent)
+		if (email.MailboxType == MailboxType.Drafts || email.MailboxType == MailboxType.Trash || email.MailboxType == MailboxType.Sent)
 			return;
 
 		var reasons = new List<string>();

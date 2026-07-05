@@ -5,5 +5,6 @@ public enum ComposeMode
 	New,
 	Reply,
 	ReplyAll,
-	Forward
+	Forward,
+	Edit
 }

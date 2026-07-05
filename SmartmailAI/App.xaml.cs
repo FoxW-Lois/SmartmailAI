@@ -32,8 +32,8 @@ public partial class App : Application
 
 	public static MainWindow MainWindow { get; set; } = null!;
 
-#if !DISABLE_XAML_GENERATED_MAIN && SINGLE_INSTANCE
-		private static bool IsExistWindow { get; set; } = false;
+#if SINGLE_INSTANCE
+	private static bool IsExistWindow { get; set; } = false;
 #endif
 
 #if TRAY_ICON
@@ -60,32 +60,18 @@ public partial class App : Application
 
 	public App()
 	{
-#if !DISABLE_XAML_GENERATED_MAIN && SINGLE_INSTANCE
-				// Check if app is already running
-				if (SystemHelper.IsWindowExist(null, ConstantHelper.AppDisplayName, true))
-				{
-						IsExistWindow = true;
-						Current.Exit();
-						return;
-				}
+#if SINGLE_INSTANCE
+		// Check if app is already running
+		if (SystemHelper.IsWindowExist(null, ConstantHelper.AppDisplayName, true))
+		{
+			IsExistWindow = true;
+			Current.Exit();
+			return;
+		}
 #endif
 
 		// Initialize the component
 		InitializeComponent();
-
-#if !DISABLE_XAML_GENERATED_MAIN
-				// Initialize core helpers
-				LocalSettingsHelper.Initialize();
-
-				// Set up Logging
-				Environment.SetEnvironmentVariable("LOGGING_ROOT", Path.Combine(LocalSettingsHelper.LogDirectory, InfoHelper.GetVersion().ToString()));
-				var configuration = new ConfigurationBuilder()
-						.AddJsonFile("appsettings.json")
-						.Build();
-				Log.Logger = new LoggerConfiguration()
-						.ReadFrom.Configuration(configuration)
-						.CreateLogger();
-#endif
 
 		// Build the host
 		var host = Host
@@ -315,15 +301,11 @@ public partial class App : Application
 
 				services.AddDbContextFactory<AppDbContext_Email>(options =>
 				{
-					var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
-
 					options.UseSqlite($"Data Source={dbPath}");
 				});
 
 				services.AddDbContextFactory<AppDbContext_MLDA>(options =>
 				{
-					var dbPath = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "SmartmailDB.db");
-
 					options.UseSqlite($"Data Source={dbPath}");
 				});
 
@@ -355,11 +337,11 @@ public partial class App : Application
 	{
 		base.OnLaunched(args);
 
-#if !DISABLE_XAML_GENERATED_MAIN && SINGLE_INSTANCE
-				if (IsExistWindow)
-				{
-						return;
-				}
+#if SINGLE_INSTANCE
+		if (IsExistWindow)
+		{
+			return;
+		}
 #endif
 
 		// Ensure the current window is active
@@ -449,7 +431,7 @@ public partial class App : Application
 
 #endif
 
-	public new static async void Exit()
+	public static new async void Exit()
 	{
 		_log.Information("Exiting current application");
 

@@ -80,9 +80,16 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		_mldaRepository = mldaRepository;
 		_dialogService = dialogService;
 
+		// Quand reçoit une demande, change la visibilité de la fenêtre de composition d'email
 		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) =>
 		{
 			IsComposing = !IsComposing;
+		});
+
+		// Quand reçoit une demande, rafraîchit la liste des emails
+		WeakReferenceMessenger.Default.Register<RequestRefreshEmailsMessage>(this, async (r, m) =>
+		{
+			await RefreshAllCategory();
 		});
 
 		// Quand reçoit une demande (ouverture des détails d'un email), envoi l'email connecté à la fenêtre des détails
@@ -97,12 +104,13 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			IsComposeExpanded = !IsComposeExpanded;
 		});
 
+		// Quand reçoit une demande d'ouverture/fermeture de l'interface IA, change la visibilité de l'interface IA
 		WeakReferenceMessenger.Default.Register<RequestCloseIAinterfaceMessage>(this, (r, m) =>
 		{
 			IsAIinterfaceVisible = !IsAIinterfaceVisible;
 		});
 
-		// Quand reçoit une demande de redimmentionnement de l'IAinterface, change l'état d'expansion de l'IAinterface
+		// Quand reçoit une demande de redimmentionnement de l'interface IA, change l'état d'expansion de l'interface IA
 		WeakReferenceMessenger.Default.Register<ToggleExpandIAinterfaceMessage>(this, (_, _) =>
 		{
 			IsAIinterfaceExpanded = !IsAIinterfaceExpanded;
