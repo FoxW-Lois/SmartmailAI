@@ -598,4 +598,10 @@
   <data name="Button_AISummarize.Content" xml:space="preserve">
     <value>Summarize the email</value>
   </data>
+  <data name="AI_Instruction_Translation" xml:space="preserve">
+    <value>I don't want any comments. Just translate this email into English:</value>
+  </data>
+  <data name="AI_Instruction_Summarize" xml:space="preserve">
+    <value>I don't want any comments. Just summarize this email in English:</value>
+  </data>
 </root>

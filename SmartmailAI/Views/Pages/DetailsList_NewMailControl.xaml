@@ -48,10 +48,7 @@
 			</Button>
 
 			<!--  Envoyer un message avec assistance IA  -->
-			<SplitButton
-				Grid.Column="2"
-				Margin="8 0 0 0"
-				Command="{x:Bind ViewModel.AttachFileCommand}">
+			<SplitButton Grid.Column="2" Margin="8 0 0 0">
 				<StackPanel
 					HorizontalAlignment="Center"
 					Orientation="Horizontal"

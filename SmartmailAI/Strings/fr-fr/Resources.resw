@@ -598,4 +598,10 @@
   <data name="Button_AISummarize.Content" xml:space="preserve">
     <value>Résumer l'email</value>
   </data>
+  <data name="AI_Instruction_Translation" xml:space="preserve">
+    <value>Je ne veux aucun commentaire. Traduis uniquement cet email en français :</value>
+  </data>
+  <data name="AI_Instruction_Summarize" xml:space="preserve">
+    <value>Je ne veux aucun commentaire. Résume uniquement cet email en français :</value>
+  </data>
 </root>
