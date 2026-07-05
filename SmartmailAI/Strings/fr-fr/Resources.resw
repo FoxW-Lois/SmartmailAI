@@ -613,4 +613,22 @@
   <data name="AI_Instruction_Correction" xml:space="preserve">
     <value>Je ne veux aucun commentaire de ta part. Corrige uniquement les fautes d'orthographe, de grammaire et d'accords de cet email :</value>
   </data>
+  <data name="AI_Title_Translation" xml:space="preserve">
+    <value>Traduction par IA</value>
+  </data>
+  <data name="Preferred_language" xml:space="preserve">
+    <value>Langue souhaitée :</value>
+  </data>
+  <data name="Writing_instructions" xml:space="preserve">
+    <value>Instructions pour l'écriture :</value>
+  </data>
+  <data name="AI_Title_Writing" xml:space="preserve">
+    <value>Rédaction par IA</value>
+  </data>
+  <data name="AI_Button_Writing" xml:space="preserve">
+    <value>Rédiger</value>
+  </data>
+  <data name="AI_Button_Translate" xml:space="preserve">
+    <value>Traduire</value>
+  </data>
 </root>

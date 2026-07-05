@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -7,7 +6,6 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
-using Windows.Globalization.Fonts;
 using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -25,6 +23,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	private readonly ResourceLoader resourceLoader = new();
 
 	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
+	private string? userInstructions { get; set; } = null;
+
 	public ObservableCollection<MailAttachment> Attachments { get; } = [];
 	public bool HasAttachments => Attachments.Count > 0;
 
@@ -228,13 +228,68 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	[RelayCommand]
 	private async Task AIWritingAsync()
 	{
-		// TODO
+		userInstructions = await _dialogService.ShowTwoButtonDialogWithRichEditboxAsync(resourceLoader.GetString("AI_Title_Writing"),
+			resourceLoader.GetString("Writing_instructions"), resourceLoader.GetString("AI_Button_Writing")) ?? null;
+
+		if (string.IsNullOrWhiteSpace(userInstructions))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Writing") + "\n\n" + userInstructions;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
 	}
 
 	[RelayCommand]
 	private async Task AITranslationAsync()
 	{
-		// TODO
+		if (string.IsNullOrWhiteSpace(Body))
+			return;
+
+		userInstructions = await _dialogService.ShowTwoButtonDialogWithTextboxAsync(resourceLoader.GetString("AI_Title_Translation"),
+			resourceLoader.GetString("Preferred_language"), resourceLoader.GetString("AI_Button_Translate")) ?? null;
+
+		if (string.IsNullOrWhiteSpace(userInstructions))
+			return;
+
+		Conversation = [];
+
+		string prompt = resourceLoader.GetString("AI_Instruction_Translation") + userInstructions + ":\n\n" + Body;
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			string answer = await _aiService.AIRequestAsync(request);
+			Body = answer;
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
 	}
 
 	[RelayCommand]
