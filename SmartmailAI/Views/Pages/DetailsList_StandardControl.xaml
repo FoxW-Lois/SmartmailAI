@@ -13,46 +13,53 @@
 		IsTabStop="True"
 		VerticalScrollMode="Enabled">
 		<StackPanel x:Name="RootStackPannel" HorizontalAlignment="Left">
-			<StackPanel
-				Padding="0 0 0 15"
-				HorizontalAlignment="Stretch"
-				Orientation="Horizontal"
-				Spacing="8">
-				<Button
-					Width="80"
-					Height="40"
-					Command="{x:Bind ViewModel.AITranslationCommand}">
-					<ToolTipService.ToolTip>
-						<ToolTip x:Uid="Button_AITranslation" />
-					</ToolTipService.ToolTip>
-					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-						<FontIcon
-							Margin="8 0 8 0"
-							FontFamily="Segoe MDL2 Assets"
-							Glyph="&#xE99A;" />
-						<FontIcon
-							Margin="8 0 8 0"
-							FontFamily="Segoe MDL2 Assets"
-							Glyph="&#xE774;" />
-					</StackPanel>
-				</Button>
+			<StackPanel Padding="0 0 0 15">
+				<StackPanel
+					HorizontalAlignment="Stretch"
+					Orientation="Horizontal"
+					Spacing="8"
+					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					<Button
+						Width="140"
+						Height="40"
+						Command="{x:Bind ViewModel.AITranslationCommand}">
+						<ToolTipService.ToolTip>
+							<ToolTip x:Uid="Button_AITranslation" />
+						</ToolTipService.ToolTip>
+						<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+							<FontIcon
+								Margin="8 0 8 0"
+								FontFamily="Segoe MDL2 Assets"
+								Glyph="&#xE99A;" />
+							<TextBlock Text="Traduire" />
+							<FontIcon
+								Margin="8 0 8 0"
+								FontFamily="Segoe MDL2 Assets"
+								Glyph="&#xE774;" />
+						</StackPanel>
+					</Button>
 
-				<Button
-					Width="80"
-					Height="40"
-					Command="{x:Bind ViewModel.AISummarizeCommand}">
-					<ToolTipService.ToolTip>
-						<ToolTip x:Uid="Button_AISummarize" />
-					</ToolTipService.ToolTip>
-					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-						<FontIcon
-							Margin="8 0 8 0"
-							FontFamily="Segoe MDL2 Assets"
-							Glyph="&#xE99A;" />
-						<FontIcon
-							Margin="8 0 8 0"
-							FontFamily="Segoe MDL2 Assets"
-							Glyph="&#xE736;" />
+					<Button
+						Width="140"
+						Height="40"
+						Command="{x:Bind ViewModel.AISummarizeCommand}">
+						<ToolTipService.ToolTip>
+							<ToolTip x:Uid="Button_AISummarize" />
+						</ToolTipService.ToolTip>
+						<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+							<FontIcon
+								Margin="8 0 8 0"
+								FontFamily="Segoe MDL2 Assets"
+								Glyph="&#xE99A;" />
+							<TextBlock Text="Résumer" />
+							<FontIcon
+								Margin="8 0 8 0"
+								FontFamily="Segoe MDL2 Assets"
+								Glyph="&#xE736;" />
+						</StackPanel>
+					</Button>
+				</StackPanel>
+
 				<Button
 					Width="110"
 					Height="40"

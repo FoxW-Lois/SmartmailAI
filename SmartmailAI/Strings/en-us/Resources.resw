@@ -630,6 +630,7 @@
   </data>
   <data name="AI_Button_Translate" xml:space="preserve">
     <value>Translate</value>
+  </data>
   <data name="ButtonEdit.Text" xml:space="preserve">
     <value>Edit</value>
   </data>
