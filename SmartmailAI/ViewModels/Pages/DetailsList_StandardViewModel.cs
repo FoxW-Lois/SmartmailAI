@@ -238,7 +238,7 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 	}
 
 	[RelayCommand]
-	private async Task TransferAsync()
+	private async Task ForwardAsync()
 	{
 		if (CurrentEmail is null)
 			return;

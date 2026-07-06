@@ -2,6 +2,7 @@
 	x:Class="SmartmailAI.Views.Pages.DetailsList_StandardControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="using:CommunityToolkit.WinUI.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:models="using:SmartmailAI.Core.Models"
@@ -14,10 +15,11 @@
 		VerticalScrollMode="Enabled">
 		<StackPanel x:Name="RootStackPannel" HorizontalAlignment="Left">
 			<StackPanel Padding="0 0 0 15">
-				<StackPanel
+				<controls:WrapPanel
 					HorizontalAlignment="Stretch"
+					HorizontalSpacing="8"
 					Orientation="Horizontal"
-					Spacing="8"
+					VerticalSpacing="8"
 					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<Button
 						Width="135"
@@ -78,7 +80,7 @@
 								Glyph="&#xE7BA;" />
 						</StackPanel>
 					</Button>
-				</StackPanel>
+				</controls:WrapPanel>
 
 				<Button
 					Width="110"
@@ -98,19 +100,27 @@
 				</Button>
 			</StackPanel>
 
-			<StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
-				<Ellipse Width="36" Height="36">
+			<Grid ColumnSpacing="12">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+
+				<Ellipse
+					Grid.Column="0"
+					Width="36"
+					Height="36">
 					<Ellipse.Fill>
 						<ImageBrush ImageSource="{x:Bind DetailsListMenuItem_Email.SenderProfileImageSource, Mode=OneWay}" Stretch="UniformToFill" />
 					</Ellipse.Fill>
 				</Ellipse>
 				<TextBlock
+					Grid.Column="1"
 					Margin="{StaticResource SmallLeftMargin}"
-					VerticalAlignment="Center"
 					IsTextSelectionEnabled="True"
 					Style="{ThemeResource TitleTextBlockStyle}"
 					Text="{x:Bind DetailsListMenuItem_Email.SenderName, Mode=OneWay}" />
-			</StackPanel>
+			</Grid>
 
 			<StackPanel Padding="0 15 0 0">
 				<TextBlock x:Uid="Email_Details_Sender" Style="{StaticResource DetailSubTitleStyle}" />
@@ -235,7 +245,10 @@
 					ItemsSource="{x:Bind DetailsListMenuItem_Email.Attachments, Mode=OneWay}"
 					Visibility="{x:Bind DetailsListMenuItem_Email.HasAttachments, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
 					<ItemsRepeater.Layout>
-						<StackLayout Orientation="Horizontal" Spacing="8" />
+						<controls:WrapLayout
+							HorizontalSpacing="8"
+							Orientation="Horizontal"
+							VerticalSpacing="8" />
 					</ItemsRepeater.Layout>
 					<ItemsRepeater.ItemTemplate>
 						<DataTemplate x:DataType="models:MailAttachment">
@@ -252,20 +265,15 @@
 					</ItemsRepeater.ItemTemplate>
 				</ItemsRepeater>
 			</StackPanel>
-			<Grid
+			<controls:WrapPanel
 				Margin="-50 50 0 0"
+				Padding="0 0 0 32"
 				HorizontalAlignment="Center"
 				Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-
 				<Button
-					Grid.Column="0"
 					Width="140"
 					Height="40"
-					Margin="58 8 16 32"
+					Margin="58 8 0 0"
 					Command="{x:Bind ViewModel.ReplyCommand}">
 					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 						<FontIcon
@@ -277,11 +285,10 @@
 				</Button>
 
 				<Button
-					Grid.Column="1"
 					Width="140"
 					Height="40"
-					Margin="58 8 16 32"
-					Command="{x:Bind ViewModel.TransferCommand}">
+					Margin="58 8 0 0"
+					Command="{x:Bind ViewModel.ForwardCommand}">
 					<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 						<FontIcon
 							Margin="0 0 8 0"
@@ -290,7 +297,7 @@
 						<TextBlock x:Uid="ButtonForward" />
 					</StackPanel>
 				</Button>
-			</Grid>
+			</controls:WrapPanel>
 		</StackPanel>
 	</ScrollViewer>
 </UserControl>
