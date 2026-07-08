@@ -64,7 +64,7 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 		if (account is null)
 		{
 			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),
-				resourceLoader.GetString("Error_AccountUnfound_Gmail") + resourceLoader.GetString("Error_OrMessage") +
+				resourceLoader.GetString("Error_AccountUnfound_Email") + resourceLoader.GetString("Error_OrMessage") +
 				resourceLoader.GetString("Error_CredentialsInvalidOrExpired_Gmail"));
 			return;
 		}
@@ -213,13 +213,13 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 
 		var body = $"""
 
-			———— Message d'origine ————
+			———— {resourceLoader.GetString("EmailSending_OriginalMessage")} ————
 
-			De : {CurrentEmail.SenderEmail}
-			À : {CurrentEmail.ReceiverEmail}
-			Date : {CurrentEmail.DateSent:g}
-			Objet : {CurrentEmail.Subject}
-			Pièces jointes : {(CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0 ? string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName)) : "Aucune")}
+			{resourceLoader.GetString("EmailSending_From")} {CurrentEmail.SenderEmail}
+			{resourceLoader.GetString("EmailSending_To")} {CurrentEmail.ReceiverEmail}
+			{resourceLoader.GetString("EmailSending_Date")} {CurrentEmail.DateSent:g}
+			{resourceLoader.GetString("EmailSending_Subject")} {CurrentEmail.Subject}
+			{resourceLoader.GetString("EmailSending_Attachments")} {(CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0 ? string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName)) : resourceLoader.GetString("EmailSending_None"))}
 
 			{CurrentEmail.Content}
 			"""
@@ -259,13 +259,13 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 
 		var body = $"""
 
-			———— Message transféré ————
+			———— {resourceLoader.GetString("EmailSending_ForwardMessage")} ————
 
-			De : {CurrentEmail.SenderEmail}
-			À : {CurrentEmail.ReceiverEmail}
-			Date : {CurrentEmail.DateSent:g}
-			Objet : {CurrentEmail.Subject}
-			Pièce(s) jointe(s) : {(CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0 ? string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName)) : "Aucune")}
+			{resourceLoader.GetString("EmailSending_From")} {CurrentEmail.SenderEmail}
+			{resourceLoader.GetString("EmailSending_To")} {CurrentEmail.ReceiverEmail}
+			{resourceLoader.GetString("EmailSending_Date")} {CurrentEmail.DateSent:g}
+			{resourceLoader.GetString("EmailSending_Subject")} {CurrentEmail.Subject}
+			{resourceLoader.GetString("EmailSending_Attachments")} {(CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0 ? string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName)) : resourceLoader.GetString("EmailSending_None"))}
 
 			{CurrentEmail.Content}
 			"""

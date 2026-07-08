@@ -50,7 +50,8 @@ public static class AppLanguageHelper
 			// TODO: Add the languages supported by the unpackaged app
 			_manifestLanguages =
 			[
-				"en-US"
+				"en-US",
+				"fr-FR"
 			];
 		}
 

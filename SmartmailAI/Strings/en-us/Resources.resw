@@ -413,7 +413,7 @@
     <value>Delete</value>
   </data>
   <data name="ManagementAddress_DateInfo.Text" xml:space="preserve">
-    <value>Address connected on:</value>
+    <value>Address connected on :</value>
   </data>
   <data name="Error_EmailAccount_AlreadyExist" xml:space="preserve">
     <value>The email address you are trying to add already exists.</value>
@@ -602,13 +602,13 @@
     <value>I don't want any comments from you. Just translate this email into </value>
   </data>
   <data name="AI_Instruction_Summarize" xml:space="preserve">
-    <value>I don't want any comments from you. Just summarize this email in English:</value>
+    <value>I don't want any comments from you. Just summarize this email in English :</value>
   </data>
   <data name="AI_Instruction_Writing" xml:space="preserve">
-    <value>I don't want any comments from you. Just write an email based on these instructions and requirements:</value>
+    <value>I don't want any comments from you. Just write an email based on these instructions and requirements :</value>
   </data>
   <data name="AI_Instruction_Rephrasing" xml:space="preserve">
-    <value>I don't want any comments from you. Just rewrite this email:</value>
+    <value>I don't want any comments from you. Just rewrite this email :</value>
   </data>
   <data name="AI_Instruction_Correction" xml:space="preserve">
     <value>I don't want any comments from you. Just correct the spelling, grammar, and agreement errors in this email:</value>
@@ -617,10 +617,10 @@
     <value>Translation by AI</value>
   </data>
   <data name="Preferred_language" xml:space="preserve">
-    <value>Preferred language:</value>
+    <value>Preferred language :</value>
   </data>
   <data name="Writing_instructions" xml:space="preserve">
-    <value>Writing instructions:</value>
+    <value>Writing instructions :</value>
   </data>
   <data name="AI_Title_Writing" xml:space="preserve">
     <value>Writing by AI</value>
@@ -674,15 +674,39 @@
     <value>Please remain neutral and objective when evaluating this request. Does this email seem fraudulent, suspicious, like a phishing attempt, or spam to you? :</value>
   </data>
   <data name="AI_Instruction_PartSubject" xml:space="preserve">
-    <value>Subject: </value>
+    <value>Subject : </value>
   </data>
   <data name="AI_Instruction_PartFrom" xml:space="preserve">
-    <value>From: </value>
+    <value>From : </value>
   </data>
   <data name="AI_Instruction_PartBody" xml:space="preserve">
-    <value>Body: </value>
+    <value>Body : </value>
   </data>
   <data name="AI_Instruction_PartAttachments" xml:space="preserve">
-    <value>Attachments: </value>
+    <value>Attachment(s) : </value>
+  </data>
+  <data name="EmailSending_OriginalMessage" xml:space="preserve">
+    <value>Original message</value>
+  </data>
+  <data name="EmailSending_From" xml:space="preserve">
+    <value>From :</value>
+  </data>
+  <data name="EmailSending_To" xml:space="preserve">
+    <value>To :</value>
+  </data>
+  <data name="EmailSending_Date" xml:space="preserve">
+    <value>Date :</value>
+  </data>
+  <data name="EmailSending_Subject" xml:space="preserve">
+    <value>Subject :</value>
+  </data>
+  <data name="EmailSending_Attachments" xml:space="preserve">
+    <value>Attachment(s) :</value>
+  </data>
+  <data name="EmailSending_ForwardMessage" xml:space="preserve">
+    <value>Forwarded message</value>
+  </data>
+  <data name="EmailSending_None" xml:space="preserve">
+    <value>None</value>
   </data>
 </root>

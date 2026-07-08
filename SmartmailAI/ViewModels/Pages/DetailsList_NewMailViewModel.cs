@@ -157,7 +157,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 		if (credential is null)
 		{
-			await ShowErrorAsync("Error_AccountUnfound_Gmail");
+			await ShowErrorAsync("Error_AccountUnfound_Email");
 			return;
 		}
 
