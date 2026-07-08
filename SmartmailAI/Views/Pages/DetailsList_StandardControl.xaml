@@ -240,17 +240,19 @@
 					Margin="{StaticResource LargeTopMargin}"
 					Style="{StaticResource DetailSubTitleStyle}"
 					Visibility="{x:Bind DetailsListMenuItem_Email.HasAttachments, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
-				<ItemsRepeater
+				<ItemsControl
 					Margin="{StaticResource MediumBottomMargin}"
 					ItemsSource="{x:Bind DetailsListMenuItem_Email.Attachments, Mode=OneWay}"
 					Visibility="{x:Bind DetailsListMenuItem_Email.HasAttachments, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-					<ItemsRepeater.Layout>
-						<controls:WrapLayout
-							HorizontalSpacing="8"
-							Orientation="Horizontal"
-							VerticalSpacing="8" />
-					</ItemsRepeater.Layout>
-					<ItemsRepeater.ItemTemplate>
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<controls:WrapPanel
+								HorizontalSpacing="8"
+								Orientation="Horizontal"
+								VerticalSpacing="8" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
 						<DataTemplate x:DataType="models:MailAttachment">
 							<Button Click="OnAttachmentClick" Tag="{x:Bind}">
 								<StackPanel Orientation="Horizontal" Spacing="6">
@@ -262,8 +264,8 @@
 								</StackPanel>
 							</Button>
 						</DataTemplate>
-					</ItemsRepeater.ItemTemplate>
-				</ItemsRepeater>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 			</StackPanel>
 			<controls:WrapPanel
 				Margin="-50 50 0 0"
