@@ -478,8 +478,8 @@
   <data name="Error_Title" xml:space="preserve">
     <value>Error</value>
   </data>
-  <data name="Error_AccountUnfound_Gmail" xml:space="preserve">
-    <value>Gmail account unfound.</value>
+  <data name="Error_AccountUnfound_Email" xml:space="preserve">
+    <value>Email/Gmail account unfound.</value>
   </data>
   <data name="Error_AccountUnfound_Other" xml:space="preserve">
     <value>Email account (via SMTP/IMAP) unfound.</value>

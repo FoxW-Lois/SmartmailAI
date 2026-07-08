@@ -33,7 +33,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 
 	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
 		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
-    IEmailRepository emailsRepository, IEmailsService emailsService, I_AIService aiService, IDialogService dialogService)
+	IEmailRepository emailsRepository, IEmailsService emailsService, I_AIService aiService, IDialogService dialogService)
 	{
 		_addressesService = addressesService;
 		_gmailApiService = gmailApiService;
@@ -54,6 +54,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 			To = m.ReceiverEmail ?? string.Empty;
 			Subject = m.Subject ?? string.Empty;
 			Body = m.Body ?? string.Empty;
+			_emailOwner = m.EmailOwner;
 		});
 
 		Attachments.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAttachments));
@@ -62,7 +63,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	[ObservableProperty]
 	private ComposeMode _composeMode;
 
-	private string? _guid;
+	private string? _guid, _emailOwner;
 
 	private string _from = string.Empty;
 
@@ -100,11 +101,16 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		if (string.IsNullOrWhiteSpace(To) || string.IsNullOrWhiteSpace(Subject))
 			return;
 
-		var account = await _addressesService.GetAccountByEmailAsync(_from);
+		AccountMailBase? account;
+
+		if (_emailOwner is not null && ComposeMode is ComposeMode.Forward or ComposeMode.Reply or ComposeMode.ReplyAll && _from != _emailOwner)
+			_from = _emailOwner;
+
+		account = await _addressesService.GetAccountByEmailAsync(_from);
 
 		if (account is null)
 		{
-			await ShowErrorAsync("Error_AccountUnfound_Gmail");
+			await ShowErrorAsync("Error_AccountUnfound_Email");
 			return;
 		}
 

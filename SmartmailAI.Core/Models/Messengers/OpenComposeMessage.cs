@@ -13,4 +13,6 @@ public sealed class OpenComposeMessage
 	public string? Subject { get; set; }
 
 	public string? Body { get; set; }
+
+	public string? EmailOwner { get; set; }
 }

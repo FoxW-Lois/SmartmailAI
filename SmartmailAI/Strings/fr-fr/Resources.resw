@@ -478,8 +478,8 @@
   <data name="Error_Title" xml:space="preserve">
     <value>Erreur</value>
   </data>
-  <data name="Error_AccountUnfound_Gmail" xml:space="preserve">
-    <value>Compte Gmail introuvable.</value>
+  <data name="Error_AccountUnfound_Email" xml:space="preserve">
+    <value>Compte Email/Gmail introuvable.</value>
   </data>
   <data name="Error_AccountUnfound_Other" xml:space="preserve">
     <value>Compte Email (via SMTP/IMAP) introuvable.</value>

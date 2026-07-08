@@ -219,18 +219,30 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			À : {CurrentEmail.ReceiverEmail}
 			Date : {CurrentEmail.DateSent:g}
 			Objet : {CurrentEmail.Subject}
+			Pièces jointes : {(CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0 ? string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName)) : "Aucune")}
 
 			{CurrentEmail.Content}
 			"""
 		;
 
+		string nextSenderEmail = CurrentEmail.ReceiverEmail!;
+		string nextReceiverEmail = CurrentEmail.SenderEmail;
+		string ownerEmail = CurrentEmail.Owner;
+
+		if (ownerEmail == nextReceiverEmail)
+		{
+			nextSenderEmail = CurrentEmail.SenderEmail;
+			nextReceiverEmail = CurrentEmail.ReceiverEmail!;
+		}
+
 		WeakReferenceMessenger.Default.Send(new OpenComposeMessage
 		{
 			Mode = ComposeMode.Reply,
-			SenderEmail = CurrentEmail.ReceiverEmail!,
-			ReceiverEmail = CurrentEmail.SenderEmail,
+			SenderEmail = nextSenderEmail!,
+			ReceiverEmail = nextReceiverEmail,
 			Subject = subject,
-			Body = body
+			Body = body,
+			EmailOwner = ownerEmail
 		});
 
 		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
@@ -253,6 +265,7 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			À : {CurrentEmail.ReceiverEmail}
 			Date : {CurrentEmail.DateSent:g}
 			Objet : {CurrentEmail.Subject}
+			Pièce(s) jointe(s) : {(CurrentEmail.Attachments is not null && CurrentEmail.Attachments.Count > 0 ? string.Join(", ", CurrentEmail.Attachments.Select(a => a.FileName)) : "Aucune")}
 
 			{CurrentEmail.Content}
 			"""
@@ -263,7 +276,8 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			Mode = ComposeMode.Forward,
 			SenderEmail = CurrentEmail.ReceiverEmail!,
 			Subject = subject,
-			Body = body
+			Body = body,
+			EmailOwner = CurrentEmail.Owner
 		});
 
 		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
