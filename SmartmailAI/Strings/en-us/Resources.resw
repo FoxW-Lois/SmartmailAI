@@ -721,4 +721,10 @@
   <data name="AI_Button_Research" xml:space="preserve">
     <value>Research</value>
   </data>
+  <data name="Dialog_MarkAsRead_Confirm_part1" xml:space="preserve">
+    <value>You are about to mark as read all emails in </value>
+  </data>
+  <data name="Dialog_MarkAsRead_Confirm_part2" xml:space="preserve">
+    <value> folder. Do you want to confirm this action?</value>
+  </data>
 </root>

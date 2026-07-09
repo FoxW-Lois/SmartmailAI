@@ -721,4 +721,10 @@
   <data name="AI_Button_Research" xml:space="preserve">
     <value>Rechercher</value>
   </data>
+  <data name="Dialog_MarkAsRead_Confirm_part1" xml:space="preserve">
+    <value>Vous vous apprêtez à marquer comme lu tous les Emails du dossier </value>
+  </data>
+  <data name="Dialog_MarkAsRead_Confirm_part2" xml:space="preserve">
+    <value>. Confirmez-vous cette action ?</value>
+  </data>
 </root>

@@ -51,6 +51,9 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private bool _isValideCategory = false;
 
 	[ObservableProperty]
+	private bool _isUnreadCategory = false;
+
+	[ObservableProperty]
 	private bool _isAIinterfaceVisible = false;
 
 	[ObservableProperty]
@@ -75,6 +78,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			return;
 
 		IsValideCategory = SelectedCategory.MailboxType == MailboxType.Trash || SelectedCategory.MailboxType == MailboxType.PhishingSpam;
+		IsUnreadCategory = SelectedCategory.MailboxType == MailboxType.Unread;
 	}
 
 	public DetailsList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository,
@@ -248,6 +252,28 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		foreach (var item in emailList)
 		{
 			await DeleteItemAsync(item);
+		}
+
+		await RefreshAllCategory();
+	}
+
+	[RelayCommand]
+	private async Task MarkAsReadAllMailsFromCurrentCategoryAsync()
+	{
+		if (SelectedCategory is null) return;
+
+		var dialogResult = await _dialogService.ShowTwoButtonDialogAsync(resourceLoader.GetString("Dialog_Confirmation"),
+			String.Concat(resourceLoader.GetString("Dialog_MarkAsRead_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_MarkAsRead_Confirm_part2")),
+			resourceLoader.GetString("Dialog_Agree"), resourceLoader.GetString("Dialog_Cancel"));
+
+		if (dialogResult != WidgetDialogResult.Left)
+			return;
+
+		var emailList = SelectedCategory.Items;
+
+		foreach (var item in emailList)
+		{
+			await _emailsService.MarkEmailAsReadAsync(item); ;
 		}
 
 		await RefreshAllCategory();

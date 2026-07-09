@@ -389,6 +389,17 @@
 				<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;" />
 			</StackPanel>
 		</Button>
+		<Button
+			Grid.Row="0"
+			Width="41"
+			Height="40"
+			Margin="272 70 0 -70"
+			Command="{x:Bind ViewModel.MarkAsReadAllMailsFromCurrentCategoryCommand}"
+			Visibility="{x:Bind ViewModel.IsUnreadCategory, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+				<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73E;" />
+			</StackPanel>
+		</Button>
 		<Grid
 			x:Name="ComposeOverlay"
 			Grid.Row="1"
