@@ -18,7 +18,7 @@
   <Identity
     Name="SmartmailAI"
     Publisher="CN=FoxW-Lois"
-    Version="1.1.2.1" />
+    Version="1.1.3.1" />
     
   <mp:PhoneIdentity PhoneProductId="8f256a41-5ee3-4218-97c6-12e1f8d5c234" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     

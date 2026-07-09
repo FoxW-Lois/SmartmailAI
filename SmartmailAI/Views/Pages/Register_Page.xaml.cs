@@ -20,7 +20,14 @@ public sealed partial class Register_Page : Page
 		bool success = await ViewModel.RegisterAsync(LoginBox.Text, PhoneNumberBox.Text, PasswordBox.Password, ConfirmPasswordBox.Password);
 
 		if (success)
+		{
 			Frame.Navigate(typeof(Login_Page));
+
+			LoginBox.Text = string.Empty;
+			PhoneNumberBox.Text = string.Empty;
+			PasswordBox.Password = string.Empty;
+			ConfirmPasswordBox.Password = string.Empty;
+		}
 
 		// Pas besoin de gérer le else avec l'affichage d'un message d'erreur, car le ViewModel s'en occupe déjà avec ErrorMessage.
 	}

@@ -83,6 +83,8 @@ public partial class Register_ViewModel(IAuthService authService, ILocalSessionS
 			return false;
 		}
 
+		ErrorMessage = string.Empty;
+
 		return true;
 	}
 }

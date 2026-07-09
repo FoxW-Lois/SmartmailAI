@@ -29,6 +29,8 @@ public sealed partial class Login_Page : Page
 			Frame.Navigate(typeof(Home_Page));
 			// Nettoie l'historique de navigation
 			Frame.BackStack.Clear();
+
+			PasswordBox.Password = string.Empty;
 		}
 	}
 

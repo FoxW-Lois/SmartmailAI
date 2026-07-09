@@ -38,8 +38,8 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 			return null;
 		}
 
-		// TODO: En dèv/debug imposer une limite basse de 3 emails, sinon 1000 à 2000 emails en prod
 		const int NumMails = 3;
+		// TODO: En dèv/debug imposer une limite basse de 3 emails, sinon 1000 à 3000 emails en prod
 
 		var lastConnection = await GetCurrentAccountLastConnectionAsync();
 

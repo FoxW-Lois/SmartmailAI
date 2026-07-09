@@ -64,6 +64,9 @@ public partial class Login_ViewModel(IAuthService authService, IAddressesService
 
 		_localSessionService.CreateSession();
 
+		Login = string.Empty;
+		ErrorMessage = string.Empty;
+
 		return (true, false, null);
 	}
 }

@@ -184,7 +184,7 @@
     <value>Montrer</value>
   </data>
   <data name="Settings_RunStartup_Expander.Description" xml:space="preserve">
-    <value>Lancer automatiquement l'application lorsque vous vous déverrouillez votre Windows</value>
+    <value>Lancer automatiquement l'application lorsque vous déverrouillez votre ordinateur</value>
   </data>
   <data name="Settings_RunStartup_Expander.Header" xml:space="preserve">
     <value>Exécuter au démarrage</value>
