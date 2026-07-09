@@ -709,4 +709,16 @@
   <data name="EmailSending_None" xml:space="preserve">
     <value>Aucune</value>
   </data>
+  <data name="Filter_With_AI.Text" xml:space="preserve">
+    <value>Rechercher avec l'IA</value>
+  </data>
+  <data name="AI_Title_Search" xml:space="preserve">
+    <value>Recherche par IA</value>
+  </data>
+  <data name="Search_instructions" xml:space="preserve">
+    <value>Instructions de recherche :</value>
+  </data>
+  <data name="AI_Button_Research" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
 </root>

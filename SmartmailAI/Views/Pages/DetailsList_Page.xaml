@@ -277,11 +277,62 @@
 				<!--  Menu déroulant du bouton  -->
 				<SplitButton.Flyout>
 					<MenuFlyout>
-						<MenuFlyoutItem x:Uid="Filter_Date_Before" Command="{x:Bind ViewModel.DateBeforeFilterCommand}" />
-						<MenuFlyoutItem x:Uid="Filter_Date_After" Command="{x:Bind ViewModel.DateAfterFilterCommand}" />
+						<MenuFlyoutItem
+							x:Uid="Filter_Date_Before"
+							Command="{x:Bind ViewModel.DateBeforeFilterCommand}"
+							Foreground="CornflowerBlue">
+							<MenuFlyoutItem.Icon>
+								<FontIcon
+									Margin="0 0 0 0"
+									FontFamily="Segoe MDL2 Assets"
+									Glyph="&#xE787;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+						<MenuFlyoutItem
+							x:Uid="Filter_Date_After"
+							Command="{x:Bind ViewModel.DateAfterFilterCommand}"
+							Foreground="LimeGreen">
+							<MenuFlyoutItem.Icon>
+								<FontIcon
+									Margin="0 0 0 0"
+									FontFamily="Segoe MDL2 Assets"
+									Glyph="&#xE787;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+
 						<MenuFlyoutSeparator />
-						<MenuFlyoutItem x:Uid="Filter_Attachments_Yes" Command="{x:Bind ViewModel.AttachmentYesFilterCommand}" />
-						<MenuFlyoutItem x:Uid="Filter_Attachments_No" Command="{x:Bind ViewModel.AttachmentNoFilterCommand}" />
+						<MenuFlyoutItem
+							x:Uid="Filter_Attachments_Yes"
+							Command="{x:Bind ViewModel.AttachmentYesFilterCommand}"
+							Foreground="MediumPurple">
+							<MenuFlyoutItem.Icon>
+								<FontIcon
+									Margin="0 0 0 0"
+									FontFamily="Segoe MDL2 Assets"
+									Glyph="&#xE723;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+						<MenuFlyoutItem
+							x:Uid="Filter_Attachments_No"
+							Command="{x:Bind ViewModel.AttachmentNoFilterCommand}"
+							Foreground="OrangeRed">
+							<MenuFlyoutItem.Icon>
+								<FontIcon
+									Margin="0 0 0 0"
+									FontFamily="Segoe MDL2 Assets"
+									Glyph="&#xE723;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
+
+						<MenuFlyoutSeparator />
+						<MenuFlyoutItem x:Uid="Filter_With_AI" Command="{x:Bind ViewModel.AI_FilterCommand}">
+							<MenuFlyoutItem.Icon>
+								<FontIcon
+									Margin="0 0 0 0"
+									FontFamily="Segoe MDL2 Assets"
+									Glyph="&#xE99A;" />
+							</MenuFlyoutItem.Icon>
+						</MenuFlyoutItem>
 					</MenuFlyout>
 				</SplitButton.Flyout>
 			</SplitButton>

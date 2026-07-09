@@ -202,6 +202,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"), resourceLoader.GetString(resourceKey));
 	}
 
+	#region Commandes gérant l'état de la fenêtre de composition
+
 	[RelayCommand]
 	private void Discard()
 	{
@@ -253,6 +255,8 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		IsCcVisible = false;
 		IsBccVisible = false;
 	}
+
+	#endregion Commandes gérant l'état de la fenêtre de composition
 
 	#region Commandes d'assistance IA (écriture d'email)
 

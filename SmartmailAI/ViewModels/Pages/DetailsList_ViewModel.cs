@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 using SmartmailAI.Core.Models.Security;
 using Windows.ApplicationModel.Resources;
@@ -14,8 +15,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	private readonly IEmailsService _emailsService;
 	private readonly IEmailRepository _emailRepository;
 	private readonly IMLDA_Repository _mldaRepository;
+	private readonly I_AIService _aiService;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
 
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
@@ -73,11 +77,13 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		IsValideCategory = SelectedCategory.MailboxType == MailboxType.Trash || SelectedCategory.MailboxType == MailboxType.PhishingSpam;
 	}
 
-	public DetailsList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository, IDialogService dialogService)
+	public DetailsList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository,
+		I_AIService aiService, IDialogService dialogService)
 	{
 		_emailsService = emailsService;
 		_emailRepository = emailRepository;
 		_mldaRepository = mldaRepository;
+		_aiService = aiService;
 		_dialogService = dialogService;
 
 		// Quand reçoit une demande, change la visibilité de la fenêtre de composition d'email
@@ -249,12 +255,45 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion Commandes boutons interface
 
+	#region Commandes d'assistance IA
+
 	// Affiche/masque l'interface de l'assistant IA
 	[RelayCommand]
 	private async Task SubmitAIAsync()
 	{
 		IsAIinterfaceVisible = !IsAIinterfaceVisible;
 	}
+
+	[RelayCommand]
+	private async Task AI_FilterAsync()
+	{
+		string? prompt = await _dialogService.ShowTwoButtonDialogWithRichEditboxAsync(resourceLoader.GetString("AI_Title_Search"),
+			resourceLoader.GetString("Search_instructions"), resourceLoader.GetString("AI_Button_Research")) ?? null;
+
+		if (string.IsNullOrWhiteSpace(prompt))
+			return;
+
+		Conversation = [];
+
+		Conversation.Add(new AIMessage()
+		{
+			Content = prompt,
+			IsUser = true
+		});
+
+		object request = await _aiService.AIConversationAsync(Conversation);
+
+		try
+		{
+			SearchText = await _aiService.AIRequestAsync(request);
+		}
+		catch (Exception)
+		{
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+		}
+	}
+
+	#endregion Commandes d'assistance IA
 
 	#region Commandes de filtrage
 
