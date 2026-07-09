@@ -8,14 +8,15 @@
   
 ## Installation utilisateur
   L'idée est de récupérer le fichier package d'installation Windows (x64) **.msix** et lancer. Pour le récupérer/en obtenir un, il est nécessaire de cloner ce repository, et suivre la documentation *Comment build un fichier d’installation Windows 10.11 (.NET 9 &+, WinUI 3...).doxc* disponible dans le dossier "/Documentation".
+  Pour exploiter toutes les fonctionnalités du logiciel il est indispensable de télécharger et de lancer LM Studio, télécharger le modèle ***mistralai/ministral-3-3b***, activer le ***mode développeur***, et lancer le modèle dans l'onglet "***Developper*** > ***Local Server***"
 
 ## Installation (dèv/lancement en débug)
   Afin de lancer le projet en débug, build un package package d'installation, ou bien encore continuer le développement, il est nécessaire de réaliser cette étape.
 	Pour cela il faut un PC Windows 10/11 (11 x64 bits de préférence), installer Visual Studio 2026 Community ***https://visualstudio.microsoft.com/insiders/***. Une fois ceci, il faudra également installer la charge de travail **Développement d'applications WinUI**.
 
 ## Utilisation
-  - Une fois l'application lancée, il est nécessaire de s'authentifier afin d'accéder aux diverses fonctionnalités du projet. Soit on choisit de s'inscrire (création d'un compte qui à l'avenir sera par défaut désactivé, en attendant qu'il soit validé par un administrateur, lui-même ayant vérifié la licence du dit utilisateur), soit on choisit de se connecter. Actuellement le compte de test est **Bob** et a pour mot de passe **123**.  
-  - Il est possible de changer de langue, de theme, de colorscheme ou encore d'activer la double authentification avec Google Authenticator en passant par la page des **paramètres**.  
+  - Une fois l'application lancée, il est nécessaire de s'authentifier afin d'accéder aux diverses fonctionnalités du projet. Soit on choisit de s'inscrire (création d'un compte qui à l'avenir sera par défaut désactivé, en attendant qu'il soit validé par un administrateur, lui-même ayant vérifié la licence du dit utilisateur), soit on choisit de se connecter.
+  - Il est possible de changer la langue, le theme, le colorscheme ou encore d'activer la double authentification avec Google Authenticator en passant par la page des **paramètres**.  
   - La page **Liste de détails** est une page utile au développement et gère l'affichage, l'envoi, la modification d'état, le filtrage et le rangement des emails. Dans cette version de développement, les emails sont fictifs et les (vrais) emails récupérés par la connexion d'une adresse email au projet a été désactivée (lignes commentées dans le fichier *EmailsService.cs*).  
   - La page **Ajouter une adresse** permet de connecter plusieurs adresses email des utilisateurs au projet. *Actuellement* il est possible de connecter tout type d'adresses *mais uniquement* en passant par la méthode de connexion de Google. La connexion par les services de Microsoft et par les services SMTP/IMAP/POP3 sera mise en place prochainement.  
   - La page **Gérer les adresses** donne la possibilité de supprimer les adresses emails (et leurs credendials) connectées au projet ainsi que tous les emails récupérés, liés à celles-ci.
@@ -42,10 +43,11 @@ Pour qu'un utilisateur puisse se connecter, il faut qu'une licence soit disponib
     - Emails (messages) : l'Adresse Email et le Nom de l'envoyeur et du réceptionnaire, les Cc et Cci, l'Objet, le Contenu et si il y en a les Pièces Jointes associées
   - Chiffrement SSL/TLS (même chose, juste 2 appellations) lors de l'envoi et de la réception d'Emails
   - La clé de chiffrement et la session (permettant de rester connecté un certain temps à l'application après fermeture) sont toutes deux chiffrées et stockées de manière sécurisé via le Windows DPAPI (impossible de déchiffrer si l'utilisateur ayant émis la clé et la session n'a pas déverouillé sa machine avec la bonne session utilisateur)
+  - Le modèle d'IA (LLM) Mistral tourne purement en local, ce qui signifie qu'aucune donnée n'est envoyée ou stockée sur un serveur tiers. De plus le prompt system bride suffisament le modèle afin qu'il ne dévoile aucune données autres que celles fournies par l'utilisateur.
   
 ## Équipe
-  - Nicolas Thomas
   - Loïs Pujol-Toureillat
-  - Alexandre Ribes
+  - Nicolas Thomas
   - Matis Missana
   - Tom Grout
+  - Alexandre Ribes
