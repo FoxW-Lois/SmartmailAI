@@ -26,7 +26,8 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 	private readonly IDnsSecurityService _dnsSecurityService = dnsSecurityService;
 	private readonly IMLDA_Repository _mldaRepository = mldaRepository;
 
-	private readonly List<Email> hardcodedEmails = [
+	// TODO: Bloc à décommenter pour l'utilisation de données statiques ↓
+	/*private readonly List<Email> hardcodedEmails = [
 	// ------ Inbox Emails ------
 	new Email
 	{
@@ -338,19 +339,19 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		MailboxType = MailboxType.Inbox,
 		IsRead = false
 	}
-];
+];*/
 
 	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null)
 	{
-		//if (addressAccount is null)
-		//	_AllEmails = await _emailRepository.GetAllEmailsAsync();
-		//else
-		//	_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
+		if (addressAccount is null)
+			_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		else
+			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
 
 		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter ces 3 là ↓
-		_AllEmails = hardcodedEmails;
-		foreach (var email in _AllEmails)
-			await ApplySecurityAnalysisAsync(email);
+		//_AllEmails = hardcodedEmails;
+		//foreach (var email in _AllEmails)
+		//	await ApplySecurityAnalysisAsync(email);
 
 		var categories = new List<MailboxCategory>
 		{
@@ -427,13 +428,13 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 
 	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType, string? addressAccount = null)
 	{
-		//if (addressAccount is null)
-		//	_AllEmails = await _emailRepository.GetAllEmailsAsync();
-		//else
-		//	_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
+		if (addressAccount is null)
+			_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		else
+			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
 
 		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter celle-là ↓
-		_AllEmails = hardcodedEmails;
+		//_AllEmails = hardcodedEmails;
 
 		var emails = mailboxType switch
 		{
