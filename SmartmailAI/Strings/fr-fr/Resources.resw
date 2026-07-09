@@ -727,4 +727,13 @@
   <data name="Dialog_MarkAsRead_Confirm_part2" xml:space="preserve">
     <value>. Confirmez-vous cette action ?</value>
   </data>
+  <data name="Error_AI_Unavailable" xml:space="preserve">
+    <value>Une erreur s'est produite. L'IA semble être indisponible/injoignable. 
+
+Vérifiez que vous avez bien lancé LM Studio, téléchargé le modèle mistralai/ministral-3-3b, activé le mode développeur, et lancé le modèle dans l'onglet "Developper &gt; Local Server". 
+
+Il est possible qu'un simple redémarrage de SmartmailAI ou de LM Studio soit nécessaire pour corriger le problème.
+
+Si malgré cela le problème persiste, contactez en priorité votre administrateur système, puis si besoin, le développeur de la solution.</value>
+  </data>
 </root>

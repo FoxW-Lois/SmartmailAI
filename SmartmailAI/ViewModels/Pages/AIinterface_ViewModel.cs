@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 
@@ -10,6 +11,7 @@ namespace SmartmailAI.ViewModels.Pages;
 public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableObject
 {
 	private readonly I_AIService _aiService = aiService;
+	private readonly ResourceLoader resourceLoader = new();
 
 	public ObservableCollection<AIMessage> Conversation { get; } = [];
 
@@ -67,7 +69,14 @@ public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableOb
 		}
 		catch (Exception)
 		{
-			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement
+			// En cas d'échec de l'IA (indisponible ou erreur), on ignore silencieusement l'exception et on ajoute à la conversation
+			// un message d'erreur
+
+			Conversation.Add(new AIMessage()
+			{
+				Content = resourceLoader.GetString("Error_AI_Unavailable"),
+				IsUser = false
+			});
 		}
 	}
 

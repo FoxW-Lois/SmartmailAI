@@ -727,4 +727,13 @@
   <data name="Dialog_MarkAsRead_Confirm_part2" xml:space="preserve">
     <value> folder. Do you want to confirm this action?</value>
   </data>
+  <data name="Error_AI_Unavailable" xml:space="preserve">
+    <value>An error has occurred. The AI appears to be unavailable or unreachable. 
+
+Verify that you have launched LM Studio, downloaded the mistralai/ministral-3-3b model, enabled developer mode, and launched the model in the "Developer &gt; Local Server" tab. 
+
+You may need to simply restart SmartmailAI or LM Studio to resolve the issue.
+
+If the problem persists, contact your system administrator first, and then, if necessary, the solution's developer.</value>
+  </data>
 </root>
