@@ -106,6 +106,7 @@ public partial class MailboxCategory : ObservableObject
 
 			filteredMails = filteredMails.Where(mail =>
 				(mail.SenderName?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
+				(mail.ReceiverName?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
 				(mail.Subject?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
 				(mail.Content?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ||
 				(mail.Attachments?.Any(a => a.FileName?.Contains(lower, StringComparison.OrdinalIgnoreCase) ?? false) ?? false)
