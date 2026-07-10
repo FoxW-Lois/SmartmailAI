@@ -134,7 +134,6 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			OnPropertyChanged(nameof(ComposeMaxHeight));
 
 			OnPropertyChanged(nameof(AIinterfaceMaxWidth));
-			OnPropertyChanged(nameof(AIinterfaceMaxHeight));
 		};
 	}
 
@@ -200,12 +199,10 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	// Ne pas mettre AIinterfaceMaxWidth et AIinterfaceMaxHeight en static car utilisés dans le .xaml
 
 	public double AIinterfaceMaxWidth => IsAIinterfaceExpanded ? WindowWidth * 0.65 : WindowWidth * 0.23;
-	public double AIinterfaceMaxHeight => WindowHeight * 0.90;
 
 	partial void OnIsAIinterfaceExpandedChanged(bool value)
 	{
 		OnPropertyChanged(nameof(AIinterfaceMaxWidth));
-		OnPropertyChanged(nameof(AIinterfaceMaxHeight));
 	}
 
 	#endregion Gestion de la taille de l'AIinterfaceOverlay

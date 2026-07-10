@@ -414,20 +414,18 @@
 			Visibility="{x:Bind ViewModel.IsComposing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
 			<views:DetailsList_NewMailControl />
 		</Grid>
-		<StackPanel
+		<Grid
 			x:Name="AIinterfaceOverlay"
 			Grid.Row="1"
 			Width="{Binding ElementName=ListDetailsViewControl, Path=ActualWidth}"
-			Height="{Binding ElementName=ListDetailsViewControl, Path=ActualHeight}"
 			MaxWidth="{x:Bind ViewModel.AIinterfaceMaxWidth, Mode=OneWay}"
-			MaxHeight="{x:Bind ViewModel.AIinterfaceMaxHeight, Mode=OneWay}"
 			Margin="0 0 -5 0"
 			HorizontalAlignment="Right"
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 			CornerRadius="15"
 			Visibility="{x:Bind ViewModel.IsAIinterfaceVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
 			<views:AIinterface_Control />
-		</StackPanel>
+		</Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState>
