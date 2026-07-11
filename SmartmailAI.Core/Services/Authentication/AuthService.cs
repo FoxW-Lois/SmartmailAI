@@ -90,7 +90,8 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			TwoFactorEnabled = false,
 			// TODO: En production = mettre Enabled en false => désactivation par défaut des nouveaux comptes créés, activation à la main par l'admin
 			Enabled = true,
-			LastConnection = DateTime.Now
+			LastConnection = DateTime.Now,
+			IsFirstConnection = true
 		};
 
 		await _accountRepository.AddAccountAsync(account);
@@ -119,7 +120,12 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 			Salt = currentAccount.Salt,
 			TwoFactorEnabled = currentAccount.TwoFactorEnabled,
 			Enabled = currentAccount.Enabled,
-			LastConnection = DateTime.Now
+			LastConnection = DateTime.Now,
+			IsFirstConnection = currentAccount.IsFirstConnection,
+			NbOpenAppByWeek = currentAccount.NbOpenAppByWeek,
+			AverageDailyTrafic = currentAccount.AverageDailyTrafic,
+			RetrievedAllEmails = currentAccount.RetrievedAllEmails,
+			DatePicked = currentAccount.DatePicked
 		};
 
 		await _accountRepository.UpdateAccountAsync(currentAccount);

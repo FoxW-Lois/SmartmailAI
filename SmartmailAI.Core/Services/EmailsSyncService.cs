@@ -10,27 +10,19 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
 
-public class EmailsSyncService : IEmailsSyncService, IAsyncDisposable
+public class EmailsSyncService(IMailReaderService mailReaderService, IEmailRepository emailRepository, IAddressesRepository addressesRepository,
+	IAuthService authService) : IEmailsSyncService, IAsyncDisposable
 {
-	private readonly IMailReaderService _mailReaderService;
-	private readonly IEmailRepository _emailRepository;
-	private readonly IAddressesRepository _addressesRepository;
-	private readonly IAuthService _authService;
+	private readonly IMailReaderService _mailReaderService = mailReaderService;
+	private readonly IEmailRepository _emailRepository = emailRepository;
+	private readonly IAddressesRepository _addressesRepository = addressesRepository;
+	private readonly IAuthService _authService = authService;
 	private readonly TimeSpan _interval = TimeSpan.FromSeconds(30);
 	private CancellationTokenSource _cts = new();
 	private Task? _runningTask;
 
 	private readonly SemaphoreSlim _startLock = new(1, 1);
 	private bool _isRunning;
-
-	public EmailsSyncService(IMailReaderService mailReaderService, IEmailRepository emailRepository, IAddressesRepository addressesRepository,
-		IAuthService authService)
-	{
-		_mailReaderService = mailReaderService;
-		_emailRepository = emailRepository;
-		_addressesRepository = addressesRepository;
-		_authService = authService;
-	}
 
 	public async Task StartAsync()
 	{

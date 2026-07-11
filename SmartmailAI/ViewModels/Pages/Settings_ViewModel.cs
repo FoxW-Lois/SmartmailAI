@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -51,6 +53,25 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	[ObservableProperty]
 	public partial string CopyRight { get; set; } = $"{InfoHelper.GetCopyright()}";
 
+	[ObservableProperty]
+	public partial int NbOpenAppByWeek { get; set; } = 0;
+
+	[ObservableProperty]
+	public partial ObservableCollection<string> AverageDailyTraficOptions { get; set; } = ["1 à 30 mails par jour",
+		"30 à 60 mails par jour", "60 à 90 mails par jour", "+ de 90 mails par jour"];
+
+	[ObservableProperty]
+	public partial string SelectedAverageDailyTrafic { get; set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial bool RetrievedAllEmails { get; set; }
+
+	[ObservableProperty]
+	public partial DateTimeOffset? DatePicked { get; set; }
+
+	[ObservableProperty]
+	public partial bool IsItemsEnabled { get; set; } = false;
+
 	#endregion View Properties
 
 	private readonly IAppSettingsService _appSettingsService;
@@ -59,6 +80,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
 	private readonly IAccountRepository _accountRepository;
+	private Account? account;
 
 	private bool _isInitialized;
 
@@ -79,6 +101,16 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		UpdateVisibilyProperties(_authService.IsAuthenticated);
 
 		InitializeSettings();
+
+		// Quand reçoit une demande, mets les Iteams en Enabled
+		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
+		{
+			IsItemsEnabled = true;
+
+			account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
+
+			UpdateFieldsFromAccount();
+		});
 	}
 
 	private async void InitializeSettings()
@@ -86,14 +118,25 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		ThemeIndex = (int)_themeSelectorService.Theme;
 		BackdropTypeIndex = (int)_appSettingsService.BackdropType;
 
-		var account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
-		if (account is not null)
-		{
-			var stateTwoFactor = account.TwoFactorEnabled;
-			EnableDisableTwoFactor = stateTwoFactor;
-		}
+		account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
+
+		if (account is not null && account.IsFirstConnection is false)
+			IsItemsEnabled = true;
+
+		UpdateFieldsFromAccount();
 
 		_isInitialized = true;
+	}
+
+	private void UpdateFieldsFromAccount()
+	{
+		if (account is not null)
+		{
+			NbOpenAppByWeek = account.NbOpenAppByWeek.GetValueOrDefault(0);
+			SelectedAverageDailyTrafic = account.AverageDailyTrafic ?? "";
+			RetrievedAllEmails = account.RetrievedAllEmails ?? false;
+			DatePicked = account.DatePicked?.ToDateTime(TimeOnly.MinValue);
+		}
 	}
 
 	#region UI Elements Update
@@ -201,6 +244,14 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		}
 	}
 
+	partial void OnThemeIndexChanged(int value)
+	{
+		if (_isInitialized)
+		{
+			_themeSelectorService.SetThemeAsync((ElementTheme)value);
+		}
+	}
+
 	async partial void OnEnableDisableTwoFactorChanged(bool value)
 	{
 		if (!_isInitialized || !_authService.IsAuthenticated)
@@ -215,12 +266,40 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		await _authService.Update_EnableDisable_TwoFactorAsync(_authService.CurrentAccountLogin, value); // Value : true = activer, false = désactiver
 	}
 
-	partial void OnThemeIndexChanged(int value)
+	async partial void OnNbOpenAppByWeekChanging(int value)
 	{
-		if (_isInitialized)
-		{
-			_themeSelectorService.SetThemeAsync((ElementTheme)value);
-		}
+		if (account is null || value < 1 || value > 100)
+			return;
+
+		account.NbOpenAppByWeek = value;
+		await _accountRepository.UpdateAccountAsync(account);
+	}
+
+	async partial void OnSelectedAverageDailyTraficChanged(string value)
+	{
+		if (account is null || string.IsNullOrWhiteSpace(value))
+			return;
+
+		account.AverageDailyTrafic = value;
+		await _accountRepository.UpdateAccountAsync(account);
+	}
+
+	async partial void OnRetrievedAllEmailsChanged(bool value)
+	{
+		if (account is null)
+			return;
+
+		account.RetrievedAllEmails = value;
+		await _accountRepository.UpdateAccountAsync(account);
+	}
+
+	async partial void OnDatePickedChanging(DateTimeOffset? value)
+	{
+		if (account is null || !value.HasValue && account.RetrievedAllEmails is false)
+			return;
+
+		account.DatePicked = DateOnly.FromDateTime(DateTime.Parse(value!.Value.ToString("yyyy-MM-dd")));
+		await _accountRepository.UpdateAccountAsync(account);
 	}
 
 	partial void OnBackdropTypeIndexChanged(int value)

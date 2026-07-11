@@ -736,4 +736,46 @@ Il est possible qu'un simple redémarrage de SmartmailAI ou de LM Studio soit n�
 
 Si malgré cela le problème persiste, contactez en priorité votre administrateur système, puis si besoin, le développeur de la solution.</value>
   </data>
+  <data name="UXQuestions_NbOpenAppByWeek.Text" xml:space="preserve">
+    <value>Combien de fois par semaine comptez-vous ouvrir/utiliser Smartmail ?</value>
+  </data>
+  <data name="Settings_NbOpenAppByWeek.Header" xml:space="preserve">
+    <value>Combien de fois par semaine comptez-vous ouvrir/utiliser Smartmail ?</value>
+  </data>
+  <data name="UXQuestions_AverageDailyTrafic.Text" xml:space="preserve">
+    <value>Quel est le trafic journalier moyen de vos boites/adresses mails (comptez pour votre boite/adresse avec le plus de trafic) ?</value>
+  </data>
+  <data name="Settings_AverageDailyTrafic.Header" xml:space="preserve">
+    <value>Quel est le trafic journalier moyen de vos boites/adresses mails (comptez pour votre boite/adresse avec le plus de trafic) ?</value>
+  </data>
+  <data name="UXQuestions_Title.Text" xml:space="preserve">
+    <value>Questions UX et performances</value>
+  </data>
+  <data name="UXQuestions_Description.Text" xml:space="preserve">
+    <value>Ces questions sont très importantes pour améliorer au maximum l'expérience utilisateur et les performances matérielles du logiciel. Les réponses seront modifiables à tout moment dans les paramètres de l'application.</value>
+  </data>
+  <data name="UXQuestions_CalendarDatePicker.Text" xml:space="preserve">
+    <value>Jusqu'à quelle date souhaitez-vous récupérer vos emails ?</value>
+  </data>
+  <data name="UXQuestions_RetrievedAllEmailsFromFuturesAddresses.Text" xml:space="preserve">
+    <value>Souhaitez-vous récupérer TOUS les emails des adresses que vous connecterez à l'avenir ?</value>
+  </data>
+  <data name="UXQuestions_DateEmailsWereRetrieved.PlaceholderText" xml:space="preserve">
+    <value>Sélectionnez la date souhaitée</value>
+  </data>
+  <data name="Error_FormInvalid_NbOpenAppByWeek" xml:space="preserve">
+    <value>Vous devez sélectionner une valeur comprise entre 1 et 100.</value>
+  </data>
+  <data name="Error_FormInvalid_SelectedAverageDailyTrafic" xml:space="preserve">
+    <value>Vous devez sélectionner une valeur.</value>
+  </data>
+  <data name="Error_FormInvalid_DatePicked" xml:space="preserve">
+    <value>Vous devez sélectionner une date.</value>
+  </data>
+  <data name="Settings_RetrievedAllEmailsFromFuturesAddresses.Header" xml:space="preserve">
+    <value>Souhaitez-vous récupérer TOUS les emails des adresses que vous connecterez à l'avenir ?</value>
+  </data>
+  <data name="Settings_CalendarDatePicker.Header" xml:space="preserve">
+    <value>Jusqu'à quelle date souhaitez-vous récupérer vos emails ?</value>
+  </data>
 </root>

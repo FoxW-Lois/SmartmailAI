@@ -6,6 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:viewmodels="using:SmartmailAI.ViewModels.Pages"
+	xmlns:views="using:SmartmailAI.Views.Pages"
 	behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
 	d:DataContext="{d:DesignInstance Type=viewmodels:Home_ViewModel}"
 	NavigationCacheMode="Required"
@@ -23,5 +24,16 @@
 			VerticalAlignment="Center"
 			Style="{ThemeResource PageTitleStyle}"
 			Text="{x:Bind ViewModel.AppDisplayName, Mode=OneTime}" />-->
+
+		<Grid
+			x:Name="AIinterfaceOverlay"
+			Margin="0 0 -5 20"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+			CornerRadius="15"
+			Visibility="{x:Bind ViewModel.IsUXQuestionsVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+			<views:UXQuestions_Control />
+		</Grid>
 	</Grid>
 </Page>

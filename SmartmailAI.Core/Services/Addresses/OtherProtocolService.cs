@@ -22,7 +22,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 	private readonly IOtherTokenStore _otherTokenStore = otherTokenStore;
 
 	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress,
-		int? maxResults = 50, DateTime? lastConnection = null)
+		int? maxResults = 300, DateTime? lastConnection = null)
 	{
 		using var client = new ImapClient();
 		IMailFolder? folder;
@@ -48,7 +48,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 			}
 
 			var uids = await folder.SearchAsync(query);
-			latestUids = [.. uids.TakeLast(maxResults ?? 50).Reverse()];
+			latestUids = [.. uids.TakeLast(maxResults ?? 300).Reverse()];
 		}
 		catch (Exception) // Si ça plante alors ça vient généralement d'une absence d'internet : System.Net.Http.HttpRequestException
 		{

@@ -12,6 +12,8 @@ public interface IAddressesRepository
 
 	Task AddAddressAsync(AccountMailBase account);
 
+	Task UpdateAddressAsync(AccountMailBase account);
+
 	Task DeleteAddressAsync(AccountMailBase account);
 
 	Task<AccountMailBase> DecryptDataAsync(AccountMailBase account);

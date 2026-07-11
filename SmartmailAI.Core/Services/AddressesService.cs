@@ -52,6 +52,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 			Email = email,
 			GoogleUserId = credential.UserId,
 			ConnectedAt = DateTime.UtcNow,
+			IsFirstConnection = true,
 			TokenStorageKey = userKey
 		};
 
@@ -77,6 +78,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 			UserName = request.UserName,
 			Password = request.Password,
 			ConnectedAt = DateTime.UtcNow,
+			IsFirstConnection = true,
 			TokenStorageKey = userKey,
 			ImapHost = request.ImapHost,
 			ImapPort = request.ImapPort,

@@ -736,4 +736,46 @@ You may need to simply restart SmartmailAI or LM Studio to resolve the issue.
 
 If the problem persists, contact your system administrator first, and then, if necessary, the solution's developer.</value>
   </data>
+  <data name="UXQuestions_NbOpenAppByWeek.Text" xml:space="preserve">
+    <value>How many times a week do you plan to open/use Smartmail ?</value>
+  </data>
+  <data name="Settings_NbOpenAppByWeek.Header" xml:space="preserve">
+    <value>How many times a week do you plan to open/use Smartmail ?</value>
+  </data>
+  <data name="UXQuestions_AverageDailyTrafic.Text" xml:space="preserve">
+    <value>What is the average daily traffic for your email accounts/addresses (use the one with the most traffic) ?</value>
+  </data>
+  <data name="Settings_AverageDailyTrafic.Header" xml:space="preserve">
+    <value>What is the average daily traffic for your email accounts/addresses (use the one with the most traffic) ?</value>
+  </data>
+  <data name="UXQuestions_Title.Text" xml:space="preserve">
+    <value>UX and Performance questions</value>
+  </data>
+  <data name="UXQuestions_Description.Text" xml:space="preserve">
+    <value>These questions are very important for optimizing the user experience and the software's hardware performance. You can edit your answers at any time in the app's settings.</value>
+  </data>
+  <data name="UXQuestions_CalendarDatePicker.Text" xml:space="preserve">
+    <value>Up to what date would you like to retrieve your emails ?</value>
+  </data>
+  <data name="UXQuestions_RetrievedAllEmailsFromFuturesAddresses.Text" xml:space="preserve">
+    <value>Would you like to retrieve ALL emails from the addresses you'll connect in the future?</value>
+  </data>
+  <data name="UXQuestions_DateEmailsWereRetrieved.PlaceholderText" xml:space="preserve">
+    <value>Select the date you want</value>
+  </data>
+  <data name="Error_FormInvalid_NbOpenAppByWeek" xml:space="preserve">
+    <value>You must select a value between 1 and 100.</value>
+  </data>
+  <data name="Error_FormInvalid_SelectedAverageDailyTrafic" xml:space="preserve">
+    <value>You must select a value.</value>
+  </data>
+  <data name="Error_FormInvalid_DatePicked" xml:space="preserve">
+    <value>You must select a date.</value>
+  </data>
+  <data name="Settings_RetrievedAllEmailsFromFuturesAddresses.Header" xml:space="preserve">
+    <value>Would you like to retrieve ALL emails from the addresses you'll connect in the future?</value>
+  </data>
+  <data name="Settings_CalendarDatePicker.Header" xml:space="preserve">
+    <value>Up to what date would you like to retrieve your emails ?</value>
+  </data>
 </root>
