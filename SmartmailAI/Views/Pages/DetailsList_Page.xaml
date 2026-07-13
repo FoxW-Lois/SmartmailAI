@@ -377,6 +377,7 @@
 			ListHeaderTemplate="{StaticResource MinimalListHeaderTemplate}"
 			NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
 			SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay}"
+			SelectionChanged="OnCategoryListDetailsSelectionChanged"
 			ViewStateChanged="OnViewStateChanged" />
 		<Grid
 			Grid.Row="1"

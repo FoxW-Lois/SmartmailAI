@@ -595,8 +595,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	}
 
 	// Calcul des catégories à rafraîchir
-	private HashSet<MailboxType> ComputeMailboxTypesToRefresh(MailboxType? previousMailboxType = null, MailboxType? newMailboxType = null,
-		Email? email = null)
+	private HashSet<MailboxType> ComputeMailboxTypesToRefresh(MailboxType? previousMailboxType, MailboxType? newMailboxType, Email? email)
 	{
 		HashSet<MailboxType> types = [];
 
