@@ -454,7 +454,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	private static bool CanMarkAsUnread(Email? email) => email is not null && email.IsRead;
 
-	[RelayCommand]
+	[RelayCommand(CanExecute = nameof(CanArchived))]
 	private async Task ArchiveMailAsync(Email email)
 	{
 		if (email is null)
@@ -466,6 +466,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var newMailboxType = email.MailboxType;
 		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
+
+	private static bool CanArchived(Email? email) => email is not null && !(email.MailboxType is MailboxType.Archives or MailboxType.Trash);
 
 	[RelayCommand(CanExecute = nameof(CanRestore))]
 	private async Task RestoreMailAsync(Email email)
@@ -482,12 +484,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task DeleteMailAsync(Email email)
 	{
-		var previousMailboxType = email.MailboxType;
-
 		await DeleteItemAsync(email);
 
-		var newMailboxType = email.MailboxType;
-		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+		// On rafraîchit toutes les catégories car un email peut-être dans 3 catégories à la fois (sans compte AllMails)
+		// à la fois : Trash, Unread, Star + la précédente catégorie quand déplacé vers la corbeille
+		await RefreshAllCategory();
 	}
 
 	private async Task DeleteItemAsync(Email email)

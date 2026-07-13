@@ -554,7 +554,9 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		if (email is null)
 			return;
 
-		email.PreviousMailboxType = email.MailboxType;
+		if (email.MailboxType is not MailboxType.Archives)
+			email.PreviousMailboxType = email.MailboxType;
+		
 		email.MailboxType = MailboxType.Trash;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))
