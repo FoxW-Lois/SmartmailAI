@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
@@ -17,11 +19,15 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	[ObservableProperty]
 	private ObservableCollection<AccountMailBase> accountsMail = [];
 
+	[ObservableProperty]
+	public partial bool IsItemsEnabled { get; set; } = false;
+
 	#region Interfaces declaration
 
 	public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
 	private readonly IAuthService _authService;
+	private readonly IAccountService _accountService;
 	private readonly IAddressesRepository _addressesRepository;
 	private readonly IAddressesService _addressesService;
 	private readonly IEmailsSyncService _emailsSyncService;
@@ -33,13 +39,15 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	#endregion Interfaces declaration
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
-		IAddressesRepository addressesRepository, IAddressesService addressesService, IEmailsSyncService emailsSyncService,
-		ILocalSessionService localSessionService, IDialogService dialogService, IEmailLoaderService emailLoaderService)
+		IAddressesRepository addressesRepository, IAccountService accountService, IAddressesService addressesService,
+		IEmailsSyncService emailsSyncService, ILocalSessionService localSessionService, IDialogService dialogService,
+		IEmailLoaderService emailLoaderService)
 	{
 		NavigationService = navigationService;
 		NavigationViewService = shellService;
 		NavigationService.Navigated += OnNavigated;
 		_authService = authService;
+		_accountService = accountService;
 		_addressesRepository = addressesRepository;
 		_addressesService = addressesService;
 		_emailsSyncService = emailsSyncService;
@@ -50,6 +58,12 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		// Tente de restaurer la session locale
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
 		IsLogged = _authService.IsAuthenticated;
+
+		// Quand reçoit une demande, mets les Iteams en Enabled
+		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
+		{
+			IsItemsEnabled = true;
+		});
 
 		_authService.AuthenticationStateChanged += (_, isLogged) =>
 		{
@@ -76,6 +90,14 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public async Task InitializeAsync()
 	{
+		var userAccount = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (userAccount is null)
+			return;
+
+		if (userAccount.IsFirstConnection is false)
+			IsItemsEnabled = true;
+
 		while (!await InternetCheckService.HasInternetConnectionAsync())
 		{
 			await _dialogService.ShowOneButtonDialogAsync(resourceLoader.GetString("Error_Title"),

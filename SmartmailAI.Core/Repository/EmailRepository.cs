@@ -18,31 +18,43 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	private readonly IDbContextFactory<AppDbContext_Email> _factory = factory;
 	private readonly IAesService _aesService = aesService;
 
-	public async Task<List<Email>> GetAllEmailsAsync()
+	public async Task<(List<Email>, int totalCount)> GetEmailsByAddressAndMailboxTypeAsync(MailboxType mailboxType, string ownerAddress, int page, int pageSize)
 	{
 		using var _context = _factory.CreateDbContext();
 
-		var emails = await _context.Email
-		   .OrderByDescending(e => e.DateSent)
-		   .ToListAsync();
+		var query = _context.Email
+			.Where(e => e.Owner == ownerAddress);
 
-		emails = await DecryptEmailListAsync(emails);
+		query = mailboxType switch
+		{
+			MailboxType.Inbox => query.Where(e => e.MailboxType == MailboxType.Inbox),
+			MailboxType.Sent => query.Where(e => e.MailboxType == MailboxType.Sent || e.SenderEmail == e.ReceiverEmail),
+			MailboxType.Drafts => query.Where(e => e.MailboxType == MailboxType.Drafts),
+			MailboxType.Starred => query.Where(e => e.IsStarred == true),
+			MailboxType.Unread => query.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash
+				&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
 
-		return emails;
-	}
+			MailboxType.Trash => query.Where(e => e.MailboxType == MailboxType.Trash),
+			MailboxType.Archives => query.Where(e => e.MailboxType == MailboxType.Archives),
+			MailboxType.PhishingSpam => query.Where(e => e.MailboxType == MailboxType.PhishingSpam),
 
-	public async Task<List<Email>> GetAllEmailsByAddressAsync(string ownerAddress)
-	{
-		using var _context = _factory.CreateDbContext();
+			_ => query.Where(e => e.MailboxType != MailboxType.Drafts && e.MailboxType != MailboxType.Trash
+				&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam)
+		};
 
-		var emails = await _context.Email
+		var totalCount = await query.CountAsync();
+
+		var emails = await query
 			.OrderByDescending(e => e.DateSent)
+			.Skip((page - 1) * pageSize)
+			.Take(pageSize)
 			.ToListAsync();
 
 		emails = await DecryptEmailListAsync(emails);
-		emails = [.. emails.Where(e => e.Owner == ownerAddress)];
+		// TODO: Ajouter chiffrement du Owner et donc un hashage + sel du Owner pour pouvoir faire la recherche par OwnerAddress
+		//emails = [.. emails.Where(e => e.Owner == ownerAddress)];
 
-		return emails;
+		return (emails, totalCount);
 	}
 
 	public async Task AddEmailAsync(Email email)

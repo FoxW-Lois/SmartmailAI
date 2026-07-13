@@ -16,4 +16,10 @@ public class Account
 	[Column("TwoFactorEnabled")] public required bool TwoFactorEnabled { get; set; }
 	[Column("Enabled")] public required bool Enabled { get; set; }
 	[Column("LastConnection")] public DateTime? LastConnection { get; set; }
+
+	[Column("IsFirstConnection")] public bool IsFirstConnection { get; set; }
+	[Column("NbOpenAppByWeek")] public int? NbOpenAppByWeek { get; set; }
+	[Column("AverageDailyTrafic")] public string? AverageDailyTrafic { get; set; }
+	[Column("RetrievedAllEmails")] public bool? RetrievedAllEmails { get; set; }
+	[Column("DatePicked")] public DateOnly? DatePicked { get; set; }
 }

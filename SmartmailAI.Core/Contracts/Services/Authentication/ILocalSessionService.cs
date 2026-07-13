@@ -14,4 +14,6 @@ public interface ILocalSessionService
 	void SaveSession(LocalSession session);
 
 	void KillSession();
+
+	LocalSession? LoadSession();
 }

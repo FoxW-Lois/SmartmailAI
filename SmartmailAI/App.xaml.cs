@@ -163,6 +163,7 @@ public partial class App : Application
 				services.AddTransient<DetailsList_NewMailViewModel>();
 				services.AddTransient<DetailsList_StandardViewModel>();
 				services.AddTransient<AIinterface_ViewModel>();
+				services.AddTransient<UXQuestions_ViewModel>();
 
 				#region Authentication/Register Pages
 
@@ -238,6 +239,7 @@ public partial class App : Application
 				services.AddTransient<IEmailLoaderService, EmailLoaderService>();
 				services.AddTransient<IEmailsService, EmailsService>();
 				services.AddTransient<IAccountRepository, AccountRepository>();
+				services.AddTransient<IAccountService, AccountService>();
 				services.AddTransient<IMappersToEmailDTOService, MappersToEmailDTOService>();
 				services.AddTransient<IMLDA_Repository, MLDA_Repository>();
 				services.AddTransient<I_AIService, AIService>();

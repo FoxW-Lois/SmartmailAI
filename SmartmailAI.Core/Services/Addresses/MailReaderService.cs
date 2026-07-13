@@ -12,7 +12,7 @@ namespace SmartmailAI.Core.Services.Addresses;
 
 public class MailReaderService(IEmailRepository emailRepository, IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService,
 	IOtherCredentialService otherCredentialService, IOtherProtocolService otherProtocolService, IOtherTokenStore otherTokenStore,
-	IAuthService authService, IAccountRepository accountRepository, IAddressesRepository addressesRepository,
+	IAuthService authService, IAccountRepository accountRepository, IAccountService accountService, IAddressesRepository addressesRepository,
 	IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
 {
 	private readonly IEmailRepository _emailRepository = emailRepository;
@@ -25,10 +25,11 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 	private readonly IAuthService _authService = authService;
 	private readonly IAccountRepository _accountRepository = accountRepository;
+	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesRepository _addressesRepository = addressesRepository;
 	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
-	public async Task<IReadOnlyList<Email>?> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase account)
+	public async Task<IReadOnlyList<Email>?> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase mailAccount)
 	{
 		if (!await InternetCheckService.HasInternetConnectionAsync())
 		{
@@ -38,20 +39,46 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 			return null;
 		}
 
-		const int NumMails = 3;
-		// TODO: En dèv/debug imposer une limite basse de 3 emails, sinon 1000 à 3000 emails en prod
+		int? NumMails;
+		var account = await _accountService.GetAccountByLoginInLocalSessionAsync();
 
-		var lastConnection = await GetCurrentAccountLastConnectionAsync();
+		if (account is null || account.IsFirstConnection is true)
+			return [];
+
+		if (mailAccount.IsFirstConnection)
+			NumMails = null; // MaxResults sera au max (donc 300 dans notre cas)
+		else
+		{
+			int averageEmailsPerDay = account.AverageDailyTrafic switch
+			{
+				"1 à 30 mails par jour" => 30,
+				"30 à 60 mails par jour" => 60,
+				"60 à 90 mails par jour" => 90,
+				"+ de 90 mails par jour" => 150,
+				_ => 30
+			};
+
+			NumMails = account.NbOpenAppByWeek switch
+			{
+				< 7 => averageEmailsPerDay * 7,
+				>= 7 and < 14 => averageEmailsPerDay,
+				>= 14 => (int)Math.Ceiling(averageEmailsPerDay / (((int)account.NbOpenAppByWeek! / 7) * 1.5)),
+				_ => averageEmailsPerDay
+			};
+		}
+
+		DateTime? lastConnection = account.RetrievedAllEmails is true ? new DateTime(2000, 1, 1) : account.DatePicked!.Value.ToDateTime(TimeOnly.MinValue);
+		lastConnection = mailAccount.IsFirstConnection ? lastConnection : await GetCurrentAccountLastConnectionAsync();
 
 		List<EmailFromAddress>? rawEmails;
 
-		if (account is AccountGmail accountGmail)
+		if (mailAccount is AccountGmail accountGmail)
 			rawEmails = await GetGmailMessagesAsync(accountGmail, isAddingNewAddress, NumMails, lastConnection);
-		else if (account is AccountOther accountOther)
+		else if (mailAccount is AccountOther accountOther)
 			rawEmails = await GetOtherMessagesAsync(accountOther, isAddingNewAddress, NumMails, lastConnection);
 		else
 			return [];
-		// TODO: ajouter un check account is AccountOutlook accountOutlook
+		// TODO: ajouter un check mailAccount is AccountOutlook accountOutlook
 
 		if (rawEmails is null) // Peut arriver si il y a une perte de connexion pendant la récupération d'emails, ou lorsque le réseau est lent
 			return null;
@@ -62,12 +89,20 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 			return emailsRecovered;
 
 		// Le dernier paramètre (isFromOtherAddress) sera true si c'est un OtherAddress (donc SMTP/IMAP)
-		return await _emailRepository.KeepOnlyNewEmailsAsync(account.Email, emailsRecovered, account is AccountOther);
+		var newEmails = await _emailRepository.KeepOnlyNewEmailsAsync(mailAccount.Email, emailsRecovered, mailAccount is AccountOther);
+
+		if (mailAccount.IsFirstConnection is true)
+		{
+			mailAccount.IsFirstConnection = false;
+			await _addressesRepository.UpdateAddressAsync(mailAccount);
+		}
+
+		return newEmails;
 	}
 
 	#region Getting emails helpers
 
-	private async Task<List<EmailFromAddress>?> GetGmailMessagesAsync(AccountGmail account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
+	private async Task<List<EmailFromAddress>?> GetGmailMessagesAsync(AccountGmail account, bool isAddingNewAddress, int? numMails, DateTime? lastConnection)
 	{
 		var credential = await _gmailCredentialService.GetCredentialAsync(account, isAddingNewAddress);
 
@@ -99,7 +134,7 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		return [.. (await inboxTask)!, .. (await sentTask)!];
 	}
 
-	private async Task<List<EmailFromAddress>?> GetOtherMessagesAsync(AccountOther account, bool isAddingNewAddress, int numMails, DateTime? lastConnection)
+	private async Task<List<EmailFromAddress>?> GetOtherMessagesAsync(AccountOther account, bool isAddingNewAddress, int? numMails, DateTime? lastConnection)
 	{
 		var connected = await PrepareOtherAccountAsync(account, isAddingNewAddress);
 
@@ -134,9 +169,9 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 	#endregion Getting emails helpers
 
-	public async Task SaveAttachmentFromEmailAsync(string messageId, MailAttachment attachment, string destinationFolder, AccountMailBase account)
+	public async Task SaveAttachmentFromEmailAsync(string messageId, MailAttachment attachment, string destinationFolder, AccountMailBase mailAccount)
 	{
-		if (account is AccountGmail accountGmail)
+		if (mailAccount is AccountGmail accountGmail)
 		{
 			var credential = await _gmailCredentialService.GetCredentialAsync(accountGmail, false);
 
@@ -148,7 +183,7 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 			return;
 		}
 
-		if (account is AccountOther accountOther)
+		if (mailAccount is AccountOther accountOther)
 		{
 			var connected = await PrepareOtherAccountAsync(accountOther, false);
 

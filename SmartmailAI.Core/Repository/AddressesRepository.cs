@@ -50,6 +50,16 @@ public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory
 		await _context.SaveChangesAsync();
 	}
 
+	public async Task UpdateAddressAsync(AccountMailBase account)
+	{
+		using var _context = _factory.CreateDbContext();
+
+		account = await EncryptDataAsync(account);
+
+		_context.AccountMailBase.Update(account);
+		await _context.SaveChangesAsync();
+	}
+
 	public async Task DeleteAddressAsync(AccountMailBase account)
 	{
 		using var _context = _factory.CreateDbContext();

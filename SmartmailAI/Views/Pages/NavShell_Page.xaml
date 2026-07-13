@@ -97,6 +97,7 @@
 
 				<NavigationViewItem
 					x:Uid="Shell_MailAddresses"
+					IsEnabled="{Binding IsItemsEnabled}"
 					MenuItemsSource="{Binding AccountsMail}"
 					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.MenuItems>
@@ -113,6 +114,7 @@
 				<NavigationViewItem
 					x:Uid="Shell_AddAddress"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddAddress_ViewModel"
+					IsEnabled="{Binding IsItemsEnabled}"
 					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
@@ -122,6 +124,7 @@
 				<NavigationViewItem
 					x:Uid="Shell_AddressManagement"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddressManagement_ViewModel"
+					IsEnabled="{Binding IsItemsEnabled}"
 					Visibility="{Binding CanShowAddressManagement, Converter={StaticResource BoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE779;" />

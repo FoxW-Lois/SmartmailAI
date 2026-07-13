@@ -18,6 +18,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 	// Elle doit être initialisée uniquement dans GetAllCategoriesAsync en brute pour garantir que l'analyse de sécurité est appliquée
 	// à tous les emails hardcodés avant de les retourner
 	private List<Email>? _AllEmails;
+	private int _TotalEmailsCount;
 
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private static readonly ResourceLoader _resources = new();
@@ -341,84 +342,53 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 	}
 ];*/
 
-	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null)
+	public async Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync()
 	{
-		if (addressAccount is null)
-			_AllEmails = await _emailRepository.GetAllEmailsAsync();
-		else
-			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
-
-		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter ces 3 là ↓
-		//_AllEmails = hardcodedEmails;
-		//foreach (var email in _AllEmails)
-		//	await ApplySecurityAnalysisAsync(email);
-
 		var categories = new List<MailboxCategory>
 		{
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Inbox"),
 				Icon = "\uE715", // Mail
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Inbox),
 				MailboxType = MailboxType.Inbox
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Sent"),
 				Icon = "\uE122", // Send
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Sent || e.SenderEmail == e.ReceiverEmail),
 				MailboxType = MailboxType.Sent
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Drafts"),
 				Icon = "\uE7C3", // Document
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Drafts),
 				MailboxType = MailboxType.Drafts
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Starred"),
 				Icon = "\uE734", // FavoriteStar
-			    Items = _AllEmails.Where(e => e.IsStarred == true),
 				MailboxType = MailboxType.Starred
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Unread"),
 				Icon = "\uE8A8", // MailFill
-				Items = _AllEmails.Where(e => e.IsRead == false && e.MailboxType != MailboxType.Trash
-					&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
 				MailboxType = MailboxType.Unread
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Trash"),
 				Icon = "\uE74D", // Delete
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Trash),
 				MailboxType = MailboxType.Trash
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
-			    Items = _AllEmails.Where(e => e.MailboxType != MailboxType.Drafts && e.MailboxType != MailboxType.Trash
-					&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam),
-				// ↑ Tous les mails sauf Brouillons, Corbeille & Phishings/Spams
 				MailboxType = MailboxType.AllMails
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_Archives"),
 				Icon = "\uE7B8", // Archive
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.Archives),
 				MailboxType = MailboxType.Archives
 			},
-			new MailboxCategory
-			{
+			new() {
 				Title = _resources.GetString("Mailbox_PhishingSpam"),
 				Icon = "\uE7BA", // Warning
-			    Items = _AllEmails.Where(e => e.MailboxType == MailboxType.PhishingSpam),
 				MailboxType = MailboxType.PhishingSpam
 			}
 		};
@@ -426,15 +396,21 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		return categories;
 	}
 
-	public async Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType, string? addressAccount = null)
+	public async Task<(IEnumerable<Email>, int totalCount)> GetMailboxEmailsAsync(MailboxType mailboxType, string? addressAccount,
+		int page, int pageSize)
 	{
-		if (addressAccount is null)
-			_AllEmails = await _emailRepository.GetAllEmailsAsync();
+		if (addressAccount is not null)
+			(_AllEmails, _TotalEmailsCount) = await _emailRepository.GetEmailsByAddressAndMailboxTypeAsync(mailboxType, addressAccount, page, pageSize);
 		else
-			_AllEmails = await _emailRepository.GetAllEmailsByAddressAsync(addressAccount);
+			_AllEmails = [];
 
-		// TODO: Si besoin d'utiliser des données statiques, commenter ces 4 lignes ↑ et décommenter celle-là ↓
-		//_AllEmails = hardcodedEmails;
+		return (_AllEmails, _TotalEmailsCount);
+
+		// TODO: Si besoin d'utiliser des données statiques, commenter ces 5 lignes ↑ et décommenter ces 23 lignes la ↓
+		/*_AllEmails = hardcodedEmails;
+
+		foreach (var email in _AllEmails)
+			await ApplySecurityAnalysisAsync(email);
 
 		var emails = mailboxType switch
 		{
@@ -453,7 +429,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 				&& e.MailboxType != MailboxType.Archives && e.MailboxType != MailboxType.PhishingSpam)
 		};
 
-		return emails;
+		return (emails, _TotalEmailsCount);*/
 	}
 
 	public async Task ScribbleEmailAsync(string? guid, string from, string? to, string? subject, string? body, string? cc, string? bcc)
@@ -578,7 +554,9 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		if (email is null)
 			return;
 
-		email.PreviousMailboxType = email.MailboxType;
+		if (email.MailboxType is not MailboxType.Archives)
+			email.PreviousMailboxType = email.MailboxType;
+		
 		email.MailboxType = MailboxType.Trash;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))

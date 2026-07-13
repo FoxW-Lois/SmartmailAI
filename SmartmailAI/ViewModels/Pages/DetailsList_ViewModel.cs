@@ -23,8 +23,24 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
+	private const int PageSize = 30; // Nombre d'emails à charger par page
+
 	// Stocke l'adresse Email sélectionnée pour la passer en tant qu'expéditeur à la fenêtre de composition
 	private string addressAccount = string.Empty;
+
+	#region ObservableProperties
+
+	[ObservableProperty]
+	public partial bool HasPreviousMails { get; set; } = false;
+
+	[ObservableProperty]
+	public partial bool HasFollowingMails { get; set; } = false;
+
+	[ObservableProperty]
+	public partial int Page { get; set; } = 1;
+
+	[ObservableProperty]
+	public partial int TotalEmailsCount { get; set; } = 0;
 
 	[ObservableProperty]
 	private MailboxCategory? selectedCategory;
@@ -59,8 +75,28 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[ObservableProperty]
 	private bool _isAIinterfaceExpanded = false;
 
-	// Pas de private/public car utilisé uniquement par la partial method
-	partial void OnSearchTextChanged(string value) => RefreshSearchbarAsync(value);
+	#endregion ObservableProperties
+
+	#region ObservableProperty Events
+
+	partial void OnPageChanged(int value)
+	{
+		HasPreviousMails = Page > 1;
+		HasFollowingMails = TotalEmailsCount > Page * PageSize;
+	}
+
+	partial void OnTotalEmailsCountChanged(int value)
+	{
+		HasPreviousMails = Page > 1;
+		HasFollowingMails = TotalEmailsCount > Page * PageSize;
+	}
+
+	partial void OnSearchTextChanged(string? value)
+	{
+		if (string.IsNullOrWhiteSpace(value)) return;
+
+		RefreshSearchbarAsync(value);
+	}
 
 	partial void OnDatePickedChanged(DateTimeOffset? value)
 	{
@@ -79,7 +115,19 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 		IsValideCategory = SelectedCategory.MailboxType == MailboxType.Trash || SelectedCategory.MailboxType == MailboxType.PhishingSpam;
 		IsUnreadCategory = SelectedCategory.MailboxType == MailboxType.Unread;
+
+		Page = 1;
+		_ = RefreshSelectedCategory();
 	}
+
+	// Appelé quand l'utilisateur clique sur le bouton "Nouveau"
+	partial void OnSelectedDetailChanged(object? value)
+	{
+		if (value is not ComposeSentinel)
+			IsComposing = false;
+	}
+
+	#endregion ObservableProperty Events
 
 	public DetailsList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository,
 		I_AIService aiService, IDialogService dialogService)
@@ -89,6 +137,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		_mldaRepository = mldaRepository;
 		_aiService = aiService;
 		_dialogService = dialogService;
+
+		#region Messenger Registration
 
 		// Quand reçoit une demande, change la visibilité de la fenêtre de composition d'email
 		WeakReferenceMessenger.Default.Register<RequestOpenOrCloseComposeMessage>(this, (r, m) =>
@@ -126,6 +176,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 			IsAIinterfaceExpanded = !IsAIinterfaceExpanded;
 		});
 
+		#endregion Messenger Registration
+
 		App.MainWindow.SizeChanged += (_, _) =>
 		{
 			OnPropertyChanged(nameof(HalfWindowWidth));
@@ -139,17 +191,10 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	public async Task OnNavigatedTo(object? parameter)
 	{
-		IEnumerable<MailboxCategory>? categoriesWithEmails;
+		IEnumerable<MailboxCategory> categoriesWithEmails = await _emailsService.GetAllCategoriesAsync();
 
-		if (parameter is not string paramAddressAccount)
-		{
-			categoriesWithEmails = await _emailsService.GetAllCategoriesAsync();
-		}
-		else
-		{
+		if (parameter is string paramAddressAccount)
 			addressAccount = paramAddressAccount;
-			categoriesWithEmails = await _emailsService.GetAllCategoriesAsync(addressAccount);
-		}
 
 		Categories.Clear();
 
@@ -166,13 +211,6 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	public void EnsureItemSelected()
 	{
 		SelectedCategory ??= Categories.FirstOrDefault();
-	}
-
-	// Appelé quand l'utilisateur clique sur le bouton "Nouveau"
-	partial void OnSelectedDetailChanged(object? value)
-	{
-		if (value is not ComposeSentinel)
-			IsComposing = false;
 	}
 
 	#region Gestion de la taille du ComposeOverlay
@@ -208,6 +246,20 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	#endregion Gestion de la taille de l'AIinterfaceOverlay
 
 	#region Commandes boutons interface
+
+	[RelayCommand]
+	private async Task LoadPreviousMailsAsync()
+	{
+		Page--;
+		await RefreshSelectedCategory();
+	}
+
+	[RelayCommand]
+	private async Task LoadFollowingMailsAsync()
+	{
+		Page++;
+		await RefreshSelectedCategory();
+	}
 
 	[RelayCommand]
 	private async Task OpenNewMailAsync()
@@ -402,7 +454,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	private static bool CanMarkAsUnread(Email? email) => email is not null && email.IsRead;
 
-	[RelayCommand]
+	[RelayCommand(CanExecute = nameof(CanArchived))]
 	private async Task ArchiveMailAsync(Email email)
 	{
 		if (email is null)
@@ -414,6 +466,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		var newMailboxType = email.MailboxType;
 		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
 	}
+
+	private static bool CanArchived(Email? email) => email is not null && !(email.MailboxType is MailboxType.Archives or MailboxType.Trash);
 
 	[RelayCommand(CanExecute = nameof(CanRestore))]
 	private async Task RestoreMailAsync(Email email)
@@ -430,12 +484,11 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	[RelayCommand]
 	private async Task DeleteMailAsync(Email email)
 	{
-		var previousMailboxType = email.MailboxType;
-
 		await DeleteItemAsync(email);
 
-		var newMailboxType = email.MailboxType;
-		await RefreshSelectedCategory(previousMailboxType, newMailboxType);
+		// On rafraîchit toutes les catégories car un email peut-être dans 3 catégories à la fois (sans compte AllMails)
+		// à la fois : Trash, Unread, Star + la précédente catégorie quand déplacé vers la corbeille
+		await RefreshAllCategory();
 	}
 
 	private async Task DeleteItemAsync(Email email)
@@ -516,6 +569,16 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		await FetchAndApplyEmailsAsync(mailboxTypesToRefresh);
 	}
 
+	// --- Méthode pour Refresh uniquement la liste des emails actuellement affichés ---
+	private async Task RefreshSelectedCategory()
+	{
+		var mailboxTypeToRefresh = SelectedCategory?.MailboxType;
+
+		if (mailboxTypeToRefresh is null) return;
+
+		await FetchAndApplyEmailsAsync(new HashSet<MailboxType> { (MailboxType)mailboxTypeToRefresh });
+	}
+
 	// --- Méthode pour Refresh la liste des emails affichés lors des actions clic droit ---
 	// emailToRestore : Email sur lequel l'action a été effectuée
 	private async Task RefreshSelectedCategory(MailboxType previousMailboxType, MailboxType newMailboxType, Email? emailToRestore = null)
@@ -533,8 +596,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	}
 
 	// Calcul des catégories à rafraîchir
-	private HashSet<MailboxType> ComputeMailboxTypesToRefresh(MailboxType? previousMailboxType = null, MailboxType? newMailboxType = null,
-		Email? email = null)
+	private HashSet<MailboxType> ComputeMailboxTypesToRefresh(MailboxType? previousMailboxType, MailboxType? newMailboxType, Email? email)
 	{
 		HashSet<MailboxType> types = [];
 
@@ -571,7 +633,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		var fetchTasks = mailboxTypes.Select(async mailboxType =>
 		{
-			var emails = await _emailsService.GetEmailsByMailboxTypeAsync(mailboxType, addressAccount);
+			(var emails, TotalEmailsCount) = await _emailsService.GetMailboxEmailsAsync(mailboxType, addressAccount, Page, PageSize);
 			return (mailboxType, emails);
 		});
 
@@ -606,7 +668,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		if (SelectedCategory is null) return;
 
-		var refreshedEmails = await _emailsService.GetEmailsByMailboxTypeAsync(SelectedCategory.MailboxType, addressAccount);
+		(var refreshedEmails, TotalEmailsCount) = await _emailsService.GetMailboxEmailsAsync(SelectedCategory.MailboxType, addressAccount, Page, PageSize);
 
 		// Recharge les données sans casser le binding
 		SelectedCategory.ReplaceAllItems(refreshedEmails);

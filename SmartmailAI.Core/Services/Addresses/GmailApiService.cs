@@ -33,7 +33,7 @@ public class GmailApiService : IGmailApiService
 	}
 
 	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress,
-		int? maxResults = 50, DateTime? lastConnection = null)
+		int? maxResults = 300, DateTime? lastConnection = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer
 		{
@@ -53,10 +53,23 @@ public class GmailApiService : IGmailApiService
 		}
 
 		ListMessagesResponse response;
+		// TODO: Si besoin de récupérer TOUS les emails, à décommenter ↓
+		//List<Message> messagesStored = [];
 
 		try // On cherche surtout à tester si il y a une absence/perte de connexion internet au moment de la récupération d'emails
 		{
 			response = await request.ExecuteAsync();
+
+			// TODO: Si besoin de récupérer TOUS les emails, à décommenter ↓ (mais besoin de mieux gérer l'asynchronisme et l'attente de
+			// l'utilisateur pour ne pas faire crash l'appli)
+			//do
+			//{
+			//	response = await request.ExecuteAsync();
+			//	if (response.Messages is not null)
+			//		messagesStored.AddRange(response.Messages);
+
+			//	request.PageToken = response.NextPageToken;
+			//} while (!string.IsNullOrEmpty(response.NextPageToken));
 		}
 		catch (Exception) // Si ça plante alors ça vient généralement d'une absence d'internet : System.Net.Http.HttpRequestException
 		{

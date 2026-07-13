@@ -109,6 +109,7 @@
 
 				<!--  Smartmail Account settings  -->
 				<TextBlock x:Uid="Settings_Account" Style="{ThemeResource SettingsSectionHeaderTextBlockStyle}" />
+
 				<controls:SettingsCard x:Uid="Settings_NoAccountLoggedIn" Visibility="{Binding NoAccountLoggedInVisibility, Mode=OneWay}">
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE77B;" />
@@ -120,8 +121,55 @@
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE72E;" />
 					</controls:SettingsCard.HeaderIcon>
-					<ToggleSwitch IsOn="{x:Bind ViewModel.EnableDisableTwoFactor, Mode=TwoWay}" />
+					<ToggleSwitch IsEnabled="{x:Bind ViewModel.IsItemsEnabled, Mode=OneWay}" IsOn="{x:Bind ViewModel.EnableDisableTwoFactor, Mode=TwoWay}" />
 				</controls:SettingsCard>
+
+				<!--  Number of times the app is opened per week  -->
+				<controls:SettingsCard x:Uid="Settings_NbOpenAppByWeek" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+					<controls:SettingsCard.HeaderIcon>
+						<FontIcon Glyph="&#xE9D2;" />
+					</controls:SettingsCard.HeaderIcon>
+					<NumberBox
+						AcceptsExpression="False"
+						IsEnabled="{x:Bind ViewModel.IsItemsEnabled, Mode=OneWay}"
+						Maximum="100"
+						Minimum="0"
+						SmallChange="3"
+						SpinButtonPlacementMode="Inline"
+						Value="{x:Bind ViewModel.NbOpenAppByWeek, Mode=TwoWay}" />
+				</controls:SettingsCard>
+
+				<!--  Average time spent in the app per week  -->
+				<controls:SettingsCard x:Uid="Settings_AverageDailyTrafic" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+					<controls:SettingsCard.HeaderIcon>
+						<FontIcon Glyph="&#xE9D9;" />
+					</controls:SettingsCard.HeaderIcon>
+					<ComboBox
+						IsEnabled="{x:Bind ViewModel.IsItemsEnabled, Mode=OneWay}"
+						ItemsSource="{x:Bind ViewModel.AverageDailyTraficOptions}"
+						SelectedItem="{x:Bind ViewModel.SelectedAverageDailyTrafic, Mode=TwoWay}" />
+				</controls:SettingsCard>
+
+				<!--  Enable/Disable retrieved all emails from future addresses connected  -->
+				<controls:SettingsCard x:Uid="Settings_RetrievedAllEmailsFromFuturesAddresses" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+					<controls:SettingsCard.HeaderIcon>
+						<FontIcon Glyph="&#xE715;" />
+					</controls:SettingsCard.HeaderIcon>
+					<ToggleSwitch IsEnabled="{x:Bind ViewModel.IsItemsEnabled, Mode=OneWay}" IsOn="{x:Bind ViewModel.RetrievedAllEmails, Mode=TwoWay}" />
+				</controls:SettingsCard>
+
+				<!--  Date when emails were retrieved  -->
+				<Grid Visibility="{Binding RetrievedAllEmails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					<controls:SettingsCard x:Uid="Settings_CalendarDatePicker" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+						<controls:SettingsCard.HeaderIcon>
+							<FontIcon Glyph="&#xE787;" />
+						</controls:SettingsCard.HeaderIcon>
+						<CalendarDatePicker
+							x:Uid="UXQuestions_DateEmailsWereRetrieved"
+							Date="{x:Bind ViewModel.DatePicked, Mode=TwoWay}"
+							IsEnabled="{x:Bind ViewModel.IsItemsEnabled, Mode=OneWay}" />
+					</controls:SettingsCard>
+				</Grid>
 
 				<!--  About  -->
 				<TextBlock x:Uid="Settings_About" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />

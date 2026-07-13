@@ -143,7 +143,7 @@ public class LocalSessionService(IAuthService authService /*,IEmailsSyncService 
 		}
 	}
 
-	private static LocalSession? LoadSession()
+	public LocalSession? LoadSession()
 	{
 		string sessionPath = Path.Combine(_rootFolder, ".tmp");
 
