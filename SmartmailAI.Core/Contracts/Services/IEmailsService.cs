@@ -6,9 +6,9 @@ namespace SmartmailAI.Core.Contracts.Services;
 
 public interface IEmailsService
 {
-	Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync(string? addressAccount = null);
+	Task<IEnumerable<MailboxCategory>> GetAllCategoriesAsync();
 
-	Task<IEnumerable<Email>> GetEmailsByMailboxTypeAsync(MailboxType mailboxType, string? addressAccount = null);
+	Task<(IEnumerable<Email>, int totalCount)> GetMailboxEmailsAsync(MailboxType mailboxType, string? addressAccount, int page, int pageSize);
 
 	Task ScribbleEmailAsync(string? guid, string from, string? to, string? subject, string? body, string? cc, string? bcc);
 

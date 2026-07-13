@@ -6,9 +6,7 @@ namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IEmailRepository
 {
-	Task<List<Email>> GetAllEmailsAsync();
-
-	Task<List<Email>> GetAllEmailsByAddressAsync(string ownerAddress);
+	Task<(List<Email>, int totalCount)> GetEmailsByAddressAndMailboxTypeAsync(MailboxType mailboxType, string ownerAddress, int page, int pageSize);
 
 	Task AddEmailAsync(Email email);
 

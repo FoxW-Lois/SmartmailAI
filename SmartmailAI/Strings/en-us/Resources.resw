@@ -778,4 +778,16 @@ If the problem persists, contact your system administrator first, and then, if n
   <data name="Settings_CalendarDatePicker.Header" xml:space="preserve">
     <value>Up to what date would you like to retrieve your emails ?</value>
   </data>
+  <data name="Button_LoadPreviousMails.Content" xml:space="preserve">
+    <value>Load previous emails</value>
+  </data>
+  <data name="Button_MarkAsReadAllMails.Content" xml:space="preserve">
+    <value>Mark all emails as "read"</value>
+  </data>
+  <data name="Button_DeleteAllMails.Content" xml:space="preserve">
+    <value>Delete all mails</value>
+  </data>
+  <data name="Button_LoadFollowingMails.Content" xml:space="preserve">
+    <value>Load the following emails</value>
+  </data>
 </root>

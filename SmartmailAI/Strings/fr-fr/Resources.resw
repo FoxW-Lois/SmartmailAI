@@ -778,4 +778,16 @@ Si malgré cela le problème persiste, contactez en priorité votre administrate
   <data name="Settings_CalendarDatePicker.Header" xml:space="preserve">
     <value>Jusqu'à quelle date souhaitez-vous récupérer vos emails ?</value>
   </data>
+  <data name="Button_LoadPreviousMails.Content" xml:space="preserve">
+    <value>Charger les emails précédents</value>
+  </data>
+  <data name="Button_MarkAsReadAllMails.Content" xml:space="preserve">
+    <value>Marquer tous les emails comme étant « lu »</value>
+  </data>
+  <data name="Button_DeleteAllMails.Content" xml:space="preserve">
+    <value>Supprimer tous les emails</value>
+  </data>
+  <data name="Button_LoadFollowingMails.Content" xml:space="preserve">
+    <value>Charger les emails suivants</value>
+  </data>
 </root>
