@@ -23,7 +23,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	public ObservableCollection<MailboxCategory> Categories { get; private set; } = [];
 
-	private const int pageSize = 30; // Nombre d'emails à charger par page
+	private const int PageSize = 30; // Nombre d'emails à charger par page
 
 	// Stocke l'adresse Email sélectionnée pour la passer en tant qu'expéditeur à la fenêtre de composition
 	private string addressAccount = string.Empty;
@@ -82,13 +82,13 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	partial void OnPageChanged(int value)
 	{
 		HasPreviousMails = Page > 1;
-		HasFollowingMails = TotalEmailsCount > Page * pageSize;
+		HasFollowingMails = TotalEmailsCount > Page * PageSize;
 	}
 
 	partial void OnTotalEmailsCountChanged(int value)
 	{
 		HasPreviousMails = Page > 1;
-		HasFollowingMails = TotalEmailsCount > Page * pageSize;
+		HasFollowingMails = TotalEmailsCount > Page * PageSize;
 	}
 
 	partial void OnSearchTextChanged(string? value)
@@ -116,8 +116,8 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 		IsValideCategory = SelectedCategory.MailboxType == MailboxType.Trash || SelectedCategory.MailboxType == MailboxType.PhishingSpam;
 		IsUnreadCategory = SelectedCategory.MailboxType == MailboxType.Unread;
 
-		_ = RefreshSelectedCategory();
 		Page = 1;
+		_ = RefreshSelectedCategory();
 	}
 
 	// Appelé quand l'utilisateur clique sur le bouton "Nouveau"
@@ -633,7 +633,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		var fetchTasks = mailboxTypes.Select(async mailboxType =>
 		{
-			(var emails, TotalEmailsCount) = await _emailsService.GetMailboxEmailsAsync(mailboxType, addressAccount, Page, pageSize);
+			(var emails, TotalEmailsCount) = await _emailsService.GetMailboxEmailsAsync(mailboxType, addressAccount, Page, PageSize);
 			return (mailboxType, emails);
 		});
 
@@ -668,7 +668,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	{
 		if (SelectedCategory is null) return;
 
-		(var refreshedEmails, TotalEmailsCount) = await _emailsService.GetMailboxEmailsAsync(SelectedCategory.MailboxType, addressAccount, Page, pageSize);
+		(var refreshedEmails, TotalEmailsCount) = await _emailsService.GetMailboxEmailsAsync(SelectedCategory.MailboxType, addressAccount, Page, PageSize);
 
 		// Recharge les données sans casser le binding
 		SelectedCategory.ReplaceAllItems(refreshedEmails);
