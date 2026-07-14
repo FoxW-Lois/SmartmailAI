@@ -1,7 +1,6 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Services.LocalSecurity;
@@ -17,14 +16,10 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 	private readonly IAccountSecretStore _secretStore;
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
-
-	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 	private TotpSecret? _tempSecret;
 
 	#region ObservableProperties & View Properties
-
-	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
 	public BitmapImage? QrCodeImage { get; private set; }
 
@@ -34,17 +29,12 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 	[ObservableProperty]
 	public partial bool IsQrVisible { get; set; } = false;
 
-	#endregion ObservableProperties & View Properties
+	[ObservableProperty]
+	public partial string? ErrorMessage { get; set; }
 
-	public string ErrorMessage
-	{
-		get => _errorMessage;
-		set
-		{
-			SetProperty(ref _errorMessage, value);
-			OnPropertyChanged(nameof(ErrorVisibility));
-		}
-	}
+	public bool HasError => string.IsNullOrWhiteSpace(ErrorMessage);
+
+	#endregion ObservableProperties & View Properties
 
 	public ICommand Confirm2FACommand { get; }
 

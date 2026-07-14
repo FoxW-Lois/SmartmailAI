@@ -110,14 +110,14 @@
 				<!--  Smartmail Account settings  -->
 				<TextBlock x:Uid="Settings_Account" Style="{ThemeResource SettingsSectionHeaderTextBlockStyle}" />
 
-				<controls:SettingsCard x:Uid="Settings_NoAccountLoggedIn" Visibility="{Binding NoAccountLoggedInVisibility, Mode=OneWay}">
+				<controls:SettingsCard x:Uid="Settings_NoAccountLoggedIn" Visibility="{x:Bind ViewModel.NoAccountLoggedInVisibility, Mode=OneWay}">
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE77B;" />
 					</controls:SettingsCard.HeaderIcon>
 				</controls:SettingsCard>
 
 				<!--  Enable/Disable Two factor authentication  -->
-				<controls:SettingsCard x:Uid="Settings_EnableDisable_TwoFactor" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+				<controls:SettingsCard x:Uid="Settings_EnableDisable_TwoFactor" Visibility="{x:Bind ViewModel.AccountLoggedInVisibility, Mode=OneWay}">
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE72E;" />
 					</controls:SettingsCard.HeaderIcon>
@@ -125,7 +125,7 @@
 				</controls:SettingsCard>
 
 				<!--  Number of times the app is opened per week  -->
-				<controls:SettingsCard x:Uid="Settings_NbOpenAppByWeek" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+				<controls:SettingsCard x:Uid="Settings_NbOpenAppByWeek" Visibility="{x:Bind ViewModel.AccountLoggedInVisibility, Mode=OneWay}">
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE9D2;" />
 					</controls:SettingsCard.HeaderIcon>
@@ -140,7 +140,7 @@
 				</controls:SettingsCard>
 
 				<!--  Average time spent in the app per week  -->
-				<controls:SettingsCard x:Uid="Settings_AverageDailyTrafic" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+				<controls:SettingsCard x:Uid="Settings_AverageDailyTrafic" Visibility="{x:Bind ViewModel.AccountLoggedInVisibility, Mode=OneWay}">
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE9D9;" />
 					</controls:SettingsCard.HeaderIcon>
@@ -151,7 +151,7 @@
 				</controls:SettingsCard>
 
 				<!--  Enable/Disable retrieved all emails from future addresses connected  -->
-				<controls:SettingsCard x:Uid="Settings_RetrievedAllEmailsFromFuturesAddresses" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+				<controls:SettingsCard x:Uid="Settings_RetrievedAllEmailsFromFuturesAddresses" Visibility="{x:Bind ViewModel.AccountLoggedInVisibility, Mode=OneWay}">
 					<controls:SettingsCard.HeaderIcon>
 						<FontIcon Glyph="&#xE715;" />
 					</controls:SettingsCard.HeaderIcon>
@@ -159,8 +159,8 @@
 				</controls:SettingsCard>
 
 				<!--  Date when emails were retrieved  -->
-				<Grid Visibility="{Binding RetrievedAllEmails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-					<controls:SettingsCard x:Uid="Settings_CalendarDatePicker" Visibility="{Binding AccountLoggedInVisibility, Mode=OneWay}">
+				<Grid Visibility="{x:Bind ViewModel.RetrievedAllEmails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+					<controls:SettingsCard x:Uid="Settings_CalendarDatePicker" Visibility="{x:Bind ViewModel.AccountLoggedInVisibility, Mode=OneWay}">
 						<controls:SettingsCard.HeaderIcon>
 							<FontIcon Glyph="&#xE787;" />
 						</controls:SettingsCard.HeaderIcon>

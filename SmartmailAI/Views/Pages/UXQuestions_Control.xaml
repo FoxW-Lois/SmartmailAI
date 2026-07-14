@@ -61,7 +61,7 @@
 							Foreground="Red"
 							Text="{x:Bind ViewModel.ErrorMessage1, Mode=OneWay}"
 							TextWrapping="Wrap"
-							Visibility="{x:Bind ViewModel.ErrorVisibility1, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.HasError1, Mode=OneWay}" />
 					</Grid>
 
 					<!--  Trafic quotidien  -->
@@ -97,7 +97,7 @@
 							Foreground="Red"
 							Text="{x:Bind ViewModel.ErrorMessage2, Mode=OneWay}"
 							TextWrapping="Wrap"
-							Visibility="{x:Bind ViewModel.ErrorVisibility2, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.HasError2, Mode=OneWay}" />
 					</Grid>
 
 					<!--  Récupération emails  -->
@@ -121,7 +121,7 @@
 					</Grid>
 
 					<!--  Date récupération emails  -->
-					<Grid>
+					<Grid Visibility="{x:Bind ViewModel.RetrievedAllEmails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
@@ -138,8 +138,7 @@
 							Grid.Column="0"
 							Margin="0 5 10 0"
 							VerticalAlignment="Top"
-							TextWrapping="Wrap"
-							Visibility="{x:Bind ViewModel.RetrievedAllEmails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+							TextWrapping="Wrap" />
 
 						<CalendarDatePicker
 							x:Name="DateEmailsWereRetrievedPicker"
@@ -148,8 +147,7 @@
 							Grid.Column="1"
 							Width="240"
 							HorizontalAlignment="Right"
-							Date="{x:Bind ViewModel.DatePicked, Mode=TwoWay}"
-							Visibility="{x:Bind ViewModel.RetrievedAllEmails, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+							Date="{x:Bind ViewModel.DatePicked, Mode=TwoWay}" />
 
 						<TextBlock
 							Grid.Row="1"
@@ -158,7 +156,7 @@
 							Foreground="Red"
 							Text="{x:Bind ViewModel.ErrorMessage3, Mode=OneWay}"
 							TextWrapping="Wrap"
-							Visibility="{x:Bind ViewModel.ErrorVisibility3, Mode=OneWay}" />
+							Visibility="{x:Bind ViewModel.HasError3, Mode=OneWay}" />
 					</Grid>
 				</StackPanel>
 

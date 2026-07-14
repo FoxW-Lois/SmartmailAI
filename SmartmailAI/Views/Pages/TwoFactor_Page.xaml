@@ -31,7 +31,7 @@
 				Foreground="Red"
 				Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
 				TextWrapping="Wrap"
-				Visibility="{Binding ErrorVisibility}" />
+				Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}" />
 
 			<Button
 				x:Uid="Account_Validate"

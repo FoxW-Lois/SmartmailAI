@@ -51,7 +51,7 @@
 				<NavigationViewItem
 					x:Uid="Shell_Login"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Login_ViewModel"
-					Visibility="{Binding IsNotLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE77B;" />
 					</NavigationViewItem.Icon>
@@ -61,7 +61,7 @@
 					x:Uid="Shell_Logout"
 					SelectsOnInvoked="False"
 					Tag="Logout"
-					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
 					</NavigationViewItem.Icon>
@@ -70,7 +70,7 @@
 				<NavigationViewItem
 					x:Uid="Shell_Register"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Register_ViewModel"
-					Visibility="{Binding IsNotLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8FA;" />
 					</NavigationViewItem.Icon>
@@ -79,7 +79,7 @@
 				<NavigationViewItem
 					x:Uid="Shell_Home"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.Home_ViewModel"
-					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE80F;" />
 					</NavigationViewItem.Icon>
@@ -89,7 +89,7 @@
 				<!--<NavigationViewItem
 					x:Uid="Shell_DetailsList"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.DetailsList_ViewModel"
-					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;" />
 					</NavigationViewItem.Icon>
@@ -99,7 +99,7 @@
 					x:Uid="Shell_MailAddresses"
 					IsEnabled="{Binding IsItemsEnabled}"
 					MenuItemsSource="{Binding AccountsMail}"
-					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay}">
 					<NavigationViewItem.MenuItems>
 						<DataTemplate x:DataType="models:AccountMailBase">
 							<NavigationViewItem Content="{x:Bind Email}" Tag="{x:Bind}" />
@@ -115,7 +115,7 @@
 					x:Uid="Shell_AddAddress"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddAddress_ViewModel"
 					IsEnabled="{Binding IsItemsEnabled}"
-					Visibility="{Binding IsLogged, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
 					</NavigationViewItem.Icon>
@@ -125,7 +125,7 @@
 					x:Uid="Shell_AddressManagement"
 					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.AddressManagement_ViewModel"
 					IsEnabled="{Binding IsItemsEnabled}"
-					Visibility="{Binding CanShowAddressManagement, Converter={StaticResource BoolToVisibilityConverter}}">
+					Visibility="{x:Bind ViewModel.CanShowAddressManagement, Mode=OneWay}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE779;" />
 					</NavigationViewItem.Icon>

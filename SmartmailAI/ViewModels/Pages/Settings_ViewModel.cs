@@ -17,8 +17,11 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public Visibility NonlogonTaskCardVisibility = RuntimeHelper.IsMSIX ? Visibility.Visible : Visibility.Collapsed;
 	public Visibility LogonTaskExpanderVisibility = RuntimeHelper.IsMSIX ? Visibility.Collapsed : Visibility.Visible;
 
-	public Visibility NoAccountLoggedInVisibility = Visibility.Visible;
-	public Visibility AccountLoggedInVisibility = Visibility.Collapsed;
+	[ObservableProperty]
+	public partial Visibility NoAccountLoggedInVisibility { get; set; } = Visibility.Visible;
+
+	[ObservableProperty]
+	public partial Visibility AccountLoggedInVisibility { get; set; } = Visibility.Collapsed;
 
 	#endregion View Properties
 
@@ -150,7 +153,6 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public void UpdateVisibilyProperties(bool isAuthenticated)
 	{
 		AccountLoggedInVisibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
-
 		NoAccountLoggedInVisibility = isAuthenticated ? Visibility.Collapsed : Visibility.Visible;
 	}
 

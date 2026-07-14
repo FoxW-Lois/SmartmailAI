@@ -66,9 +66,9 @@
 					Foreground="Red"
 					Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
 					TextWrapping="Wrap"
-					Visibility="{Binding ErrorVisibility}" />
+					Visibility="{x:Bind ViewModel.HasError}" />
 
-				<StackPanel Spacing="16" Visibility="{Binding IsOtherChoice, Converter={StaticResource BoolToVisibilityConverter}}">
+				<StackPanel Spacing="16" Visibility="{x:Bind ViewModel.IsOtherChoice, Mode=OneWay}">
 					<TextBlock x:Uid="AddAddress_OtherChoice" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
 					<TextBox x:Uid="AddAddress_Email" Text="{x:Bind ViewModel.Email, Mode=TwoWay}" />

@@ -27,6 +27,9 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	[ObservableProperty]
 	public partial bool HasLinkedAddresses { get; set; } = false;
 
+	[ObservableProperty]
+	public partial bool IsLogged { get; set; } = false;
+
 	#endregion ObservableProperties
 
 	#region Interfaces declaration
@@ -146,26 +149,6 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			Selected = selectedItem;
 		}
 	}
-
-	#region Changement d'état concernant l'authentification de l'utilisateur
-
-	public bool _isLogged = false;
-
-	public bool IsLogged
-	{
-		get => _isLogged;
-		set
-		{
-			if (SetProperty(ref _isLogged, value))
-			{
-				OnPropertyChanged(nameof(IsNotLogged));
-			}
-		}
-	}
-
-	public bool IsNotLogged => !IsLogged;
-
-	#endregion Changement d'état concernant l'authentification de l'utilisateur
 
 	#region Changement d'état concernant la présence d'adresses email connectées
 

@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -11,28 +10,23 @@ public partial class Login_ViewModel(IAuthService authService, IAddressesService
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private readonly ILocalSessionService _localSessionService = localSessionService;
-
-	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#region ObservableProperties & View Properties
 
 	[ObservableProperty]
 	public partial string Login { get; set; } = string.Empty;
 
-	public string ErrorMessage
-	{
-		get => _errorMessage;
-		set
-		{
-			SetProperty(ref _errorMessage, value);
-			OnPropertyChanged(nameof(ErrorVisibility));
-		}
-	}
+	[ObservableProperty]
+	public partial string? ErrorMessage { get; set; }
 
-	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+	public bool HasError => string.IsNullOrWhiteSpace(ErrorMessage);
+
+	#endregion ObservableProperties & View Properties
 
 	public async Task<(bool success, bool twoFactorValidation, string?)> LoginAsync(string password)
 	{
-		ErrorMessage = string.Empty;
+		ErrorMessage = null;
 
 		(bool success, string? specificError) = await _authService.LoginAsync(Login, password);
 
@@ -61,7 +55,7 @@ public partial class Login_ViewModel(IAuthService authService, IAddressesService
 		_localSessionService.CreateSession();
 
 		Login = string.Empty;
-		ErrorMessage = string.Empty;
+		ErrorMessage = null;
 
 		return (true, false, null);
 	}

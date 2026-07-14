@@ -6,13 +6,17 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class Home_ViewModel : ObservableRecipient
 {
+	private readonly IAccountService _accountService;
+
+	#region ObservableProperties
+
 	[ObservableProperty]
 	public partial string AppDisplayName { get; set; } = ConstantHelper.AppDisplayName;
 
 	[ObservableProperty]
 	public partial bool IsUXQuestionsVisible { get; set; } = false;
 
-	private readonly IAccountService _accountService;
+	#endregion ObservableProperties
 
 	public Home_ViewModel(IAccountService accountService)
 	{
