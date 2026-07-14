@@ -32,6 +32,7 @@ public class Email
 	[Column("Subject")] public string? Subject { get; set; }
 	[Column("Content")] public string? Content { get; set; }
 	[Column("Owner")] public string Owner { get; set; } = default!;
+	[Column("OwnerHash")] public string OwnerHash { get; set; } = default!;
 
 	[Column("DateSent")] public DateTime? DateSent { get; set; } = DateTime.Now;
 

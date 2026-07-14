@@ -6,6 +6,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Security;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
 using SmartmailAI.Core.Models.Security;
 
@@ -434,6 +435,8 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 
 	public async Task ScribbleEmailAsync(string? guid, string from, string? to, string? subject, string? body, string? cc, string? bcc)
 	{
+		var ownerHash = Hasher.HashDataWithoutSalt(from);
+
 		Email email = new()
 		{
 			Guid = guid ?? Guid.NewGuid().ToString(),
@@ -444,6 +447,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 			Subject = subject,
 			Content = body,
 			Owner = from,
+			OwnerHash = ownerHash,
 			Cc = cc,
 			Bcc = bcc,
 			MailboxType = MailboxType.Drafts,
@@ -556,7 +560,7 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 
 		if (email.MailboxType is not MailboxType.Archives)
 			email.PreviousMailboxType = email.MailboxType;
-		
+
 		email.MailboxType = MailboxType.Trash;
 
 		if (email.Guid.StartsWith("Email_Hardcoded-"))

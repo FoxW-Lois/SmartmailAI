@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Services;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
@@ -11,6 +12,8 @@ public class MappersToEmailDTOService(IEmailsService emailsService) : IMappersTo
 
 	public Email MapEmailFromAddressToEmail(EmailFromAddress emailFromAddress)
 	{
+		var ownerHash = Hasher.HashDataWithoutSalt(emailFromAddress.Owner);
+
 		return new Email
 		{
 			Guid = emailFromAddress.Guid,
@@ -24,6 +27,7 @@ public class MappersToEmailDTOService(IEmailsService emailsService) : IMappersTo
 			Content = emailFromAddress.Body,
 			DateSent = emailFromAddress.Date,
 			Owner = emailFromAddress.Owner,
+			OwnerHash = ownerHash,
 			Attachments = emailFromAddress.Attachments,
 			MailboxType = emailFromAddress.MailboxType switch
 			{

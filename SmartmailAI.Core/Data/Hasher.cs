@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace SmartmailAI.Core.Data;
 
@@ -21,5 +22,13 @@ public class Hasher
 		var hashBytes = pbkdf2.GetBytes(32);
 
 		return Convert.ToBase64String(hashBytes) == storedHash;
+	}
+
+	public static string HashDataWithoutSalt(string password)
+	{
+		var bytes = Encoding.UTF8.GetBytes(password);
+		var hash = SHA256.HashData(bytes);
+
+		return Convert.ToBase64String(hash);
 	}
 }
