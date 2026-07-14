@@ -17,11 +17,12 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public Visibility NonlogonTaskCardVisibility = RuntimeHelper.IsMSIX ? Visibility.Visible : Visibility.Collapsed;
 	public Visibility LogonTaskExpanderVisibility = RuntimeHelper.IsMSIX ? Visibility.Collapsed : Visibility.Visible;
 
-	[ObservableProperty]
-	public Visibility noAccountLoggedInVisibility = Visibility.Visible;
+	public Visibility NoAccountLoggedInVisibility = Visibility.Visible;
+	public Visibility AccountLoggedInVisibility = Visibility.Collapsed;
 
-	[ObservableProperty]
-	public Visibility accountLoggedInVisibility = Visibility.Collapsed;
+	#endregion View Properties
+
+	#region ObservableProperty
 
 	[ObservableProperty]
 	public partial int LanguageIndex { get; set; }
@@ -72,7 +73,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	[ObservableProperty]
 	public partial bool IsItemsEnabled { get; set; } = false;
 
-	#endregion View Properties
+	#endregion ObservableProperty
 
 	private readonly IAppSettingsService _appSettingsService;
 	private readonly IBackdropSelectorService _backdropSelectorService;

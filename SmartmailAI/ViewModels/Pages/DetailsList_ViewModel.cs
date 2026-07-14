@@ -43,37 +43,37 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 	public partial int TotalEmailsCount { get; set; } = 0;
 
 	[ObservableProperty]
-	private MailboxCategory? selectedCategory;
+	public partial MailboxCategory? SelectedCategory { get; set; }
 
 	[ObservableProperty]
-	private string? searchText;
+	public partial string? SearchText { get; set; }
 
 	[ObservableProperty]
-	private bool _isComposing = false;
+	public partial bool IsComposing { get; set; } = false;
 
 	[ObservableProperty]
-	private bool _isComposeExpanded = false;
+	public partial bool IsComposeExpanded { get; set; } = false;
 
 	[ObservableProperty]
-	private object? _selectedDetail;
+	public partial object? SelectedDetail { get; set; }
 
 	[ObservableProperty]
-	private DateTimeOffset? _datePicked;
+	public partial DateTimeOffset? DatePicked { get; set; }
 
 	[ObservableProperty]
-	private bool _isDatePickerOpen = false;
+	public partial bool IsDatePickerOpen { get; set; } = false;
 
 	[ObservableProperty]
-	private bool _isValideCategory = false;
+	public partial bool IsValideCategory { get; set; } = false;
 
 	[ObservableProperty]
-	private bool _isUnreadCategory = false;
+	public partial bool IsUnreadCategory { get; set; } = false;
 
 	[ObservableProperty]
-	private bool _isAIinterfaceVisible = false;
+	public partial bool IsAIinterfaceVisible { get; set; } = false;
 
 	[ObservableProperty]
-	private bool _isAIinterfaceExpanded = false;
+	public partial bool IsAIinterfaceExpanded { get; set; } = false;
 
 	#endregion ObservableProperties
 

@@ -11,6 +11,9 @@ public partial class TwoFactor_ViewModel : ObservableObject
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
 
+	[ObservableProperty]
+	public partial string Code { get; set; } = string.Empty;
+
 	public string Login { get; private set; } = string.Empty;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
@@ -40,14 +43,6 @@ public partial class TwoFactor_ViewModel : ObservableObject
 			SetProperty(ref _errorMessage, value);
 			OnPropertyChanged(nameof(ErrorVisibility));
 		}
-	}
-
-	private string _code = string.Empty;
-
-	public string Code
-	{
-		get => _code;
-		set => SetProperty(ref _code, value);
 	}
 
 	private async Task ValidateAsync()

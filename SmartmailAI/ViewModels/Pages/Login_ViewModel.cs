@@ -12,15 +12,11 @@ public partial class Login_ViewModel(IAuthService authService, IAddressesService
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private readonly ILocalSessionService _localSessionService = localSessionService;
 
-	private string _login = string.Empty;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
-	public string Login
-	{
-		get => _login;
-		set => SetProperty(ref _login, value);
-	}
+	[ObservableProperty]
+	public partial string Login { get; set; } = string.Empty;
 
 	public string ErrorMessage
 	{

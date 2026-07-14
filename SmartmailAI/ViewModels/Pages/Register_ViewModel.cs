@@ -5,28 +5,24 @@ using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class Register_ViewModel(IAuthService authService, ILocalSessionService localSessionService)
-	: ObservableRecipient
+public partial class Register_ViewModel(IAuthService authService) : ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
-	private readonly ILocalSessionService _localSessionService = localSessionService;
 
-	private string _login = string.Empty;
-	private string _phoneNumber = string.Empty;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
-	public string Login
-	{
-		get => _login;
-		set => SetProperty(ref _login, value);
-	}
+	#region ObservableProperties & View Properties
 
-	public string PhoneNumber
-	{
-		get => _phoneNumber;
-		set => SetProperty(ref _phoneNumber, value);
-	}
+	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+
+	[ObservableProperty]
+	public partial string Login { get; set; } = string.Empty;
+
+	[ObservableProperty]
+	public partial string PhoneNumber { get; set; } = string.Empty;
+
+	#endregion ObservableProperties & View Properties
 
 	public string ErrorMessage
 	{
@@ -37,8 +33,6 @@ public partial class Register_ViewModel(IAuthService authService, ILocalSessionS
 			OnPropertyChanged(nameof(ErrorVisibility));
 		}
 	}
-
-	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
 	public async Task<bool> RegisterAsync(string login, string phoneNumber, string password, string confirmPassword)
 	{

@@ -60,33 +60,37 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		Attachments.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAttachments));
 	}
 
+	#region Emails properties
+
 	[ObservableProperty]
-	private ComposeMode _composeMode;
+	public partial ComposeMode ComposeMode { get; set; }
 
 	private string? _guid, _emailOwner;
 
 	private string _from = string.Empty;
 
 	[ObservableProperty]
-	private string _to = string.Empty;
+	public partial string To { get; set; } = string.Empty;
 
 	[ObservableProperty]
-	private string _cc = string.Empty;
+	public partial string Cc { get; set; } = string.Empty;
 
 	[ObservableProperty]
-	private string _bcc = string.Empty;
+	public partial string Bcc { get; set; } = string.Empty;
 
 	[ObservableProperty]
-	private string _subject = string.Empty;
+	public partial string Subject { get; set; } = string.Empty;
 
 	[ObservableProperty]
-	private string _body = string.Empty;
+	public partial string Body { get; set; } = string.Empty;
 
 	[ObservableProperty]
-	private bool _isCcVisible;
+	public partial bool IsCcVisible { get; set; } = false;
 
 	[ObservableProperty]
-	private bool _isBccVisible;
+	public partial bool IsBccVisible { get; set; } = false;
+
+	#endregion Emails properties
 
 	public bool IsSubjectEnable => ComposeMode is ComposeMode.New or ComposeMode.Edit;
 

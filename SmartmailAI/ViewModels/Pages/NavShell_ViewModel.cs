@@ -10,6 +10,8 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class NavShell_ViewModel : ObservableRecipient
 {
+	#region ObservableProperties
+
 	[ObservableProperty]
 	public partial bool IsBackEnabled { get; set; }
 
@@ -17,10 +19,15 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	public partial object? Selected { get; set; }
 
 	[ObservableProperty]
-	private ObservableCollection<AccountMailBase> accountsMail = [];
+	public partial ObservableCollection<AccountMailBase> AccountsMail { get; set; } = [];
 
 	[ObservableProperty]
 	public partial bool IsItemsEnabled { get; set; } = false;
+
+	[ObservableProperty]
+	public partial bool HasLinkedAddresses { get; set; } = false;
+
+	#endregion ObservableProperties
 
 	#region Interfaces declaration
 
@@ -161,14 +168,6 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	#endregion Changement d'état concernant l'authentification de l'utilisateur
 
 	#region Changement d'état concernant la présence d'adresses email connectées
-
-	private bool _hasLinkedAddresses;
-
-	public bool HasLinkedAddresses
-	{
-		get => _hasLinkedAddresses;
-		set => SetProperty(ref _hasLinkedAddresses, value);
-	}
 
 	public bool CanShowAddressManagement => IsLogged && HasLinkedAddresses;
 

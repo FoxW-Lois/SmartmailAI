@@ -18,13 +18,21 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly ResourceLoader resourceLoader = new();
 
-	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
+	#region ObservableProperties
 
 	[ObservableProperty]
-	private Email? currentEmail;
+	public partial ObservableCollection<AIMessage> Conversation { get; set; } = [];
 
 	[ObservableProperty]
-	private string? currentEmailContentAIAssist;
+	public partial Email? CurrentEmail { get; set; }
+
+	[ObservableProperty]
+	public partial string? CurrentEmailContentAIAssist { get; set; }
+
+	[ObservableProperty]
+	public partial bool HasAnAIResult { get; set; } = false;
+
+	#endregion ObservableProperties
 
 	partial void OnCurrentEmailChanged(Email? value)
 	{
@@ -33,9 +41,6 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			CurrentEmailContentAIAssist = null;
 		}
 	}
-
-	[ObservableProperty]
-	private bool hasAnAIResult = false;
 
 	partial void OnCurrentEmailContentAIAssistChanged(string? value)
 	{

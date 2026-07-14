@@ -6,16 +6,17 @@ using SmartmailAI.Core.Contracts.Repository;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddressManagement_ViewModel : ObservableRecipient
+public partial class AddressManagement_ViewModel(IAddressesRepository addressRepository, IAddressesService addressesService,
+	INavigationService navigationService) : ObservableRecipient
 {
-	private readonly IAddressesRepository _addressRepository;
-	private readonly IAddressesService _addressesService;
-	private readonly INavigationService _navigationService;
+	private readonly IAddressesRepository _addressRepository = addressRepository;
+	private readonly IAddressesService _addressesService = addressesService;
+	private readonly INavigationService _navigationService = navigationService;
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
 	[ObservableProperty]
-	private ObservableCollection<AccountMailBase> accountsMail = [];
+	public partial ObservableCollection<AccountMailBase> AccountsMail { get; set; } = [];
 
 	public string ErrorMessage
 	{
@@ -28,13 +29,6 @@ public partial class AddressManagement_ViewModel : ObservableRecipient
 	}
 
 	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
-
-	public AddressManagement_ViewModel(IAddressesRepository addressRepository, IAddressesService addressesService, INavigationService navigationService)
-	{
-		_addressRepository = addressRepository;
-		_addressesService = addressesService;
-		_navigationService = navigationService;
-	}
 
 	public async Task LoadAddressesAsync()
 	{

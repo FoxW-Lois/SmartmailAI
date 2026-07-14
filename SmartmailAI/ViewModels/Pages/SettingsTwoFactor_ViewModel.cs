@@ -22,29 +22,19 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 	private readonly ResourceLoader resourceLoader = new();
 	private TotpSecret? _tempSecret;
 
-	#region QrCode variables
+	#region ObservableProperties & View Properties
+
+	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
 	public BitmapImage? QrCodeImage { get; private set; }
 
-	private string _code = string.Empty;
+	[ObservableProperty]
+	public partial string Code { get; set; } = string.Empty;
 
-	public string Code
-	{
-		get => _code;
-		set => SetProperty(ref _code, value);
-	}
+	[ObservableProperty]
+	public partial bool IsQrVisible { get; set; } = false;
 
-	private bool _isQrVisible;
-
-	public bool IsQrVisible
-	{
-		get => _isQrVisible;
-		set => SetProperty(ref _isQrVisible, value);
-	}
-
-	#endregion QrCode variables
-
-	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
+	#endregion ObservableProperties & View Properties
 
 	public string ErrorMessage
 	{

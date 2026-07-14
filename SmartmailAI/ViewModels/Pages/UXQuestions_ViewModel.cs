@@ -14,6 +14,8 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IAccountService _accountService = accountService;
 
+	#region ObservableProperties
+
 	[ObservableProperty]
 	public partial int NbOpenAppByWeek { get; set; } = 0;
 
@@ -29,6 +31,8 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 
 	[ObservableProperty]
 	public partial DateTimeOffset? DatePicked { get; set; }
+
+	#endregion ObservableProperties
 
 	private DateOnly? parsedDatePicked;
 	private string _errorMessage1 = string.Empty;

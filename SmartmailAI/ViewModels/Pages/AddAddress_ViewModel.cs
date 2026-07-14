@@ -16,74 +16,36 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
-	#region Champs pour la connexion SMTP/IMAP
+	#region ObservableProperties : champs pour la connexion SMTP/IMAP
 
-	// Déclaration avec valeur par défaut :
-	private string _email = string.Empty;
-	private string _userName = string.Empty;
-	private string _password = string.Empty;
-	private string _imapHost = string.Empty;
-	private int _imapPort = 993;
-	private string _imapUseSsl = "true";
-	private string _smtpHost = string.Empty;
-	private int _smtpPort = 465; // 587 ou 465
-	private string _smtpUseSsl = "true";
+	[ObservableProperty]
+	public partial string Email { get; set; } = string.Empty;
 
-	public string Email
-	{
-		get => _email;
-		set => SetProperty(ref _email, value);
-	}
+	[ObservableProperty]
+	public partial string UserName { get; set; } = string.Empty;
 
-	public string UserName
-	{
-		get => _userName;
-		set => SetProperty(ref _userName, value);
-	}
+	[ObservableProperty]
+	public partial string Password { get; set; } = string.Empty;
 
-	public string Password
-	{
-		get => _password;
-		set => SetProperty(ref _password, value);
-	}
+	[ObservableProperty]
+	public partial string ImapHost { get; set; } = string.Empty;
 
-	public string ImapHost
-	{
-		get => _imapHost;
-		set => SetProperty(ref _imapHost, value);
-	}
+	[ObservableProperty]
+	public partial int ImapPort { get; set; } = 993;
 
-	public int ImapPort
-	{
-		get => _imapPort;
-		set => SetProperty(ref _imapPort, value);
-	}
+	[ObservableProperty]
+	public partial string ImapUseSsl { get; set; } = "true";
 
-	public string ImapUseSsl
-	{
-		get => _imapUseSsl;
-		set => SetProperty(ref _imapUseSsl, value);
-	}
+	[ObservableProperty]
+	public partial string SmtpHost { get; set; } = string.Empty;
 
-	public string SmtpHost
-	{
-		get => _smtpHost;
-		set => SetProperty(ref _smtpHost, value);
-	}
+	[ObservableProperty]
+	public partial int SmtpPort { get; set; } = 465; // 587 ou 465
 
-	public int SmtpPort
-	{
-		get => _smtpPort;
-		set => SetProperty(ref _smtpPort, value);
-	}
+	[ObservableProperty]
+	public partial string SmtpUseSsl { get; set; } = "true";
 
-	public string SmtpUseSsl
-	{
-		get => _smtpUseSsl;
-		set => SetProperty(ref _smtpUseSsl, value);
-	}
-
-	#endregion Champs pour la connexion SMTP/IMAP
+	#endregion ObservableProperties : champs pour la connexion SMTP/IMAP
 
 	public string ErrorMessage
 	{

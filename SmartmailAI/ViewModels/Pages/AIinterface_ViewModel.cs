@@ -16,7 +16,7 @@ public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableOb
 	public ObservableCollection<AIMessage> Conversation { get; } = [];
 
 	[ObservableProperty]
-	private string _userPrompt = string.Empty;
+	public partial string UserPrompt { get; set; } = string.Empty;
 
 	[RelayCommand]
 	private void Delete()
