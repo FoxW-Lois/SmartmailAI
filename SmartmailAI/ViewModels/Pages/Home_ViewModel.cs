@@ -25,7 +25,8 @@ public partial class Home_ViewModel : ObservableRecipient
 		// Quand reçoit une demande, cache le UserControl UXQuestions
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
-			IsUXQuestionsVisible = false;
+			// Exclusivement dans ce cas là, on doit passer l'inverse de ChangeDisplay
+			IsUXQuestionsVisible = !m.ChangeDisplay;
 		});
 	}
 

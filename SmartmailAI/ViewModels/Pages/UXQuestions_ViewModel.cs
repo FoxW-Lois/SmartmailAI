@@ -75,8 +75,8 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 
 		await _accountRepository.UpdateAccountAsync(account);
 
-		// Notifie Home_ViewModel et NavShell_ViewModel de mettre à jour leur vue respective
-		WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage());
+		// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+		WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = true });
 
 		Reset();
 	}

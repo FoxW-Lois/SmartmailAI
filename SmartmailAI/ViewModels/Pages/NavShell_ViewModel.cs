@@ -72,7 +72,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		// Quand reçoit une demande, mets les Iteams en Enabled
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
-			IsItemsEnabled = true;
+			IsItemsEnabled = m.ChangeDisplay;
 		});
 
 		_authService.AuthenticationStateChanged += (_, isLogged) =>
@@ -173,6 +173,19 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public void Logout()
 	{
+		var userAccount = _accountService.GetAccountByLoginInLocalSessionAsync().GetAwaiter().GetResult();
+
+		if (userAccount is not null && userAccount.IsFirstConnection is false)
+		{
+			// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+			WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = true });
+		}
+		else if (userAccount is not null && userAccount.IsFirstConnection is true)
+		{
+			// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+			WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = false });
+		}
+
 		_emailsSyncService.Stop();
 		_authService.Logout();
 		_localSessionService.KillSession();

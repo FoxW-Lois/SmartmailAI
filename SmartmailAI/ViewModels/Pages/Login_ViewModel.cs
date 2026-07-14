@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Windows.ApplicationModel.Resources;
+using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class Login_ViewModel(IAuthService authService, IAddressesService addressesService, IEmailLoaderService emailLoaderService,
-	ILocalSessionService localSessionService) : ObservableRecipient
+public partial class Login_ViewModel(IAuthService authService, IAccountService accountService, IAddressesService addressesService,
+	IEmailLoaderService emailLoaderService, ILocalSessionService localSessionService) : ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
+	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private readonly ILocalSessionService _localSessionService = localSessionService;
@@ -56,6 +59,19 @@ public partial class Login_ViewModel(IAuthService authService, IAddressesService
 
 		Login = string.Empty;
 		ErrorMessage = null;
+
+		var userAccount = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (userAccount is not null && userAccount.IsFirstConnection is false)
+		{
+			// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+			WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = true });
+		}
+		else if (userAccount is not null && userAccount.IsFirstConnection is true)
+		{
+			// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+			WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = false });
+		}
 
 		return (true, false, null);
 	}

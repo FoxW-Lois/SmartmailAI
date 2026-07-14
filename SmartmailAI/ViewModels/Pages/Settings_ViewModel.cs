@@ -109,7 +109,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 		// Quand reçoit une demande, mets les Iteams en Enabled
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
-			IsItemsEnabled = true;
+			IsItemsEnabled = m.ChangeDisplay;
 
 			account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
 
@@ -298,10 +298,10 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 	async partial void OnDatePickedChanging(DateTimeOffset? value)
 	{
-		if (account is null || !value.HasValue && account.RetrievedAllEmails is false)
+		if (value is null || account is null || !value.HasValue && account.RetrievedAllEmails is true)
 			return;
 
-		account.DatePicked = DateOnly.FromDateTime(DateTime.Parse(value!.Value.ToString("yyyy-MM-dd")));
+		account.DatePicked = DateOnly.FromDateTime(DateTime.Parse(value.Value.ToString("yyyy-MM-dd")));
 		await _accountRepository.UpdateAccountAsync(account);
 	}
 
