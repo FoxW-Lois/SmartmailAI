@@ -14,9 +14,9 @@ public class Email
 {
 	#region Propriétés de base / Composition
 
-	[Key][Column("Guid")] public string Guid { get; set; } = default!;
+	[Key][Column("Guid")] public required string Guid { get; set; }
 
-	[Column("SenderEmail")] public string SenderEmail { get; set; } = default!;
+	[Column("SenderEmail")] public required string SenderEmail { get; set; }
 	[Column("SenderName")] public string SenderName { get; set; } = default!; // ← Nullable en bdd mais recevra le SenderEmail si null côté UI
 	[NotMapped] public Uri? SenderProfileImage { get; set; }
 
@@ -31,8 +31,8 @@ public class Email
 
 	[Column("Subject")] public string? Subject { get; set; }
 	[Column("Content")] public string? Content { get; set; }
-	[Column("Owner")] public string Owner { get; set; } = default!;
-	[Column("OwnerHash")] public string OwnerHash { get; set; } = default!;
+	[Column("Owner")] public required string Owner { get; set; }
+	[Column("OwnerHash")] public required string OwnerHash { get; set; }
 
 	[Column("DateSent")] public DateTime? DateSent { get; set; } = DateTime.Now;
 
