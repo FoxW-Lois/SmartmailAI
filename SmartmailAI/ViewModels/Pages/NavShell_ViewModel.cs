@@ -69,7 +69,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
 		IsLogged = _authService.IsAuthenticated;
 
-		// Quand reçoit une demande, mets les Iteams en Enabled
+		// Quand reçoit une demande, mets les Items en Enabled
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
 			IsItemsEnabled = m.ChangeDisplay;
@@ -80,6 +80,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			// Debug en console du changement de IsAuthenticated
 			//Console.WriteLine($"============ Auth changed: {isLogged}");
 			IsLogged = isLogged;
+			LoadAccountsAsync().GetAwaiter();
 			UpdateVisibility();
 		};
 
@@ -161,12 +162,23 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public async Task LoadAccountsAsync()
 	{
+		// Il nécessaire d'avoir un tout petit délai d'attente, le temps que le fichier .tmp gérant la session locale se mettent à jour
+		// lorsque l'utilisateur se connecte/déconnecte
+		await Task.Delay(1000);
+
 		var accounts = await _addressesRepository.GetAllAddressesByAccountIndexGuidAsync();
 
 		AccountsMail.Clear();
 
 		foreach (var account in accounts)
 			AccountsMail.Add(account);
+
+		if (AccountsMail.Count > 0)
+			HasLinkedAddresses = true;
+		else
+			HasLinkedAddresses = false;
+
+		UpdateVisibility();
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées

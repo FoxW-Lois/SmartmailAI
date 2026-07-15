@@ -106,7 +106,7 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 		InitializeSettings();
 
-		// Quand reçoit une demande, mets les Iteams en Enabled
+		// Quand reçoit une demande, mets les Items en Enabled
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
 			IsItemsEnabled = m.ChangeDisplay;
