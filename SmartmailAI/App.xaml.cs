@@ -70,6 +70,10 @@ public partial class App : Application
 		}
 #endif
 
+		// Load environment variables from the .env file
+		string envPath = Path.Combine(AppContext.BaseDirectory, ".env");
+		DotNetEnv.Env.Load(envPath);
+
 		// Initialize the component
 		InitializeComponent();
 

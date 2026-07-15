@@ -53,7 +53,7 @@ public class EmailsSyncService(IMailReaderService mailReaderService, IEmailRepos
 
 			while (await timer.WaitForNextTickAsync(_cts.Token))
 			{
-				var addressRefreshList = await _addressesRepository.GetAllAddressesAsync();
+				var addressRefreshList = await _addressesRepository.GetAllAddressesByAccountIndexGuidAsync();
 
 				if (addressRefreshList is null || addressRefreshList.Count == 0) continue;
 

@@ -24,8 +24,8 @@ public class GmailCredentialService(IAddressesRepository addressesRepository) : 
 		{
 			var secrets = new ClientSecrets
 			{
-				ClientId = "687689133134-p1h6di4c2chv5dne4rfi3cfljp0ln9n8.apps.googleusercontent.com",
-				ClientSecret = "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"
+				ClientId = Environment.GetEnvironmentVariable("CLIENT_ID"),
+				ClientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET")
 			};
 
 			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };
@@ -47,8 +47,8 @@ public class GmailCredentialService(IAddressesRepository addressesRepository) : 
 		{
 			var secrets = new ClientSecrets
 			{
-				ClientId = "687689133134-p1h6di4c2chv5dne4rfi3cfljp0ln9n8.apps.googleusercontent.com",
-				ClientSecret = "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"
+				ClientId = Environment.GetEnvironmentVariable("CLIENT_ID"),
+				ClientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET")
 			};
 
 			var scopes = new[] { GmailService.Scope.GmailReadonly, GmailService.Scope.GmailSend };

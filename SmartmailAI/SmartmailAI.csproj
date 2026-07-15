@@ -92,7 +92,7 @@
             <SubType>Designer</SubType>
         </AppxManifest>
     </ItemGroup>
-	
+
     <ItemGroup>
         <None Remove="NativeMethods.txt" />
         <None Remove="SmartmailDB.db" />
@@ -103,22 +103,29 @@
     </ItemGroup>
 
     <ItemGroup>
-			<Content Include="SmartmailDB.db">
-				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			</Content>
+      <Content Include="SmartmailDB.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-			<None Update="appsettings.json">
-				<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			</None>
-		</ItemGroup>
-	
-		<ItemGroup>
-			<None Update="Prompt-system-Smartmail.txt">
-				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			</None>
-		</ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+  
+    <ItemGroup>
+      <None Update="Prompt-system-Smartmail.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include=".env">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.2.251219" />
@@ -126,6 +133,7 @@
         <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+        <PackageReference Include="DotNetEnv" Version="3.2.0" />
         <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.2" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />

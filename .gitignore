@@ -362,3 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Files.App/UserControls/TabBar/TabBar.xaml
+
+# env files
+.env
