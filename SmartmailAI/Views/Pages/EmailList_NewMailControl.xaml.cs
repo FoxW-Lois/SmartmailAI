@@ -6,13 +6,13 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace SmartmailAI.Views.Pages;
 
-public sealed partial class DetailsList_NewMailControl : UserControl
+public sealed partial class EmailList_NewMailControl : UserControl
 {
-	public DetailsList_NewMailViewModel ViewModel { get; }
+	public EmailList_NewMailViewModel ViewModel { get; }
 
-	public DetailsList_NewMailControl()
+	public EmailList_NewMailControl()
 	{
-		ViewModel = Ioc.Default.GetRequiredService<DetailsList_NewMailViewModel>();
+		ViewModel = Ioc.Default.GetRequiredService<EmailList_NewMailViewModel>();
 		InitializeComponent();
 
 		ViewModel.PropertyChanged += ViewModel_PropertyChanged!;

@@ -87,7 +87,7 @@ public sealed partial class NavShell_Page : Page
 		if (args.InvokedItemContainer?.DataContext is AccountMailBase account)
 		{
 			string addressAccount = account.Email;
-			_navigationService.NavigateTo(typeof(DetailsList_ViewModel).FullName!, addressAccount);
+			_navigationService.NavigateTo(typeof(EmailList_ViewModel).FullName!, addressAccount);
 		}
 	}
 }

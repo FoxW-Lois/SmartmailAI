@@ -9,7 +9,7 @@ using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class DetailsList_StandardViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
+public partial class EmailList_StandardViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
 	IDialogService dialogService) : ObservableRecipient
 {
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
@@ -202,7 +202,7 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			Body = CurrentEmail.Content
 		});
 
-		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
+		// Notifie EmailList_ViewModel d'ouvrir le ComposeOverlay
 		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 	}
 
@@ -250,7 +250,7 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			EmailOwner = ownerEmail
 		});
 
-		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
+		// Notifie EmailList_ViewModel d'ouvrir le ComposeOverlay
 		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 	}
 
@@ -285,7 +285,7 @@ public partial class DetailsList_StandardViewModel(IMailReaderService mailReader
 			EmailOwner = CurrentEmail.Owner
 		});
 
-		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay
+		// Notifie EmailList_ViewModel d'ouvrir le ComposeOverlay
 		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 	}
 

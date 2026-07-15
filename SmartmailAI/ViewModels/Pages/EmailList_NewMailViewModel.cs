@@ -11,7 +11,7 @@ using Windows.Storage.Pickers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class DetailsList_NewMailViewModel : ObservableObject
+public partial class EmailList_NewMailViewModel : ObservableObject
 {
 	private readonly IAddressesService _addressesService;
 	private readonly IGmailApiService _gmailApiService;
@@ -31,7 +31,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	public ObservableCollection<MailAttachment> Attachments { get; } = [];
 	public bool HasAttachments => Attachments.Count > 0;
 
-	public DetailsList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
+	public EmailList_NewMailViewModel(IAddressesService addressesService, IGmailApiService gmailApiService, IGmailCredentialService gmailCredentialService,
 		IOtherProtocolService otherProtocolService, IOtherCredentialService otherCredentialService, IOtherTokenStore otherTokenStore,
 	IEmailRepository emailsRepository, IEmailsService emailsService, I_AIService aiService, IDialogService dialogService)
 	{
@@ -141,7 +141,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 			}
 			// TODO: ajouter un check account is AccountOutlook accountOutlook
 
-			// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
+			// Notifie EmailList_ViewModel de fermer le ComposeOverlay
 			Discard();
 
 			if (_guid is not null)
@@ -211,7 +211,7 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 	[RelayCommand]
 	private void Discard()
 	{
-		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
+		// Notifie EmailList_ViewModel de fermer le ComposeOverlay
 		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 		Reset();
 	}
@@ -222,18 +222,18 @@ public partial class DetailsList_NewMailViewModel : ObservableObject
 		// Récupère le contenu de tous les champs, puis les enregistre en base dans un objet Email avec la catégorie "Drafts"
 		await _emailsService.ScribbleEmailAsync(_guid, _from, To, Subject, Body, Cc, Bcc);
 
-		// Notifie DetailsList_ViewModel de fermer le ComposeOverlay
+		// Notifie EmailList_ViewModel de fermer le ComposeOverlay
 		WeakReferenceMessenger.Default.Send(new RequestOpenOrCloseComposeMessage());
 		Reset();
 
-		// Notifie DetailsList_ViewModel de refresh la liste des emails
+		// Notifie EmailList_ViewModel de refresh la liste des emails
 		WeakReferenceMessenger.Default.Send(new RequestRefreshEmailsMessage());
 	}
 
 	[RelayCommand]
 	private static void Expand()
 	{
-		// Notifie DetailsList_ViewModel d'ouvrir le ComposeOverlay en taille maximale
+		// Notifie EmailList_ViewModel d'ouvrir le ComposeOverlay en taille maximale
 		WeakReferenceMessenger.Default.Send(new ToggleExpandComposeMessage());
 	}
 

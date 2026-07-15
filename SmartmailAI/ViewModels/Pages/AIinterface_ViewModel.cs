@@ -21,7 +21,7 @@ public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableOb
 	[RelayCommand]
 	private void Delete()
 	{
-		// Notifie DetailsList_ViewModel de fermer l'AIinterfaceOverlay
+		// Notifie EmailList_ViewModel de fermer l'AIinterfaceOverlay
 		WeakReferenceMessenger.Default.Send(new RequestCloseIAinterfaceMessage());
 		Reset(true);
 	}
@@ -29,14 +29,14 @@ public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableOb
 	[RelayCommand]
 	private static void Discard()
 	{
-		// Notifie DetailsList_ViewModel de fermer l'AIinterfaceOverlay
+		// Notifie EmailList_ViewModel de fermer l'AIinterfaceOverlay
 		WeakReferenceMessenger.Default.Send(new RequestCloseIAinterfaceMessage());
 	}
 
 	[RelayCommand]
 	private static void Expand()
 	{
-		// Notifie DetailsList_ViewModel d'ouvrir l'AIinterfaceOverlay en taille maximale
+		// Notifie EmailList_ViewModel d'ouvrir l'AIinterfaceOverlay en taille maximale
 		WeakReferenceMessenger.Default.Send(new ToggleExpandIAinterfaceMessage());
 	}
 

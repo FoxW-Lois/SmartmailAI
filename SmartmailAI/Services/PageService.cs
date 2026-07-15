@@ -17,7 +17,7 @@ internal class PageService : IPageService
 		// Main Window Pages
 		Configure<Home_ViewModel, Home_Page>();
 		Configure<Settings_ViewModel, Settings_Page>();
-		Configure<DetailsList_ViewModel, DetailsList_Page>();
+		Configure<EmailList_ViewModel, EmailList_Page>();
 
 		// Main Window Subpages
 		Configure<Login_ViewModel, Login_Page>();

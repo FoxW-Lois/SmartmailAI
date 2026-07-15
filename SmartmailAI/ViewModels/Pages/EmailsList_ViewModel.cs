@@ -10,7 +10,7 @@ using Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAware
+public partial class EmailList_ViewModel : ObservableRecipient, INavigationAware
 {
 	private readonly IEmailsService _emailsService;
 	private readonly IEmailRepository _emailRepository;
@@ -129,7 +129,7 @@ public partial class DetailsList_ViewModel : ObservableRecipient, INavigationAwa
 
 	#endregion ObservableProperty Events
 
-	public DetailsList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository,
+	public EmailList_ViewModel(IEmailsService emailsService, IEmailRepository emailRepository, IMLDA_Repository mldaRepository,
 		I_AIService aiService, IDialogService dialogService)
 	{
 		_emailsService = emailsService;

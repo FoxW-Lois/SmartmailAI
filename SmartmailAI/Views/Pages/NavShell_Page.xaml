@@ -88,7 +88,7 @@
 				<!--  TODO: Si besoin d'utiliser des données statiques, décommenter l'Item ↓  -->
 				<!--<NavigationViewItem
 					x:Uid="Shell_DetailsList"
-					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.DetailsList_ViewModel"
+					helpers:NavigationHelper.NavigateTo="SmartmailAI.ViewModels.Pages.EmailList_ViewModel"
 					Visibility="{x:Bind ViewModel.IsLogged, Mode=OneWay}">
 					<NavigationViewItem.Icon>
 						<FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;" />

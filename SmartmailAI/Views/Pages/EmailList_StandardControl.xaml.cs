@@ -5,14 +5,14 @@ using Microsoft.Windows.Storage.Pickers;
 
 namespace SmartmailAI.Views.Pages;
 
-public sealed partial class DetailsList_StandardControl : UserControl
+public sealed partial class EmailList_StandardControl : UserControl
 {
-	public DetailsList_StandardViewModel ViewModel { get; }
+	public EmailList_StandardViewModel ViewModel { get; }
 	private string? _lastRenderedEmail;
 
-	public DetailsList_StandardControl()
+	public EmailList_StandardControl()
 	{
-		ViewModel = Ioc.Default.GetRequiredService<DetailsList_StandardViewModel>();
+		ViewModel = Ioc.Default.GetRequiredService<EmailList_StandardViewModel>();
 		DataContext = ViewModel;
 		InitializeComponent();
 	}
@@ -24,11 +24,11 @@ public sealed partial class DetailsList_StandardControl : UserControl
 	}
 
 	public static readonly DependencyProperty DetailsListMenuItem_EmailProperty = DependencyProperty.Register("DetailsListMenuItem_Email",
-		typeof(Email), typeof(DetailsList_StandardControl), new PropertyMetadata(null, OnDetailsListMenuItemPropertyChanged));
+		typeof(Email), typeof(EmailList_StandardControl), new PropertyMetadata(null, OnDetailsListMenuItemPropertyChanged));
 
 	private static void OnDetailsListMenuItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
-		if (d is DetailsList_StandardControl control && e.NewValue is Email email)
+		if (d is EmailList_StandardControl control && e.NewValue is Email email)
 		{
 			control.ViewModel.CurrentEmail = email;
 

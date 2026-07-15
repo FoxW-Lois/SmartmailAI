@@ -7,9 +7,9 @@ using Microsoft.UI.Xaml.Media;
 
 namespace SmartmailAI.Views.Pages;
 
-public sealed partial class DetailsList_Page : Page, INotifyPropertyChanged
+public sealed partial class EmailList_Page : Page, INotifyPropertyChanged
 {
-	public DetailsList_ViewModel ViewModel { get; }
+	public EmailList_ViewModel ViewModel { get; }
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -17,9 +17,9 @@ public sealed partial class DetailsList_Page : Page, INotifyPropertyChanged
 	private Email? _previousSelectedEmail;
 	private bool isAlreadyDone = false;
 
-	public DetailsList_Page()
+	public EmailList_Page()
 	{
-		ViewModel = Ioc.Default.GetRequiredService<DetailsList_ViewModel>();
+		ViewModel = Ioc.Default.GetRequiredService<EmailList_ViewModel>();
 		ViewModel.RestoreSelectionRequested += OnRestoreSelectionRequested;
 		DataContext = ViewModel;
 		InitializeComponent();
