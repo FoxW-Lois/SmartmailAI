@@ -83,6 +83,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 
 		var account = new Account
 		{
+			IndexGuid = Guid.NewGuid().ToString(),
 			Login = login,
 			PhoneNumber = phoneNumber,
 			Password = hash,
@@ -113,6 +114,7 @@ public class AuthService(IAccountRepository accountRepository, IAccountSecretSto
 
 		currentAccount = new Account
 		{
+			IndexGuid = currentAccount.IndexGuid,
 			Id = currentAccount.Id,
 			Login = currentAccount.Login,
 			PhoneNumber = currentAccount.PhoneNumber,

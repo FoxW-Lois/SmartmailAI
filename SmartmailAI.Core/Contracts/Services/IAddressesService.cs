@@ -13,11 +13,11 @@ public interface IAddressesService
 
 	Task RefreshAddressesListAsync();
 
-	Task<(bool, AccountGmail?, string?)> AddGmailAccountAsync();
+	Task<(bool success, AccountGmail? accountGmail, string? errorName)> AddGmailAccountAsync(string accountIndexGuid);
 
 	Task<bool> AddOutlookAsync();
 
-	Task<(bool, AccountOther?, string?)> AddOtherAddressAsync(AddOtherAddressRequest request);
+	Task<(bool success, AccountOther? accountOther, string? errorName)> AddOtherAddressAsync(AddOtherAddressRequest request, string accountIndexGuid);
 
 	Task<bool> RemoveAddressAsync(AccountMailBase account);
 

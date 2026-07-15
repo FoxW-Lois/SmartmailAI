@@ -6,7 +6,7 @@ namespace SmartmailAI.Core.Contracts.Repository;
 
 public interface IAddressesRepository
 {
-	Task<List<AccountMailBase>> GetAllAddressesAsync();
+	Task<List<AccountMailBase>> GetAllAddressesByAccountIndexGuidAsync();
 
 	Task<AccountMailBase?> GetAddressByEmailAsync(string email);
 

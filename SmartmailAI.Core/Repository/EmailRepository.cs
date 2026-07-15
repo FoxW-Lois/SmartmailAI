@@ -23,7 +23,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
-		var ownerHash = Hasher.HashDataWithoutSalt(ownerAddress);
+		string ownerHash = Hasher.HashDataWithoutSalt(ownerAddress);
 
 		var query = _context.Email
 			.Where(e => e.OwnerHash == ownerHash);

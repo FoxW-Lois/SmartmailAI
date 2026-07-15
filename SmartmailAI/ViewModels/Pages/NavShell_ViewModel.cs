@@ -161,7 +161,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public async Task LoadAccountsAsync()
 	{
-		var accounts = await _addressesRepository.GetAllAddressesAsync();
+		var accounts = await _addressesRepository.GetAllAddressesByAccountIndexGuidAsync();
 
 		AccountsMail.Clear();
 

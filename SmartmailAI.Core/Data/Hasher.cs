@@ -54,9 +54,9 @@ public class Hasher
 		return CryptographicOperations.FixedTimeEquals(computedHash, Convert.FromBase64String(storedHash));
 	}
 
-	public static string HashDataWithoutSalt(string password)
+	public static string HashDataWithoutSalt(string data)
 	{
-		var bytes = Encoding.UTF8.GetBytes(password);
+		var bytes = Encoding.UTF8.GetBytes(data);
 		var hash = SHA256.HashData(bytes);
 
 		return Convert.ToBase64String(hash);

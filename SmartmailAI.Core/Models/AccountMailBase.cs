@@ -7,6 +7,8 @@ namespace SmartmailAI.Core.Models;
 public class AccountMailBase
 {
 	[Key][Column("Id")] public Guid Id { get; init; } = Guid.NewGuid();
+	[Column("IndexGuidHash")] public required string IndexGuidHash { get; init; }
+
 	[Column("Email")][MaxLength(255)] public required string Email { get; set; }
 	[Column("ConnectedAt")] public required DateTime ConnectedAt { get; init; }
 	[Column("IsFirstConnection")] public bool IsFirstConnection { get; set; }

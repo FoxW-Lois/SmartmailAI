@@ -3,9 +3,10 @@ using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddAddress_ViewModel(IAddressesService addressesService, IDialogService dialogService, IEmailLoaderService emailLoaderService)
-	: ObservableRecipient
+public partial class AddAddress_ViewModel(IAccountService accountService, IAddressesService addressesService, IDialogService dialogService,
+	IEmailLoaderService emailLoaderService) : ObservableRecipient
 {
+	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
@@ -66,11 +67,19 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 
 		ErrorMessage = null;
 
-		(bool success, AccountGmail? accountGmail, string? specificError) = await _addressesService.AddGmailAccountAsync();
+		var account = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (account is null)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PreRecoveryMailFailed");
+			return false;
+		}
+
+		(bool success, AccountGmail? accountGmail, string? specificError) = await _addressesService.AddGmailAccountAsync(account.IndexGuid);
 
 		if (!success && specificError == "Email_AlreadyExist")
 		{
-			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
+			ErrorMessage = resourceLoader.GetString("Error_EmailAccount_AlreadyExist");
 			return false;
 		}
 		else if (!success)
@@ -137,11 +146,19 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 			SmtpUseSsl = smtpUseSsl
 		};
 
-		(bool success, AccountOther? accountOther, string? specificError) = await _addressesService.AddOtherAddressAsync(request);
+		var account = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (account is null)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PreRecoveryMailFailed");
+			return false;
+		}
+
+		(bool success, AccountOther? accountOther, string? specificError) = await _addressesService.AddOtherAddressAsync(request, account.IndexGuid);
 
 		if (!success && specificError == "Email_AlreadyExist")
 		{
-			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
+			ErrorMessage = resourceLoader.GetString("Error_EmailAccount_AlreadyExist");
 			return false;
 		}
 		else if (!success)

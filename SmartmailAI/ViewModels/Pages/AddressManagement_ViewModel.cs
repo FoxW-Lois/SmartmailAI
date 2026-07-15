@@ -27,7 +27,7 @@ public partial class AddressManagement_ViewModel(IAddressesRepository addressRep
 
 	public async Task LoadAddressesAsync()
 	{
-		var result = await _addressRepository.GetAllAddressesAsync();
+		var result = await _addressRepository.GetAllAddressesByAccountIndexGuidAsync();
 		AccountsMail = new ObservableCollection<AccountMailBase>(result);
 	}
 
