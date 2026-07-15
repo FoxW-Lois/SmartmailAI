@@ -162,10 +162,10 @@ public partial class App : Application
 
 				services.AddTransient<EmailList_ViewModel>();
 				services.AddTransient<EmailList_Page>();
-				// Pas besoin d'instancier en Transient EmailList_StandardControl et EmailList_NewMailControl car leur durées de vie sont gérées
+				// Pas besoin d'instancier en Transient EmailList_DetailsControl et EmailList_NewMailControl car leur durées de vie sont gérées
 				// par leur page parente : EmailList_Page
 				services.AddTransient<EmailList_NewMailViewModel>();
-				services.AddTransient<EmailList_StandardViewModel>();
+				services.AddTransient<EmailList_DetailsViewModel>();
 				services.AddTransient<AIinterface_ViewModel>();
 				services.AddTransient<UXQuestions_ViewModel>();
 

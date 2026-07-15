@@ -9,7 +9,7 @@ using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class EmailList_StandardViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
+public partial class EmailList_DetailsViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
 	IDialogService dialogService) : ObservableRecipient
 {
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
