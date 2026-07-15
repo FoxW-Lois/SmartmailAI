@@ -12,7 +12,9 @@
 
 ## Installation (dèv/lancement en débug)
   Afin de lancer le projet en débug, build un package package d'installation, ou bien encore continuer le développement, il est nécessaire de réaliser cette étape.
-	Pour cela il faut un PC Windows 10/11 (11 x64 bits de préférence), installer Visual Studio 2026 Community ***https://visualstudio.microsoft.com/insiders/***. Une fois ceci, il faudra également installer la charge de travail **Développement d'applications WinUI**.
+  Pour cela il faut un PC Windows 10/11 (11 x64 bits de préférence), installer Visual Studio 2026 Community ***https://visualstudio.microsoft.com/insiders/***. Une fois ceci, il faudra également installer la charge de travail **Développement d'applications WinUI**.
+  L'utlisation de l'extension **Todo Tree** de **Visual Studio Code** est également préférable pour avoir une vue d'ensemble sur les diverses annotations laissées aux développeurs et à une éventuelle évolution du projet
+  Il est également nécessaire de se créer une *application* sur les services API de Google et de générer une clé API à placer au sein d'un .env local afin de gérer la connexion, récupération et envoi d'emails via les services Google. Les variables d'environnement nécessaires ainsi que le placement du .env au sein de l'arborescence du projet sont indiqués via le fichier *.envexample*.
 
 ## Utilisation
   - Une fois l'application lancée, il est nécessaire de s'authentifier afin d'accéder aux diverses fonctionnalités du projet. Soit on choisit de s'inscrire (création d'un compte qui dans un contexte de déploiement avec un serveur de license, sera par défaut désactivé en attendant d'être validé par un administrateur), soit on choisit de se connecter.
