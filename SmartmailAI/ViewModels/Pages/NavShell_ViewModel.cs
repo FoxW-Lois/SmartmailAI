@@ -27,6 +27,9 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	[ObservableProperty]
 	public partial bool HasLinkedAddresses { get; set; } = false;
 
+	[ObservableProperty]
+	public partial bool IsLogged { get; set; } = false;
+
 	#endregion ObservableProperties
 
 	#region Interfaces declaration
@@ -66,10 +69,10 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		_authService.IsAuthenticated = _localSessionService.ValidateSession();
 		IsLogged = _authService.IsAuthenticated;
 
-		// Quand reçoit une demande, mets les Iteams en Enabled
+		// Quand reçoit une demande, mets les Items en Enabled
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
-			IsItemsEnabled = true;
+			IsItemsEnabled = m.ChangeDisplay;
 		});
 
 		_authService.AuthenticationStateChanged += (_, isLogged) =>
@@ -77,6 +80,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 			// Debug en console du changement de IsAuthenticated
 			//Console.WriteLine($"============ Auth changed: {isLogged}");
 			IsLogged = isLogged;
+			LoadAccountsAsync().GetAwaiter();
 			UpdateVisibility();
 		};
 
@@ -147,26 +151,6 @@ public partial class NavShell_ViewModel : ObservableRecipient
 		}
 	}
 
-	#region Changement d'état concernant l'authentification de l'utilisateur
-
-	public bool _isLogged = false;
-
-	public bool IsLogged
-	{
-		get => _isLogged;
-		set
-		{
-			if (SetProperty(ref _isLogged, value))
-			{
-				OnPropertyChanged(nameof(IsNotLogged));
-			}
-		}
-	}
-
-	public bool IsNotLogged => !IsLogged;
-
-	#endregion Changement d'état concernant l'authentification de l'utilisateur
-
 	#region Changement d'état concernant la présence d'adresses email connectées
 
 	public bool CanShowAddressManagement => IsLogged && HasLinkedAddresses;
@@ -178,18 +162,42 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	public async Task LoadAccountsAsync()
 	{
-		var accounts = await _addressesRepository.GetAllAddressesAsync();
+		// Il nécessaire d'avoir un tout petit délai d'attente, le temps que le fichier .tmp gérant la session locale se mettent à jour
+		// lorsque l'utilisateur se connecte/déconnecte
+		await Task.Delay(1000);
+
+		var accounts = await _addressesRepository.GetAllAddressesByAccountIndexGuidAsync();
 
 		AccountsMail.Clear();
 
 		foreach (var account in accounts)
 			AccountsMail.Add(account);
+
+		if (AccountsMail.Count > 0)
+			HasLinkedAddresses = true;
+		else
+			HasLinkedAddresses = false;
+
+		UpdateVisibility();
 	}
 
 	#endregion Changement d'état concernant la présence d'adresses email connectées
 
 	public void Logout()
 	{
+		var userAccount = _accountService.GetAccountByLoginInLocalSessionAsync().GetAwaiter().GetResult();
+
+		if (userAccount is not null && userAccount.IsFirstConnection is false)
+		{
+			// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+			WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = true });
+		}
+		else if (userAccount is not null && userAccount.IsFirstConnection is true)
+		{
+			// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+			WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = false });
+		}
+
 		_emailsSyncService.Stop();
 		_authService.Logout();
 		_localSessionService.KillSession();

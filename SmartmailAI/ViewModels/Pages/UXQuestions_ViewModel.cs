@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models.Messengers;
@@ -13,6 +12,8 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 {
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IAccountService _accountService = accountService;
+	private readonly ResourceLoader resourceLoader = new();
+	private DateOnly? parsedDatePicked;
 
 	#region ObservableProperties
 
@@ -34,47 +35,20 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 
 	#endregion ObservableProperties
 
-	private DateOnly? parsedDatePicked;
-	private string _errorMessage1 = string.Empty;
-	private string _errorMessage2 = string.Empty;
-	private string _errorMessage3 = string.Empty;
-	private readonly ResourceLoader resourceLoader = new();
-
 	#region ErrorMessage Properties
 
-	public string ErrorMessage1
-	{
-		get => _errorMessage1;
-		set
-		{
-			SetProperty(ref _errorMessage1, value);
-			OnPropertyChanged(nameof(ErrorVisibility1));
-		}
-	}
+	[ObservableProperty]
+	public partial string? ErrorMessage1 { get; set; }
 
-	public string ErrorMessage2
-	{
-		get => _errorMessage2;
-		set
-		{
-			SetProperty(ref _errorMessage2, value);
-			OnPropertyChanged(nameof(ErrorVisibility2));
-		}
-	}
+	[ObservableProperty]
+	public partial string? ErrorMessage2 { get; set; }
 
-	public string ErrorMessage3
-	{
-		get => _errorMessage3;
-		set
-		{
-			SetProperty(ref _errorMessage3, value);
-			OnPropertyChanged(nameof(ErrorVisibility3));
-		}
-	}
+	[ObservableProperty]
+	public partial string? ErrorMessage3 { get; set; }
 
-	public Visibility ErrorVisibility1 => string.IsNullOrWhiteSpace(ErrorMessage1) ? Visibility.Collapsed : Visibility.Visible;
-	public Visibility ErrorVisibility2 => string.IsNullOrWhiteSpace(ErrorMessage2) ? Visibility.Collapsed : Visibility.Visible;
-	public Visibility ErrorVisibility3 => string.IsNullOrWhiteSpace(ErrorMessage3) ? Visibility.Collapsed : Visibility.Visible;
+	public bool HasError1 => string.IsNullOrWhiteSpace(ErrorMessage1);
+	public bool HasError2 => string.IsNullOrWhiteSpace(ErrorMessage2);
+	public bool HasError3 => string.IsNullOrWhiteSpace(ErrorMessage3);
 
 	#endregion ErrorMessage Properties
 
@@ -101,8 +75,8 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 
 		await _accountRepository.UpdateAccountAsync(account);
 
-		// Notifie Home_ViewModel et NavShell_ViewModel de mettre à jour leur vue respective
-		WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage());
+		// Notifie Home_ViewModel, NavShell_ViewModel et Settings_ViewModel de mettre à jour leur vue respective
+		WeakReferenceMessenger.Default.Send(new RequestUpdateUXQuestionsMessage { ChangeDisplay = true });
 
 		Reset();
 	}

@@ -4,14 +4,16 @@ using System.Threading.Tasks;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.Addresses;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
 
-public class AddressesService(IAddressesRepository addressRepository, IEmailRepository emailRepository, IGmailCredentialService gmailCredentialService,
-	IGmailApiService gmailApiService, IGmailLogoutService gmailLogoutService, IOtherCredentialService otherCredentialService,
-	IOtherLogoutService otherLogoutService, IOtherTokenStore otherTokenStore) : IAddressesService
+public class AddressesService(IAccountService accountService, IAddressesRepository addressRepository, IEmailRepository emailRepository,
+	IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService, IGmailLogoutService gmailLogoutService,
+	IOtherCredentialService otherCredentialService, IOtherLogoutService otherLogoutService, IOtherTokenStore otherTokenStore) : IAddressesService
 {
+	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesRepository _addressRepository = addressRepository;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 
@@ -29,12 +31,12 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 
 	public async Task RefreshAddressesListAsync()
 	{
-		var newValue = await _addressRepository.GetAllAddressesAsync();
+		var newValue = await _addressRepository.GetAllAddressesByAccountIndexGuidAsync();
 		HasAny = newValue.Count > 0;
 		AddressesListChanged?.Invoke(this, HasAny);
 	}
 
-	public async Task<(bool, AccountGmail?, string?)> AddGmailAccountAsync()
+	public async Task<(bool success, AccountGmail? accountGmail, string? errorName)> AddGmailAccountAsync(string accountIndexGuid)
 	{
 		var userKey = Guid.NewGuid().ToString();
 
@@ -49,6 +51,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 
 		var account = new AccountGmail
 		{
+			IndexGuidHash = Hasher.HashDataWithoutSalt(accountIndexGuid),
 			Email = email,
 			GoogleUserId = credential.UserId,
 			ConnectedAt = DateTime.UtcNow,
@@ -65,7 +68,7 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 		return true;
 	}
 
-	public async Task<(bool, AccountOther?, string?)> AddOtherAddressAsync(AddOtherAddressRequest request)
+	public async Task<(bool success, AccountOther? accountOther, string? errorName)> AddOtherAddressAsync(AddOtherAddressRequest request, string accountIndexGuid)
 	{
 		var userKey = Guid.NewGuid().ToString();
 
@@ -74,9 +77,10 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 
 		var account = new AccountOther
 		{
+			IndexGuidHash = Hasher.HashDataWithoutSalt(accountIndexGuid),
 			Email = request.Email,
 			UserName = request.UserName,
-			Password = request.Password,
+			Password = request.Password, // Mot de passe des adresses connectées par SMTP/IMAP jamais stocké
 			ConnectedAt = DateTime.UtcNow,
 			IsFirstConnection = true,
 			TokenStorageKey = userKey,
@@ -125,13 +129,13 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 
 	public async Task<List<AccountMailBase>> GetListAccountsLinkedAsync()
 	{
-		var accounts = await _addressRepository.GetAllAddressesAsync();
+		var accounts = await _addressRepository.GetAllAddressesByAccountIndexGuidAsync();
 		return accounts;
 	}
 
 	private async Task<bool> CheckIfMailAccountExist(string address)
 	{
-		var accountsList = await _addressRepository.GetAllAddressesAsync();
+		var accountsList = await _addressRepository.GetAllAddressesByAccountIndexGuidAsync();
 
 		foreach (var account in accountsList)
 		{

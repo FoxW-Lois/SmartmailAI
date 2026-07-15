@@ -8,6 +8,7 @@ using SmartmailAI.Core.AppDbContext;
 using SmartmailAI.Core.Contracts;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Contracts.Services.LocalSecurity;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Repository;
@@ -22,8 +23,10 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
+		string ownerHash = Hasher.HashDataWithoutSalt(ownerAddress);
+
 		var query = _context.Email
-			.Where(e => e.Owner == ownerAddress);
+			.Where(e => e.OwnerHash == ownerHash);
 
 		query = mailboxType switch
 		{
@@ -51,8 +54,6 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 			.ToListAsync();
 
 		emails = await DecryptEmailListAsync(emails);
-		// TODO: Ajouter chiffrement du Owner et donc un hashage + sel du Owner pour pouvoir faire la recherche par OwnerAddress
-		//emails = [.. emails.Where(e => e.Owner == ownerAddress)];
 
 		return (emails, totalCount);
 	}
@@ -130,6 +131,8 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 	{
 		using var _context = _factory.CreateDbContext();
 
+		var ownerHash = Hasher.HashDataWithoutSalt(ownerAddress);
+
 		newEmails = await EncryptEmailListAsync(newEmails);
 
 		// Fait un Check du Guid sur les nouveaux emails entrants, par rapport à ceux déjà présents en base pour éviter les doublons
@@ -140,12 +143,12 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 
 		if (!isFromOtherAddress)
 		{
-			existingAddresses = await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).ToHashSetAsync();
+			existingAddresses = await _context.Email.Where(e => e.OwnerHash == ownerHash).Select(e => e.Guid).ToHashSetAsync();
 			newEmailsToKeep = [.. newEmails.Where(e => !existingAddresses.Contains(e.Guid))];
 		}
 		else
 		{
-			existingAddresses = [.. (await _context.Email.Where(e => e.Owner == ownerAddress).Select(e => e.Guid).
+			existingAddresses = [.. (await _context.Email.Where(e => e.OwnerHash == ownerHash).Select(e => e.Guid).
 				ToListAsync()).Select(NormalizeGuid)];
 			newEmailsToKeep = [.. newEmails.Where(e => !existingAddresses.Contains(NormalizeGuid(e.Guid)))];
 		}
@@ -173,6 +176,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		if (email.Bcc is not null) email.Bcc = await _aesService.EncryptAsync(email.Bcc);
 		if (email.Subject is not null) email.Subject = await _aesService.EncryptAsync(email.Subject);
 		if (email.Content is not null) email.Content = await _aesService.EncryptAsync(email.Content);
+		email.Owner = await _aesService.EncryptAsync(email.Owner);
 
 		if (email.Attachments.Count > 0)
 		{
@@ -207,6 +211,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		if (email.Bcc is not null) email.Bcc = await _aesService.DecryptAsync(email.Bcc);
 		if (email.Subject is not null) email.Subject = await _aesService.DecryptAsync(email.Subject);
 		if (email.Content is not null) email.Content = await _aesService.DecryptAsync(email.Content);
+		email.Owner = await _aesService.DecryptAsync(email.Owner);
 
 		if (email.AttachmentsJson is not null)
 		{

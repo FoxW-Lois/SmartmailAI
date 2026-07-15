@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
@@ -8,13 +7,9 @@ namespace SmartmailAI.ViewModels.Pages;
 public partial class Register_ViewModel(IAuthService authService) : ObservableRecipient
 {
 	private readonly IAuthService _authService = authService;
-
-	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
 
 	#region ObservableProperties & View Properties
-
-	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
 
 	[ObservableProperty]
 	public partial string Login { get; set; } = string.Empty;
@@ -22,21 +17,16 @@ public partial class Register_ViewModel(IAuthService authService) : ObservableRe
 	[ObservableProperty]
 	public partial string PhoneNumber { get; set; } = string.Empty;
 
-	#endregion ObservableProperties & View Properties
+	[ObservableProperty]
+	public partial string? ErrorMessage { get; set; }
 
-	public string ErrorMessage
-	{
-		get => _errorMessage;
-		set
-		{
-			SetProperty(ref _errorMessage, value);
-			OnPropertyChanged(nameof(ErrorVisibility));
-		}
-	}
+	public bool HasError => string.IsNullOrWhiteSpace(ErrorMessage);
+
+	#endregion ObservableProperties & View Properties
 
 	public async Task<bool> RegisterAsync(string login, string phoneNumber, string password, string confirmPassword)
 	{
-		ErrorMessage = string.Empty;
+		ErrorMessage = null;
 
 		if (string.IsNullOrWhiteSpace(login))
 		{

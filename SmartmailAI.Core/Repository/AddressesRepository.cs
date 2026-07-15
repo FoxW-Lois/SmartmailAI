@@ -6,22 +6,36 @@ using Microsoft.EntityFrameworkCore;
 using SmartmailAI.Core.AppDbContext;
 using SmartmailAI.Core.Contracts;
 using SmartmailAI.Core.Contracts.Repository;
+using SmartmailAI.Core.Contracts.Services;
 using SmartmailAI.Core.Contracts.Services.LocalSecurity;
+using SmartmailAI.Core.Data;
 using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Repository;
 
-public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory, IAesService aesService) : IAddressesRepository,
-	IEncryptDecryptDatas<AccountMailBase>
+public class AddressesRepository(IDbContextFactory<AppDbContext_Address> factory, IAesService aesService, IAccountService accountService)
+	: IAddressesRepository, IEncryptDecryptDatas<AccountMailBase>
 {
 	private readonly IDbContextFactory<AppDbContext_Address> _factory = factory;
 	private readonly IAesService _aesService = aesService;
+	private readonly IAccountService _accountService = accountService;
 
-	public async Task<List<AccountMailBase>> GetAllAddressesAsync()
+	public async Task<List<AccountMailBase>> GetAllAddressesByAccountIndexGuidAsync()
 	{
 		using var _context = _factory.CreateDbContext();
 
-		var addresses = await _context.AccountMailBase.ToListAsync();
+		// Exceptionnellement on gère la récupération et le hashage du account.IndexGuid ici, afin d'éviter de faire 20 récupérations
+		// de l'objet account actuellement authentifié, absolument partout dans le projet
+		var account = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (account is null)
+			return [];
+
+		string accountIndexGuidHash = Hasher.HashDataWithoutSalt(account.IndexGuid);
+
+		var addresses = await _context.AccountMailBase
+			.Where(a => a.IndexGuidHash == accountIndexGuidHash)
+			.ToListAsync();
 
 		addresses = await DecryptAddressListAsync(addresses);
 

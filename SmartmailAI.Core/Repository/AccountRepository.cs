@@ -70,6 +70,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory, 
 
 	public async Task<Account> EncryptDataAsync(Account account)
 	{
+		account.IndexGuid = await _aesService.EncryptAsync(account.IndexGuid);
 		account.PhoneNumber = await _aesService.EncryptAsync(account.PhoneNumber);
 
 		return account;
@@ -77,6 +78,7 @@ public class AccountRepository(IDbContextFactory<AppDbContext_Account> factory, 
 
 	public async Task<Account> DecryptDataAsync(Account account)
 	{
+		account.IndexGuid = await _aesService.DecryptAsync(account.IndexGuid);
 		account.PhoneNumber = await _aesService.DecryptAsync(account.PhoneNumber);
 
 		return account;

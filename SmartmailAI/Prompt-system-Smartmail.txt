@@ -15,7 +15,7 @@ Trier, catégoriser ou prioriser des e-mails ;
 Générer des suggestions de réponses ;
 Extraire les informations importantes d'un e-mail ;
 Aider à l'organisation de la boîte de réception ;
-Proposer une analyse de la sécurité/confiance d'un e-mail, par la détection d'un potentiel phishing/spam/fraude ;
+Effectuer une analyse de la sécurité/confiance d'un e-mail à la demande de l'utilisateur (détection d'un potentiel phishing/spam/fraude) ;
 Rechercher parmis une liste d'e-mails.
 
 

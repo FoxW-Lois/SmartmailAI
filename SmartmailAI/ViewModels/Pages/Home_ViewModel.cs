@@ -6,13 +6,17 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class Home_ViewModel : ObservableRecipient
 {
+	private readonly IAccountService _accountService;
+
+	#region ObservableProperties
+
 	[ObservableProperty]
 	public partial string AppDisplayName { get; set; } = ConstantHelper.AppDisplayName;
 
 	[ObservableProperty]
 	public partial bool IsUXQuestionsVisible { get; set; } = false;
 
-	private readonly IAccountService _accountService;
+	#endregion ObservableProperties
 
 	public Home_ViewModel(IAccountService accountService)
 	{
@@ -21,7 +25,8 @@ public partial class Home_ViewModel : ObservableRecipient
 		// Quand reçoit une demande, cache le UserControl UXQuestions
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
-			IsUXQuestionsVisible = false;
+			// Exclusivement dans ce cas là, on doit passer l'inverse de ChangeDisplay
+			IsUXQuestionsVisible = !m.ChangeDisplay;
 		});
 	}
 

@@ -1,20 +1,28 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.ViewModels.Pages;
 
-public partial class AddAddress_ViewModel(IAddressesService addressesService, IDialogService dialogService, IEmailLoaderService emailLoaderService)
-	: ObservableRecipient
+public partial class AddAddress_ViewModel(IAccountService accountService, IAddressesService addressesService, IDialogService dialogService,
+	IEmailLoaderService emailLoaderService) : ObservableRecipient
 {
-	[ObservableProperty]
-	public partial bool IsOtherChoice { get; set; }
-
+	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
-	private string _errorMessage = string.Empty;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#region ObservableProperties & View Properties
+
+	[ObservableProperty]
+	public partial bool IsOtherChoice { get; set; }
+
+	[ObservableProperty]
+	public partial string? ErrorMessage { get; set; }
+
+	public bool HasError => string.IsNullOrWhiteSpace(ErrorMessage);
+
+	#endregion ObservableProperties & View Properties
 
 	#region ObservableProperties : champs pour la connexion SMTP/IMAP
 
@@ -47,18 +55,6 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 
 	#endregion ObservableProperties : champs pour la connexion SMTP/IMAP
 
-	public string ErrorMessage
-	{
-		get => _errorMessage;
-		set
-		{
-			SetProperty(ref _errorMessage, value);
-			OnPropertyChanged(nameof(ErrorVisibility));
-		}
-	}
-
-	public Visibility ErrorVisibility => string.IsNullOrWhiteSpace(ErrorMessage) ? Visibility.Collapsed : Visibility.Visible;
-
 	#region Add methods for diffrent Addresses type/domain/source
 
 	public async Task<bool> AddOAuth2Async()
@@ -69,13 +65,21 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 				resourceLoader.GetString("Error_HasNoInternet"));
 		}
 
-		ErrorMessage = string.Empty;
+		ErrorMessage = null;
 
-		(bool success, AccountGmail? accountGmail, string? specificError) = await _addressesService.AddGmailAccountAsync();
+		var account = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (account is null)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PreRecoveryMailFailed");
+			return false;
+		}
+
+		(bool success, AccountGmail? accountGmail, string? specificError) = await _addressesService.AddGmailAccountAsync(account.IndexGuid);
 
 		if (!success && specificError == "Email_AlreadyExist")
 		{
-			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
+			ErrorMessage = resourceLoader.GetString("Error_EmailAccount_AlreadyExist");
 			return false;
 		}
 		else if (!success)
@@ -104,7 +108,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 				resourceLoader.GetString("Error_HasNoInternet"));
 		}
 
-		ErrorMessage = string.Empty;
+		ErrorMessage = null;
 
 		bool success = await _addressesService.AddOutlookAsync();
 
@@ -127,7 +131,7 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 				resourceLoader.GetString("Error_HasNoInternet"));
 		}
 
-		ErrorMessage = string.Empty;
+		ErrorMessage = null;
 
 		AddOtherAddressRequest request = new()
 		{
@@ -142,11 +146,19 @@ public partial class AddAddress_ViewModel(IAddressesService addressesService, ID
 			SmtpUseSsl = smtpUseSsl
 		};
 
-		(bool success, AccountOther? accountOther, string? specificError) = await _addressesService.AddOtherAddressAsync(request);
+		var account = await _accountService.GetAccountByLoginInLocalSessionAsync();
+
+		if (account is null)
+		{
+			ErrorMessage = resourceLoader.GetString("Error_PreRecoveryMailFailed");
+			return false;
+		}
+
+		(bool success, AccountOther? accountOther, string? specificError) = await _addressesService.AddOtherAddressAsync(request, account.IndexGuid);
 
 		if (!success && specificError == "Email_AlreadyExist")
 		{
-			ErrorMessage = resourceLoader.GetString("Error_Email_AlreadyExist");
+			ErrorMessage = resourceLoader.GetString("Error_EmailAccount_AlreadyExist");
 			return false;
 		}
 		else if (!success)

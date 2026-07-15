@@ -21,8 +21,8 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 {
 	private readonly IOtherTokenStore _otherTokenStore = otherTokenStore;
 
-	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(AccountOther account, string mailboxType, bool isAddingNewAddress,
-		int? maxResults = 300, DateTime? lastConnection = null)
+	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(AccountOther account, string mailboxType, int? maxResults = 300,
+		DateTime? lastConnection = null)
 	{
 		using var client = new ImapClient();
 		IMailFolder? folder;
@@ -42,7 +42,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 
 			var query = SearchQuery.All;
 
-			if (lastConnection is not null && !isAddingNewAddress)
+			if (lastConnection is not null)
 			{
 				query = query.And(SearchQuery.DeliveredAfter(lastConnection.Value));
 			}

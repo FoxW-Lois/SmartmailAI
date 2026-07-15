@@ -85,17 +85,17 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 
 		List<Email> emailsRecovered = await _mappersToEmailDTOService.MapEmailFromAddressToEmail_List(rawEmails);
 
-		if (isAddingNewAddress)
-			return emailsRecovered;
-
-		// Le dernier paramètre (isFromOtherAddress) sera true si c'est un OtherAddress (donc SMTP/IMAP)
-		var newEmails = await _emailRepository.KeepOnlyNewEmailsAsync(mailAccount.Email, emailsRecovered, mailAccount is AccountOther);
-
 		if (mailAccount.IsFirstConnection is true)
 		{
 			mailAccount.IsFirstConnection = false;
 			await _addressesRepository.UpdateAddressAsync(mailAccount);
 		}
+
+		if (isAddingNewAddress)
+			return emailsRecovered;
+
+		// Le dernier paramètre (isFromOtherAddress) sera true si c'est un OtherAddress (donc SMTP/IMAP)
+		var newEmails = await _emailRepository.KeepOnlyNewEmailsAsync(mailAccount.Email, emailsRecovered, mailAccount is AccountOther);
 
 		return newEmails;
 	}
@@ -109,11 +109,9 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		if (credential is null)
 			return [];
 
-		var inboxTask = _gmailApiService.GetLastMessagesAsync(credential, "Inbox", isAddingNewAddress, numMails,
-			lastConnection);
+		var inboxTask = _gmailApiService.GetLastMessagesAsync(credential, "Inbox", numMails, lastConnection);
 
-		var sentTask = _gmailApiService.GetLastMessagesAsync(credential, "Sent", isAddingNewAddress, numMails,
-			lastConnection);
+		var sentTask = _gmailApiService.GetLastMessagesAsync(credential, "Sent", numMails, lastConnection);
 
 		// Fait un Check du Guid sur les 2 listes de nouveaux emails entrants, et si un email de la liste "Sent" a un Guid déjà présent
 		// dans la liste "Inbox", alors on le supprime de la liste "Sent" pour éviter les doublons.
@@ -141,11 +139,9 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 		if (!connected)
 			return [];
 
-		var inboxTask = _otherProtocolService.GetLastMessagesAsync(account, "Inbox", isAddingNewAddress, numMails,
-			lastConnection);
+		var inboxTask = _otherProtocolService.GetLastMessagesAsync(account, "Inbox", numMails, lastConnection);
 
-		var sentTask = _otherProtocolService.GetLastMessagesAsync(account, "Sent", isAddingNewAddress, numMails,
-			lastConnection);
+		var sentTask = _otherProtocolService.GetLastMessagesAsync(account, "Sent", numMails, lastConnection);
 
 		// Fait un Check du Guid sur les 2 listes de nouveaux emails entrants, et si un email de la liste "Sent" a un Guid déjà présent
 		// dans la liste "Inbox", alors on le supprime de la liste "Sent" pour éviter les doublons. Et pour cela il faut supprimer le "-nombre"

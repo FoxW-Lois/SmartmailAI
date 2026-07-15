@@ -790,4 +790,7 @@ Si malgré cela le problème persiste, contactez en priorité votre administrate
   <data name="Button_LoadFollowingMails.Content" xml:space="preserve">
     <value>Charger les emails suivants</value>
   </data>
+  <data name="Error_PreRecoveryMailFailed" xml:space="preserve">
+    <value>La connexion de l'adresse mail à l'application a échoué dans sa phase d'initialisation. Veuillez réessayer plus tard. Si le problème persiste, contactez en priorité votre administrateur système, puis si besoin, le développeur de la solution.</value>
+  </data>
 </root>

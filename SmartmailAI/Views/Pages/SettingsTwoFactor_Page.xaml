@@ -20,7 +20,7 @@
 			<Image
 				Height="220"
 				Source="{Binding QrCodeImage}"
-				Visibility="{Binding IsQrVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
+				Visibility="{x:Bind ViewModel.IsQrVisible, Mode=OneWay}" />
 
 			<TextBox
 				x:Uid="Account_SecurityCode"
@@ -32,13 +32,13 @@
 				Foreground="Red"
 				Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
 				TextWrapping="Wrap"
-				Visibility="{Binding ErrorVisibility}" />
+				Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}" />
 
 			<Button
 				x:Uid="Account_Confirm"
 				HorizontalAlignment="Center"
 				Command="{Binding Confirm2FACommand}"
-				IsEnabled="{Binding IsQrVisible}" />
+				IsEnabled="{x:Bind ViewModel.IsQrVisible, Mode=OneWay}" />
 		</StackPanel>
 	</Grid>
 </Page>

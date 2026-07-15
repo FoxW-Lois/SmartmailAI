@@ -32,8 +32,8 @@ public class GmailApiService : IGmailApiService
 		return profile.EmailAddress;
 	}
 
-	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(UserCredential credential, string MailboxType, bool isAddingNewAddress,
-		int? maxResults = 300, DateTime? lastConnection = null)
+	public async Task<List<EmailFromAddress>?> GetLastMessagesAsync(UserCredential credential, string MailboxType, int? maxResults = 300,
+		DateTime? lastConnection = null)
 	{
 		var service = new GmailService(new BaseClientService.Initializer
 		{
@@ -46,7 +46,7 @@ public class GmailApiService : IGmailApiService
 		request.LabelIds = MailboxType.ToUpper();       // Pour récupérer des (vrais) spams/phishings => mettre "SPAM" en valeur
 		request.IncludeSpamTrash = true;               // TODO: En prod mettre true en valeur
 
-		if (lastConnection is not null && !isAddingNewAddress)
+		if (lastConnection is not null)
 		{
 			var unixSeconds = ToUnixSeconds(lastConnection.Value.AddMinutes(-2));
 			request.Q = $"after:{unixSeconds}";

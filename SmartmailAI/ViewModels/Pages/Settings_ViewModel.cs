@@ -17,8 +17,11 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public Visibility NonlogonTaskCardVisibility = RuntimeHelper.IsMSIX ? Visibility.Visible : Visibility.Collapsed;
 	public Visibility LogonTaskExpanderVisibility = RuntimeHelper.IsMSIX ? Visibility.Collapsed : Visibility.Visible;
 
-	public Visibility NoAccountLoggedInVisibility = Visibility.Visible;
-	public Visibility AccountLoggedInVisibility = Visibility.Collapsed;
+	[ObservableProperty]
+	public partial Visibility NoAccountLoggedInVisibility { get; set; } = Visibility.Visible;
+
+	[ObservableProperty]
+	public partial Visibility AccountLoggedInVisibility { get; set; } = Visibility.Collapsed;
 
 	#endregion View Properties
 
@@ -103,10 +106,10 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 		InitializeSettings();
 
-		// Quand reçoit une demande, mets les Iteams en Enabled
+		// Quand reçoit une demande, mets les Items en Enabled
 		WeakReferenceMessenger.Default.Register<RequestUpdateUXQuestionsMessage>(this, async (r, m) =>
 		{
-			IsItemsEnabled = true;
+			IsItemsEnabled = m.ChangeDisplay;
 
 			account = await _accountRepository.GetAccountByLoginAsync(_authService.CurrentAccountLogin);
 
@@ -150,7 +153,6 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 	public void UpdateVisibilyProperties(bool isAuthenticated)
 	{
 		AccountLoggedInVisibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
-
 		NoAccountLoggedInVisibility = isAuthenticated ? Visibility.Collapsed : Visibility.Visible;
 	}
 
@@ -296,10 +298,10 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 	async partial void OnDatePickedChanging(DateTimeOffset? value)
 	{
-		if (account is null || !value.HasValue && account.RetrievedAllEmails is false)
+		if (value is null || account is null || !value.HasValue && account.RetrievedAllEmails is true)
 			return;
 
-		account.DatePicked = DateOnly.FromDateTime(DateTime.Parse(value!.Value.ToString("yyyy-MM-dd")));
+		account.DatePicked = DateOnly.FromDateTime(DateTime.Parse(value.Value.ToString("yyyy-MM-dd")));
 		await _accountRepository.UpdateAccountAsync(account);
 	}
 
