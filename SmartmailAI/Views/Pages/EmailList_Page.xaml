@@ -264,8 +264,7 @@
 				Grid.Column="3"
 				Width="200"
 				Height="40"
-				Margin="0 8 16 32"
-				Command="{Binding DataContext.FilterCommand, ElementName=RootPage}">
+				Margin="0 8 16 32">
 				<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 					<FontIcon
 						Margin="0 0 8 0"

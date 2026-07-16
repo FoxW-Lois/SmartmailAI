@@ -22,6 +22,23 @@
 					VerticalSpacing="8"
 					Visibility="{x:Bind DetailsListMenuItem_Email.IsDraft, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
 					<Button
+						Width="44"
+						Height="40"
+						Command="{x:Bind ViewModel.CloseEmailCommand}">
+						<ToolTipService.ToolTip>
+							<ToolTip x:Uid="Button_CloseEmail" />
+						</ToolTipService.ToolTip>
+						<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+							<FontIcon
+								Margin="8 0 8 0"
+								FontFamily="Segoe MDL2 Assets"
+								FontWeight="Bold"
+								Foreground="OrangeRed"
+								Glyph="&#xE8BB;" />
+						</StackPanel>
+					</Button>
+
+					<Button
 						Width="135"
 						Height="40"
 						Command="{x:Bind ViewModel.AITranslationCommand}">

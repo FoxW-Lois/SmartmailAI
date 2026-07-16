@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using SmartmailAI.Core.Models.Messengers;
 
 namespace SmartmailAI.Views.Pages;
 
@@ -23,6 +25,13 @@ public sealed partial class EmailList_Page : Page, INotifyPropertyChanged
 		ViewModel.RestoreSelectionRequested += OnRestoreSelectionRequested;
 		DataContext = ViewModel;
 		InitializeComponent();
+
+		// Quand reçoit une demande, ferme la fenêtre des détails de l'email actuellement ouvert
+		WeakReferenceMessenger.Default.Register<RequestCloseDetailsMessage>(this, (r, m) =>
+		{
+			OnCloseSelectionRequested();
+			_previousSelectedEmail = null;
+		});
 	}
 
 	private void OnViewStateChanged(object sender, ListDetailsViewState e)
@@ -46,6 +55,19 @@ public sealed partial class EmailList_Page : Page, INotifyPropertyChanged
 
 		// Mémorise la nouvelle catégorie sélectionnée
 		_currentSelectedCategory = mailboxCategory;
+	}
+
+	private void OnCloseSelectionRequested()
+	{
+		// Parcourt les ListDetailsView imbriqués pour trouver le bon
+		var innerListDetails = FindInnerListDetailsView(ListDetailsViewControl);
+		if (innerListDetails is null)
+			return;
+
+		DispatcherQueue.TryEnqueue(() =>
+		{
+			innerListDetails.SelectedItem = null;
+		});
 	}
 
 	private void OnRestoreSelectionRequested(Email email)

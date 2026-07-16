@@ -187,6 +187,13 @@ public partial class EmailList_DetailsViewModel(IMailReaderService mailReaderSer
 	#endregion Commandes d'assistance IA sur les emails ouverts
 
 	[RelayCommand]
+	private static async Task CloseEmailAsync()
+	{
+		// Notifie EmailList_Page.xaml.cs de fermer de la vue des détails
+		WeakReferenceMessenger.Default.Send(new RequestCloseDetailsMessage());
+	}
+
+	[RelayCommand]
 	private async Task EditDraftedEmailAsync()
 	{
 		if (CurrentEmail is null)

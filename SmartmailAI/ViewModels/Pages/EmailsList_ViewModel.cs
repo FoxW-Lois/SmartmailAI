@@ -373,11 +373,6 @@ public partial class EmailList_ViewModel : ObservableRecipient, INavigationAware
 	#region Commandes de filtrage
 
 	[RelayCommand]
-	private async Task FilterAsync()
-	{
-	}
-
-	[RelayCommand]
 	private async Task DateBeforeFilterAsync()
 	{
 		IsDatePickerOpen = true;

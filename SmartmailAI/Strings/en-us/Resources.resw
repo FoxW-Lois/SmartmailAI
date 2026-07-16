@@ -790,10 +790,10 @@ If the problem persists, contact your system administrator first, and then, if n
   <data name="Button_LoadFollowingMails.Content" xml:space="preserve">
     <value>Load the following emails</value>
   </data>
-  <data name=" " xml:space="preserve">
-    <value>The email address failed to connect to the application during initialization. Please try again later. If the problem persists, contact your system administrator first, and then, if necessary, the solution developer.</value>
-  </data>
   <data name="Error_PreRecoveryMailFailed" xml:space="preserve">
     <value>The email address failed to connect to the application during initialization. Please try again later. If the problem persists, contact your system administrator first, and then, if necessary, the solution developer.</value>
+  </data>
+  <data name="Button_CloseEmail.Content" xml:space="preserve">
+    <value>Close the email</value>
   </data>
 </root>
