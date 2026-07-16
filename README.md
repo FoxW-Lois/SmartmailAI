@@ -52,7 +52,49 @@ L'utilisateur de l'application va se connecter avec un compte et utiliser Google
   - Chiffrement SSL/TLS (même chose, juste 2 appellations) lors de l'envoi et de la réception d'Emails
   - La clé de chiffrement et la session (permettant de rester connecté un certain temps à l'application après fermeture) sont toutes deux chiffrées et stockées de manière sécurisé via le Windows DPAPI (impossible de déchiffrer si l'utilisateur ayant émis la clé et la session n'a pas déverouillé sa machine avec la bonne session utilisateur)
   - Le modèle d'IA (LLM) Mistral tourne purement en local, ce qui signifie qu'aucune donnée n'est envoyée ou stockée sur un serveur tiers. De plus le prompt-system bride suffisament le modèle afin qu'il ne dévoile aucune donnée autre que celles fournies par l'utilisateur.
-  
+
+## Captures d'écran/screenshots du projet
+
+#### 1. UX-Questions view
+<picture>
+  <img alt="UX-Questions-view" src="./Images/Img-1-UX-Questions.png">
+</picture>
+
+#### 2. Parameters view
+<picture>
+  <img alt="Parameters-view" src="./Images/Img-2-Parameters.png">
+</picture>
+
+#### 3. Adding email address view
+<picture>
+  <img alt="Adding-email-address-view" src="./Images/Img-3-Adding-email-address.png">
+</picture>
+
+#### 4. Emails interface
+<picture>
+  <img alt="Emails-interface" src="./Images/Img-4-Emails-interface.png">
+</picture>
+
+#### 5. Compose message view
+<picture>
+  <img alt="Compose-message-view" src="./Images/Img-5-Compose-message.png">
+</picture>
+
+#### 6. AI Writing view
+<picture>
+  <img alt="AI-Writing-view" src="./Images/Img-6-AI-Writing.png">
+</picture>
+
+#### 7. AI Writing result view
+<picture>
+  <img alt="AI-Writing-result-view" src="./Images/img-7-AI-Writing-result.png">
+</picture>
+
+#### 8. AI Assistance Chatbot view
+<picture>
+  <img alt="AI-Assistance-Chatbot-view" src="./Images/Img-8-AI-Assistance-Chatbot.png">
+</picture>
+
 ## Équipe
   - Loïs Pujol-Toureillat
   - Nicolas Thomas
