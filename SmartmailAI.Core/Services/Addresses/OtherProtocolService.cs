@@ -91,7 +91,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 					Cc = cc,
 					Bcc = bcc,
 					Subject = message.Subject ?? string.Empty,
-					Body = message.TextBody ?? message.HtmlBody ?? string.Empty,
+					Body = message.HtmlBody ?? message.TextBody ?? string.Empty,
 					Date = date,
 					Owner = ownerAddress,
 					MailboxType = mailboxType,

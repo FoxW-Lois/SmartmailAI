@@ -178,22 +178,35 @@ public class GmailApiService : IGmailApiService
 
 	private static string GetMessageBody(Message message)
 	{
-		if (!string.IsNullOrEmpty(message.Payload.Body?.Data))
-			return DecodeBase64(message.Payload.Body.Data);
+		var html = FindPart(message.Payload, "text/html");
 
-		if (message.Payload.Parts is not null)
+		if (!string.IsNullOrEmpty(html))
+			return html;
+
+		var text = FindPart(message.Payload, "text/plain");
+
+		return text ?? string.Empty;
+	}
+
+	private static string? FindPart(Google.Apis.Gmail.v1.Data.MessagePart part, string mimeType)
+	{
+		if (part.MimeType == mimeType && !string.IsNullOrEmpty(part.Body?.Data))
 		{
-			foreach (var part in message.Payload.Parts)
-			{
-				if (part.MimeType is "text/plain" or "text/html")
-				{
-					if (!string.IsNullOrEmpty(part.Body?.Data))
-						return DecodeBase64(part.Body.Data);
-				}
-			}
+			return DecodeBase64(part.Body.Data);
 		}
 
-		return string.Empty;
+		if (part.Parts == null)
+			return null;
+
+		foreach (var child in part.Parts)
+		{
+			var result = FindPart(child, mimeType);
+
+			if (!string.IsNullOrEmpty(result))
+				return result;
+		}
+
+		return null;
 	}
 
 	private static List<MailAttachment> GetAttachments(Message message)
