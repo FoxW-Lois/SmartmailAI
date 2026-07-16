@@ -4,16 +4,17 @@
   Smarmail est une application de gestion de boite mails sécurisée intégrant des outils IA tel que la traduction automatique, le résumé de contenu et la génération automatique de réponses.
 
 ## Objectifs
-  Concurencer les grosses sociétés (GAFAM) et proposer une solution abordable, sécurisée et pérenne pour les TPE/PME. [Et dans le cadre de la mise en public de ce projet, proposer une solution libre d'usage et opensource.]
+  Concurencer les grosses sociétés (GAFAM) et proposer une solution abordable, sécurisée et pérenne pour les TPE/PME. [Et dans le cadre de la mise en public de ce projet, proposer une solution libre d'usage et opensource.]  
+	Ce projet devient donc libre d'utilisation et de modification, mais toute redistribution modifiée doit rester libre et conserver l'attribution originale. Pour assurer cela il est indispensable de respecter la licence GNU GPL v3.
   
 ## Installation utilisateur
-  L'idée est de récupérer le fichier package d'installation Windows (x64) **.msix** et lancer. Pour le récupérer/en obtenir un, il est nécessaire de cloner ce repository, et suivre la documentation *Comment build un fichier d’installation Windows 10.11 (.NET 9 &+, WinUI 3...).doxc* disponible dans le dossier "/Documentation".
+  L'idée est de récupérer le fichier package d'installation Windows (x64) **.msix** et lancer. Pour le récupérer/en obtenir un, il est nécessaire de cloner ce repository, et suivre la documentation *Comment build un fichier d’installation Windows 10.11 (.NET 9 &+, WinUI 3...).doxc* disponible dans le dossier "/Documentation".  
   Pour exploiter toutes les fonctionnalités du logiciel il est indispensable de télécharger et de lancer LM Studio, télécharger le modèle ***mistralai/ministral-3-3b***, activer le ***mode développeur***, et lancer le modèle dans l'onglet "***Developper*** > ***Local Server***"
 
 ## Installation (dèv/lancement en débug)
-  Afin de lancer le projet en débug, build un package package d'installation, ou bien encore continuer le développement, il est nécessaire de réaliser cette étape.
-  Pour cela il faut un PC Windows 10/11 (11 x64 bits de préférence), installer Visual Studio 2026 Community ***https://visualstudio.microsoft.com/insiders/***. Une fois ceci, il faudra également installer la charge de travail **Développement d'applications WinUI**.
-  L'utlisation de l'extension **Todo Tree** de **Visual Studio Code** est également préférable pour avoir une vue d'ensemble sur les diverses annotations laissées aux développeurs et à une éventuelle évolution du projet
+  Afin de lancer le projet en débug, build un package package d'installation, ou bien encore continuer le développement, il est nécessaire de réaliser cette étape :  
+  Pour cela il faut un PC Windows 10/11 (11 x64 bits de préférence), installer Visual Studio 2026 Community ***https://visualstudio.microsoft.com/insiders/***. Une fois ceci, il faudra également installer la charge de travail **Développement d'applications WinUI**.  
+  L'utlisation de l'extension **Todo Tree** de **Visual Studio Code** est également préférable pour avoir une vue d'ensemble sur les diverses annotations laissées aux développeurs et à une éventuelle évolution du projet.  
   Il est également nécessaire de se créer une *application* sur les services API de Google et de générer une clé API à placer au sein d'un .env local afin de gérer la connexion, récupération et envoi d'emails via les services Google. Les variables d'environnement nécessaires ainsi que le placement du .env au sein de l'arborescence du projet sont indiqués via le fichier *.envexample*.
 
 ## Utilisation
