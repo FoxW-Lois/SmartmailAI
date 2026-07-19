@@ -1,7 +1,7 @@
 # SmartmailAI
   
 ## Description
-  SmartmailAI est une application de gestion de boite mails sécurisée intégrant des outils IA tel que la traduction automatique, le résumé de contenu et la génération automatique de réponses.
+  SmartmailAI est une application desktop de gestion de boite mails sécurisée, intégrant des outils IA locaux tel que la traduction automatique, le résumé de contenu et la génération automatique de réponses.
 
 ## Objectifs
   Concurencer les grosses sociétés (GAFAM) et proposer une solution abordable, sécurisée et pérenne pour les TPE/PME. [Et dans le cadre de la mise en public de ce projet, proposer une solution libre d'usage et opensource.]  
