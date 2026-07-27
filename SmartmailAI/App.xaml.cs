@@ -1,11 +1,6 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-
-#if !DISABLE_XAML_GENERATED_MAIN
-using Microsoft.Extensions.Configuration;
-#endif
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
