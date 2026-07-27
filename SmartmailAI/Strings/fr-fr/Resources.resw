@@ -796,4 +796,7 @@ Si malgré cela le problème persiste, contactez en priorité votre administrate
   <data name="Button_CloseEmail.Content" xml:space="preserve">
     <value>Fermer l'email</value>
   </data>
+  <data name="Settings_LicenseLink.Content" xml:space="preserve">
+    <value>Licence GPL-3.0</value>
+  </data>
 </root>
