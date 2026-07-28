@@ -33,6 +33,7 @@
 				Style="{StaticResource CaptionTextBlockStyle}"
 				TextWrapping="NoWrap" />
 		</Grid>
+		<!--  Changer la taille maximale du NavShell : modifier la valeur du OpenPaneLength  -->
 		<NavigationView
 			x:Name="NavigationViewControl"
 			Canvas.ZIndex="0"
