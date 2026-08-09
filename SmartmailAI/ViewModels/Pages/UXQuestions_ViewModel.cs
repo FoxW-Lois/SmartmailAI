@@ -86,6 +86,14 @@ public partial class UXQuestions_ViewModel(IAccountRepository accountRepository,
 		return condition ? resourceLoader.GetString(resourceKey) : string.Empty;
 	}
 
+	partial void OnNbOpenAppByWeekChanged(int value)
+	{
+		if (double.IsNaN(value) || value < 0)
+		{
+			NbOpenAppByWeek = 0;
+		}
+	}
+
 	partial void OnDatePickedChanged(DateTimeOffset? value)
 	{
 		if (value is null)
