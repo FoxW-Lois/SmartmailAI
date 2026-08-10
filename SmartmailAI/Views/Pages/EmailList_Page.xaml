@@ -9,6 +9,7 @@
 	xmlns:models="using:SmartmailAI.Core.Models"
 	xmlns:viewmodels="using:SmartmailAI.ViewModels.Pages"
 	xmlns:views="using:SmartmailAI.Views.Pages"
+	xmlns:viewscontrols="using:SmartmailAI.Views.Controls"
 	x:Name="RootPage"
 	behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
 	d:DataContext="{d:DesignInstance Type=viewmodels:EmailList_ViewModel}"
@@ -159,7 +160,7 @@
 
 		<DataTemplate x:Key="DetailsMailsTemplate" x:DataType="models:Email">
 			<Grid Margin="64 0 0 0">
-				<views:EmailList_DetailsControl DetailsListMenuItem_Email="{x:Bind}" />
+				<viewscontrols:EmailList_DetailsControl DetailsListMenuItem_Email="{x:Bind}" />
 			</Grid>
 		</DataTemplate>
 
@@ -447,7 +448,7 @@
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 			CornerRadius="15"
 			Visibility="{x:Bind ViewModel.IsComposing, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-			<views:EmailList_NewMailControl />
+			<viewscontrols:EmailList_NewMailControl />
 		</Grid>
 		<Grid
 			x:Name="AIinterfaceOverlay"
@@ -460,7 +461,7 @@
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 			CornerRadius="15"
 			Visibility="{x:Bind ViewModel.IsAIinterfaceVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-			<views:AIinterface_Control />
+			<viewscontrols:AIinterface_Control />
 		</Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>

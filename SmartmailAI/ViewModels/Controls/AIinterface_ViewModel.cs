@@ -6,7 +6,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 
-namespace SmartmailAI.ViewModels.Pages;
+namespace SmartmailAI.ViewModels.Controls;
 
 public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableObject
 {

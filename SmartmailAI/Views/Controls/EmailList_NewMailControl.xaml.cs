@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SmartmailAI.ViewModels.Controls;
 
-namespace SmartmailAI.Views.Pages;
+namespace SmartmailAI.Views.Controls;
 
 public sealed partial class EmailList_NewMailControl : UserControl
 {

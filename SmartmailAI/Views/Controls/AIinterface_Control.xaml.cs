@@ -1,8 +1,9 @@
 ﻿using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
+using SmartmailAI.ViewModels.Controls;
 
-namespace SmartmailAI.Views.Pages;
+namespace SmartmailAI.Views.Controls;
 
 public sealed partial class AIinterface_Control : UserControl
 {

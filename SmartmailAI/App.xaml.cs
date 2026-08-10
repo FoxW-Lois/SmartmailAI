@@ -16,6 +16,7 @@ using SmartmailAI.Core.Repository;
 using SmartmailAI.Core.Services.Addresses;
 using SmartmailAI.Core.Services.LocalSecurity;
 using SmartmailAI.Core.Services.Security;
+using SmartmailAI.ViewModels.Controls;
 
 namespace SmartmailAI;
 

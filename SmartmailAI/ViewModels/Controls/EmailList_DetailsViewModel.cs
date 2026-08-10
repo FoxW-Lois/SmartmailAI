@@ -7,7 +7,7 @@ using SmartmailAI.Core.Contracts.Services.Addresses;
 using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 
-namespace SmartmailAI.ViewModels.Pages;
+namespace SmartmailAI.ViewModels.Controls;
 
 public partial class EmailList_DetailsViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
 	IDialogService dialogService) : ObservableRecipient

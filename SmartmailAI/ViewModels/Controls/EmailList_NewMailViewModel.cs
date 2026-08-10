@@ -9,7 +9,7 @@ using SmartmailAI.Core.Models.AI;
 using SmartmailAI.Core.Models.Messengers;
 using Windows.Storage.Pickers;
 
-namespace SmartmailAI.ViewModels.Pages;
+namespace SmartmailAI.ViewModels.Controls;
 
 public partial class EmailList_NewMailViewModel : ObservableObject
 {

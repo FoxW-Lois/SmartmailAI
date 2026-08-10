@@ -7,6 +7,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:viewmodels="using:SmartmailAI.ViewModels.Pages"
 	xmlns:views="using:SmartmailAI.Views.Pages"
+	xmlns:viewscontrols="using:SmartmailAI.Views.Controls"
 	behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
 	d:DataContext="{d:DesignInstance Type=viewmodels:Home_ViewModel}"
 	NavigationCacheMode="Required"
@@ -33,7 +34,7 @@
 			Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 			CornerRadius="15"
 			Visibility="{x:Bind ViewModel.IsUXQuestionsVisible, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-			<views:UXQuestions_Control />
+			<viewscontrols:UXQuestions_Control />
 		</Grid>
 	</Grid>
 </Page>

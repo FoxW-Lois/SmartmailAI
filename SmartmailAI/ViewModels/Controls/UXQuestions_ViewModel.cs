@@ -6,7 +6,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using SmartmailAI.Core.Contracts.Repository;
 using SmartmailAI.Core.Models.Messengers;
 
-namespace SmartmailAI.ViewModels.Pages;
+namespace SmartmailAI.ViewModels.Controls;
 
 public partial class UXQuestions_ViewModel(IAccountRepository accountRepository, IAccountService accountService) : ObservableObject
 {

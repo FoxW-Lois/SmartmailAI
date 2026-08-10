@@ -2,8 +2,9 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Storage.Pickers;
+using SmartmailAI.ViewModels.Controls;
 
-namespace SmartmailAI.Views.Pages;
+namespace SmartmailAI.Views.Controls;
 
 public sealed partial class EmailList_DetailsControl : UserControl
 {
