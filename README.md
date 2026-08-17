@@ -8,7 +8,9 @@
 	Ce projet devient donc libre d'utilisation et de modification, mais toute redistribution modifiée doit rester libre et conserver l'attribution originale. Pour assurer cela il est indispensable de respecter la licence GNU GPL v3.
   
 ## Installation utilisateur
-  L'idée est de récupérer le fichier package d'installation Windows (x64) **.msix** et lancer. Pour le récupérer/en obtenir un, il est nécessaire de cloner ce repository, et suivre la documentation *Comment build un fichier d’installation Windows 10.11 (.NET 9 &+, WinUI 3...).doxc* disponible dans le dossier "/Documentation".  
+  Concernant l'installation côté utilisateur, il est recommandé de suivre la courte documentation *Comment installer et autoriser un certificat - Windows 10.11 (.NET 9 &+, WinUI 3...).docx* disponible dans le dossier "/Documentation".
+  Concernant la récupération du package d'installation Windows (x64) **.msix**, ce dernier est disponible (avec les autres fichiers du package) au sein de la section *Releases* du repository GitHub : ***https://github.com/FoxW-Lois/SmartmailAI/releases/***.  
+  Il est également possible d'en générer un soi-même : pour cela il est nécessaire de cloner ce repository, et suivre la documentation *Comment build un fichier d’installation Windows 10.11 (.NET 9 &+, WinUI 3...).doxc* disponible dans le dossier "/Documentation".  
   Pour exploiter toutes les fonctionnalités du logiciel il est indispensable de télécharger et de lancer LM Studio, télécharger le modèle ***mistralai/ministral-3-3b***, activer le ***mode développeur***, et lancer le modèle dans l'onglet "***Developper*** > ***Local Server***"
 
 ## Installation (dèv/lancement en débug)
