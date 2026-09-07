@@ -121,7 +121,7 @@
 					Grid.Column="1"
 					Margin="{StaticResource SmallLeftMargin}"
 					VerticalAlignment="Center">
-					<!--  Alignement SenderName / DateSent  -->
+					<!--  Alignement DisplayName (SenderName/ReceiverName en fonction de l'email) / DateSent  -->
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
@@ -142,7 +142,7 @@
 							Grid.Column="1"
 							FontWeight="{x:Bind IsRead, Converter={StaticResource BoolToFontWeight}}"
 							Style="{StaticResource ListTitleItem_Style}"
-							Text="{x:Bind SenderName}" />
+							Text="{x:Bind DisplayName}" />
 
 						<TextBlock
 							Grid.Column="2"

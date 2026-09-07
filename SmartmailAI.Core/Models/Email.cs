@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.ApplicationModel.Resources;
 
 namespace SmartmailAI.Core.Models;
 
@@ -78,6 +79,36 @@ public class Email
 	#endregion Propriétés de gestion de l'état des mails
 
 	#region Propriétés dédiées à l'affichage
+
+	private readonly ResourceLoader resourceLoader = new();
+
+	// Se remplit à partir de SenderName/ReceiverName
+	[NotMapped]
+	public string DisplayNameFull
+	{
+		get
+		{
+			return IsSentByUser
+				? String.Concat(ReceiverName ?? ReceiverEmail ?? string.Empty)
+				: SenderName ?? SenderEmail ?? string.Empty;
+		}
+	}
+
+	[NotMapped]
+	public string DisplayName
+	{
+		get
+		{
+			string name = IsSentByUser
+				? String.Concat(resourceLoader.GetString("EmailSending_To"), " ", ReceiverName ?? ReceiverEmail ?? string.Empty) :
+				SenderName ?? SenderEmail ?? string.Empty;
+
+			if (name.Length > 20)
+				name = name[..20] + "…";
+
+			return name;
+		}
+	}
 
 	// Se remplit à partir de SenderProfileImage
 	[NotMapped]

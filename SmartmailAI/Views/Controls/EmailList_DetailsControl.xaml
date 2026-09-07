@@ -136,7 +136,7 @@
 					Margin="{StaticResource SmallLeftMargin}"
 					IsTextSelectionEnabled="True"
 					Style="{ThemeResource TitleTextBlockStyle}"
-					Text="{x:Bind DetailsListMenuItem_Email.SenderName, Mode=OneWay}" />
+					Text="{x:Bind DetailsListMenuItem_Email.DisplayNameFull, Mode=OneWay}" />
 			</Grid>
 
 			<StackPanel Padding="0 15 0 0">
