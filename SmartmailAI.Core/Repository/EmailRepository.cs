@@ -106,7 +106,7 @@ public class EmailRepository(IDbContextFactory<AppDbContext_Email> factory, IAes
 		   .OrderByDescending(e => e.DateSent)
 		   .ToListAsync();
 
-		var emailsToDelete = await EncryptEmailListAsync(emails);
+		var emailsToDelete = await DecryptEmailListAsync(emails);
 		emailsToDelete = [.. emailsToDelete.Where(e => account is not null && e.Owner == account.Email)];
 
 		_context.Email.RemoveRange(emailsToDelete);

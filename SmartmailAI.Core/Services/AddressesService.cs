@@ -9,11 +9,10 @@ using SmartmailAI.Core.Models;
 
 namespace SmartmailAI.Core.Services;
 
-public class AddressesService(IAccountService accountService, IAddressesRepository addressRepository, IEmailRepository emailRepository,
+public class AddressesService(IAddressesRepository addressRepository, IEmailRepository emailRepository,
 	IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService, IGmailLogoutService gmailLogoutService,
 	IOtherCredentialService otherCredentialService, IOtherLogoutService otherLogoutService, IOtherTokenStore otherTokenStore) : IAddressesService
 {
-	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesRepository _addressRepository = addressRepository;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 
