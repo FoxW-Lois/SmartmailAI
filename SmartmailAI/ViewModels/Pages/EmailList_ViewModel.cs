@@ -290,7 +290,7 @@ public partial class EmailList_ViewModel : ObservableRecipient, INavigationAware
 		if (SelectedCategory is null) return;
 
 		var dialogResult = await _dialogService.ShowTwoButtonDialogAsync(resourceLoader.GetString("Dialog_Confirmation"),
-			String.Concat(resourceLoader.GetString("Dialog_Delete_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_Delete_Confirm_part2")),
+			string.Concat(resourceLoader.GetString("Dialog_Delete_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_Delete_Confirm_part2")),
 			resourceLoader.GetString("Dialog_Agree"), resourceLoader.GetString("Dialog_Cancel"));
 
 		if (dialogResult != WidgetDialogResult.Left)
@@ -312,7 +312,7 @@ public partial class EmailList_ViewModel : ObservableRecipient, INavigationAware
 		if (SelectedCategory is null) return;
 
 		var dialogResult = await _dialogService.ShowTwoButtonDialogAsync(resourceLoader.GetString("Dialog_Confirmation"),
-			String.Concat(resourceLoader.GetString("Dialog_MarkAsRead_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_MarkAsRead_Confirm_part2")),
+			string.Concat(resourceLoader.GetString("Dialog_MarkAsRead_Confirm_part1"), SelectedCategory.MailboxType, resourceLoader.GetString("Dialog_MarkAsRead_Confirm_part2")),
 			resourceLoader.GetString("Dialog_Agree"), resourceLoader.GetString("Dialog_Cancel"));
 
 		if (dialogResult != WidgetDialogResult.Left)

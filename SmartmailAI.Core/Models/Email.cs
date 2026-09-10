@@ -80,7 +80,7 @@ public class Email
 
 	#region Propriétés dédiées à l'affichage
 
-	private readonly ResourceLoader resourceLoader = new();
+	private ResourceLoader? resourceLoader;
 
 	// Se remplit à partir de SenderName/ReceiverName
 	[NotMapped]
@@ -89,7 +89,7 @@ public class Email
 		get
 		{
 			return IsSentByUser
-				? String.Concat(ReceiverName ?? ReceiverEmail ?? string.Empty)
+				? string.Concat(ReceiverName ?? ReceiverEmail ?? string.Empty)
 				: SenderName ?? SenderEmail ?? string.Empty;
 		}
 	}
@@ -100,7 +100,7 @@ public class Email
 		get
 		{
 			string name = IsSentByUser
-				? String.Concat(resourceLoader.GetString("EmailSending_To"), " ", ReceiverName ?? ReceiverEmail ?? string.Empty) :
+				? string.Concat((resourceLoader ??= new ResourceLoader()).GetString("EmailSending_To"), " ", ReceiverName ?? ReceiverEmail ?? string.Empty) :
 				SenderName ?? SenderEmail ?? string.Empty;
 
 			if (name.Length > 20)

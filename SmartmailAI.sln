@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Settings.XamlStyler = Settings.XamlStyler
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartmailAI.Tests", "SmartmailAI.Tests\SmartmailAI.Tests.csproj", "{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|arm64 = Debug|arm64
@@ -75,6 +77,18 @@ Global
 		{172979F7-8B4A-4AD6-86C3-2F835C86D442}.Release|x64.Build.0 = Release|x64
 		{172979F7-8B4A-4AD6-86C3-2F835C86D442}.Release|x86.ActiveCfg = Release|x86
 		{172979F7-8B4A-4AD6-86C3-2F835C86D442}.Release|x86.Build.0 = Release|x86
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Debug|arm64.ActiveCfg = Debug|arm64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Debug|arm64.Build.0 = Debug|arm64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Debug|x64.ActiveCfg = Debug|x64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Debug|x64.Build.0 = Debug|x64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Debug|x86.ActiveCfg = Debug|x86
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Debug|x86.Build.0 = Debug|x86
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Release|arm64.ActiveCfg = Release|arm64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Release|arm64.Build.0 = Release|arm64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Release|x64.ActiveCfg = Release|x64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Release|x64.Build.0 = Release|x64
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Release|x86.ActiveCfg = Release|x86
+		{CF5D7033-9D6F-4E01-8A83-BBE4DC9CA2E2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

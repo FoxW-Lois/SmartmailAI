@@ -4,15 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SmartmailAI.Core.AppDbContext;
 using SmartmailAI.Core.Contracts.Repository;
-using SmartmailAI.Core.Contracts.Services.LocalSecurity;
 using SmartmailAI.Core.Models.Security;
 
 namespace SmartmailAI.Core.Repository;
 
-public class MLDA_Repository(IDbContextFactory<AppDbContext_MLDA> factory, IAesService aesService) : IMLDA_Repository
+public class MLDA_Repository(IDbContextFactory<AppDbContext_MLDA> factory) : IMLDA_Repository
 {
 	private readonly IDbContextFactory<AppDbContext_MLDA> _factory = factory;
-	private readonly IAesService _aesService = aesService;
 
 	public async Task<List<ManualLegitDomainsAndAddresses>?> GetAllMLDA_Async()
 	{

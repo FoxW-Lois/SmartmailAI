@@ -83,7 +83,7 @@ public class OtherProtocolService(IOtherTokenStore otherTokenStore) : IOtherProt
 
 				result.Add(new EmailFromAddress
 				{
-					Guid = String.Concat(guid, "-", uid.Id.ToString()),
+					Guid = string.Concat(guid, "-", uid.Id.ToString()),
 					FromEmail = fromEmail,
 					FromName = from?.Name ?? fromEmail,
 					ToEmail = toEmail,
