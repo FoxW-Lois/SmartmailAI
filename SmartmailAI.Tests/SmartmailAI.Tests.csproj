@@ -39,7 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\LocalSecurity\" />
     <Folder Include="Services\Authentication\" />
   </ItemGroup>
 
