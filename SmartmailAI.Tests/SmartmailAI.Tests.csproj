@@ -12,6 +12,7 @@
 		<!-- Other Settings -->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
   <ItemGroup>
@@ -38,7 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="Services\LocalSecurity\" />
+    <Folder Include="Services\Authentication\" />
   </ItemGroup>
 
 </Project>

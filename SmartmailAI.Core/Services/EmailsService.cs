@@ -21,12 +21,45 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 	private List<Email>? _AllEmails;
 	private int _TotalEmailsCount;
 
+	#region Instance declarations
 	private readonly IEmailRepository _emailRepository = emailRepository;
-	private static readonly ResourceLoader _resources = new();
+	private static ResourceLoader? _resources;
+
+	private static string GetResourceString(string key)
+	{
+		try
+		{
+			return (_resources ??= new ResourceLoader()).GetString(key);
+		}
+		catch (System.Runtime.InteropServices.COMException)
+		{
+			// ResourceLoader unavailable in test environment (COM not registered).
+			// Fallback to the key itself or a simple default mapping.
+			switch (key)
+			{
+				case "Mailbox_Inbox": return "Inbox";
+				case "Mailbox_Sent": return "Sent";
+				case "Mailbox_Drafts": return "Drafts";
+				case "Mailbox_Starred": return "Starred";
+				case "Mailbox_Unread": return "Unread";
+				case "Mailbox_Trash": return "Trash";
+				case "Mailbox_AllMails": return "All mails";
+				case "Mailbox_Archives": return "Archives";
+				case "Mailbox_PhishingSpam": return "Phishing/Spam";
+				default: return key;
+			}
+		}
+		catch
+		{
+			return key;
+		}
+	}
+
 	private readonly IRedFlagDomainService _redFlagDomainService = redFlagDomainService;
 	private readonly IVirusTotalService _virusTotalService = virusTotalService;
 	private readonly IDnsSecurityService _dnsSecurityService = dnsSecurityService;
 	private readonly IMLDA_Repository _mldaRepository = mldaRepository;
+	#endregion Instance declarations
 
 	// TODO: Bloc à décommenter pour l'utilisation de données statiques ↓
 	/*private readonly List<Email> hardcodedEmails = [
@@ -348,47 +381,47 @@ public class EmailsService(IEmailRepository emailRepository, IRedFlagDomainServi
 		var categories = new List<MailboxCategory>
 		{
 			new() {
-				Title = _resources.GetString("Mailbox_Inbox"),
+				Title = GetResourceString("Mailbox_Inbox"),
 				Icon = "\uE715", // Mail
 				MailboxType = MailboxType.Inbox
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_Sent"),
+				Title = GetResourceString("Mailbox_Sent"),
 				Icon = "\uE122", // Send
 				MailboxType = MailboxType.Sent
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_Drafts"),
+				Title = GetResourceString("Mailbox_Drafts"),
 				Icon = "\uE7C3", // Document
 				MailboxType = MailboxType.Drafts
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_Starred"),
+				Title = GetResourceString("Mailbox_Starred"),
 				Icon = "\uE734", // FavoriteStar
 				MailboxType = MailboxType.Starred
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_Unread"),
+				Title = GetResourceString("Mailbox_Unread"),
 				Icon = "\uE8A8", // MailFill
 				MailboxType = MailboxType.Unread
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_Trash"),
+				Title = GetResourceString("Mailbox_Trash"),
 				Icon = "\uE74D", // Delete
 				MailboxType = MailboxType.Trash
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_AllMails"),
+				Title = GetResourceString("Mailbox_AllMails"),
 				Icon = "\uE8F1", // AllApps
 				MailboxType = MailboxType.AllMails
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_Archives"),
+				Title = GetResourceString("Mailbox_Archives"),
 				Icon = "\uE7B8", // Archive
 				MailboxType = MailboxType.Archives
 			},
 			new() {
-				Title = _resources.GetString("Mailbox_PhishingSpam"),
+				Title = GetResourceString("Mailbox_PhishingSpam"),
 				Icon = "\uE7BA", // Warning
 				MailboxType = MailboxType.PhishingSpam
 			}
