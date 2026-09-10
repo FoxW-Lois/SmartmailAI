@@ -12,11 +12,15 @@ namespace SmartmailAI.ViewModels.Controls;
 public partial class EmailList_DetailsViewModel(IMailReaderService mailReaderService, IAddressesService addressesService, I_AIService aiService,
 	IDialogService dialogService) : ObservableRecipient
 {
+	#region Instance declarations
+
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly I_AIService _aiService = aiService;
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	#region ObservableProperties
 

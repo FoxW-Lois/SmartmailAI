@@ -78,12 +78,17 @@ public partial class Settings_ViewModel : ObservableRecipient, INavigationAware
 
 	#endregion ObservableProperty
 
+	#region Instance declarations
+
 	private readonly IAppSettingsService _appSettingsService;
 	private readonly IBackdropSelectorService _backdropSelectorService;
 	private readonly IThemeSelectorService _themeSelectorService;
 	private readonly IAuthService _authService;
 	private readonly INavigationService _navigationService;
 	private readonly IAccountRepository _accountRepository;
+
+	#endregion Instance declarations
+
 	private Account? account;
 
 	private bool _isInitialized;

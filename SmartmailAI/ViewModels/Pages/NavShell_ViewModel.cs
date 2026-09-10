@@ -32,7 +32,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 
 	#endregion ObservableProperties
 
-	#region Interfaces declaration
+	#region Instance declarations
 
 	public INavigationService NavigationService { get; }
 	public INavigationViewService NavigationViewService { get; }
@@ -46,7 +46,7 @@ public partial class NavShell_ViewModel : ObservableRecipient
 	private readonly IEmailLoaderService _emailLoaderService;
 	private readonly ResourceLoader resourceLoader = new();
 
-	#endregion Interfaces declaration
+	#endregion Instance declarations
 
 	public NavShell_ViewModel(INavigationService navigationService, INavigationViewService shellService, IAuthService authService,
 		IAddressesRepository addressesRepository, IAccountService accountService, IAddressesService addressesService,

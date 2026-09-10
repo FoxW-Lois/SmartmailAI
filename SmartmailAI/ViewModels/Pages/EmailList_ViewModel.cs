@@ -12,12 +12,16 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class EmailList_ViewModel : ObservableRecipient, INavigationAware
 {
+	#region Instance declarations
+
 	private readonly IEmailsService _emailsService;
 	private readonly IEmailRepository _emailRepository;
 	private readonly IMLDA_Repository _mldaRepository;
 	private readonly I_AIService _aiService;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
 

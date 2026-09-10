@@ -8,10 +8,14 @@ namespace SmartmailAI.ViewModels.Pages;
 public partial class AddressManagement_ViewModel(IAddressesRepository addressRepository, IAddressesService addressesService,
 	INavigationService navigationService) : ObservableRecipient
 {
+	#region Instance declarations
+
 	private readonly IAddressesRepository _addressRepository = addressRepository;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly INavigationService _navigationService = navigationService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	#region ObservableProperties & View Properties
 

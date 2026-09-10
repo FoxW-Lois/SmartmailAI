@@ -7,12 +7,16 @@ namespace SmartmailAI.Services;
 public class EmailLoaderService(IAuthService authService, IMailReaderService mailReaderService, IEmailRepository emailRepository,
 	IDialogService dialogService) : IEmailLoaderService
 {
+	#region Instance declarations
+
 	private readonly IAuthService _authService = authService;
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	public async Task LoadMessagesAsync(bool isAddingNewAddress, AccountMailBase account)
 	{

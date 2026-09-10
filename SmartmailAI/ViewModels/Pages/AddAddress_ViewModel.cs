@@ -6,11 +6,15 @@ namespace SmartmailAI.ViewModels.Pages;
 public partial class AddAddress_ViewModel(IAccountService accountService, IAddressesService addressesService, IDialogService dialogService,
 	IEmailLoaderService emailLoaderService) : ObservableRecipient
 {
+	#region Instance declarations
+
 	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly IDialogService _dialogService = dialogService;
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	#region ObservableProperties & View Properties
 

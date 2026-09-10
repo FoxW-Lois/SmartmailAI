@@ -12,10 +12,14 @@ namespace SmartmailAI.Core.Services.Authentication;
 public class AuthService(IAccountRepository accountRepository, IAccountSecretStore secretStore, ITotpService totpService,
 	IDpapiService dpapiService) : IAuthService
 {
+	#region Instance declarations
+
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IAccountSecretStore _secretStore = secretStore;
 	private readonly ITotpService _totpService = totpService;
 	private readonly IDpapiService _dpapiService = dpapiService;
+
+	#endregion Instance declarations
 
 	#region Notification du changement d'état concernant l'authentification de l'utilisateur
 

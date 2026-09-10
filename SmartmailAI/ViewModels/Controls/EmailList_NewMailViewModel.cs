@@ -13,6 +13,8 @@ namespace SmartmailAI.ViewModels.Controls;
 
 public partial class EmailList_NewMailViewModel : ObservableObject
 {
+	#region Instance declarations
+
 	private readonly IAddressesService _addressesService;
 	private readonly IGmailApiService _gmailApiService;
 	private readonly IGmailCredentialService _gmailCredentialService;
@@ -24,6 +26,8 @@ public partial class EmailList_NewMailViewModel : ObservableObject
 	private readonly I_AIService _aiService;
 	private readonly IDialogService _dialogService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	public ObservableCollection<AIMessage> Conversation { get; set; } = [];
 	private string? userInstructions { get; set; } = null;

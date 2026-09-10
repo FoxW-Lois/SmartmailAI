@@ -13,11 +13,16 @@ namespace SmartmailAI.Core.Services;
 public class EmailsSyncService(IMailReaderService mailReaderService, IEmailRepository emailRepository, IAddressesRepository addressesRepository,
 	IAuthService authService) : IEmailsSyncService, IAsyncDisposable
 {
+	#region Instance declarations
+
 	private readonly IMailReaderService _mailReaderService = mailReaderService;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IAddressesRepository _addressesRepository = addressesRepository;
 	private readonly IAuthService _authService = authService;
 	private readonly TimeSpan _interval = TimeSpan.FromSeconds(30);
+
+	#endregion Instance declarations
+
 	private CancellationTokenSource _cts = new();
 	private Task? _runningTask;
 

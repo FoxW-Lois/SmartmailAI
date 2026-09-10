@@ -10,9 +10,14 @@ namespace SmartmailAI.ViewModels.Controls;
 
 public partial class UXQuestions_ViewModel(IAccountRepository accountRepository, IAccountService accountService) : ObservableObject
 {
+	#region Instance declarations
+
 	private readonly IAccountRepository _accountRepository = accountRepository;
 	private readonly IAccountService _accountService = accountService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
+
 	private DateOnly? parsedDatePicked;
 
 	#region ObservableProperties

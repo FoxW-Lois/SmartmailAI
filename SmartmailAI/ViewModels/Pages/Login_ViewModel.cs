@@ -8,12 +8,16 @@ namespace SmartmailAI.ViewModels.Pages;
 public partial class Login_ViewModel(IAuthService authService, IAccountService accountService, IAddressesService addressesService,
 	IEmailLoaderService emailLoaderService, ILocalSessionService localSessionService) : ObservableRecipient
 {
+	#region Instance declarations
+
 	private readonly IAuthService _authService = authService;
 	private readonly IAccountService _accountService = accountService;
 	private readonly IAddressesService _addressesService = addressesService;
 	private readonly IEmailLoaderService _emailLoaderService = emailLoaderService;
 	private readonly ILocalSessionService _localSessionService = localSessionService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	#region ObservableProperties & View Properties
 

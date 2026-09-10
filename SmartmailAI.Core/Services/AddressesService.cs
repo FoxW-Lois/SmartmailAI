@@ -13,6 +13,8 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 	IGmailCredentialService gmailCredentialService, IGmailApiService gmailApiService, IGmailLogoutService gmailLogoutService,
 	IOtherCredentialService otherCredentialService, IOtherLogoutService otherLogoutService, IOtherTokenStore otherTokenStore) : IAddressesService
 {
+	#region Instance declarations
+
 	private readonly IAddressesRepository _addressRepository = addressRepository;
 	private readonly IEmailRepository _emailRepository = emailRepository;
 
@@ -23,6 +25,8 @@ public class AddressesService(IAddressesRepository addressRepository, IEmailRepo
 	private readonly IOtherCredentialService _otherCredentialService = otherCredentialService;
 	private readonly IOtherLogoutService _otherLogoutService = otherLogoutService;
 	private readonly IOtherTokenStore _otherTokenStore = otherTokenStore;
+
+	#endregion Instance declarations
 
 	public bool HasAny { get; private set; }
 

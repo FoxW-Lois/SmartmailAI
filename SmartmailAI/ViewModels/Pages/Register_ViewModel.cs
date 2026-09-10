@@ -6,8 +6,12 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class Register_ViewModel(IAuthService authService) : ObservableRecipient
 {
+	#region Instance declarations
+
 	private readonly IAuthService _authService = authService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	#region ObservableProperties & View Properties
 

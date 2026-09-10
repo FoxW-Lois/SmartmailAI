@@ -10,8 +10,12 @@ namespace SmartmailAI.ViewModels.Controls;
 
 public partial class AIinterface_ViewModel(I_AIService aiService) : ObservableObject
 {
+	#region Instance declarations
+
 	private readonly I_AIService _aiService = aiService;
 	private readonly ResourceLoader resourceLoader = new();
+
+	#endregion Instance declarations
 
 	public ObservableCollection<AIMessage> Conversation { get; } = [];
 

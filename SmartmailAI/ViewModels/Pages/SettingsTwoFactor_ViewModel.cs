@@ -10,6 +10,8 @@ namespace SmartmailAI.ViewModels.Pages;
 
 public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigationAware
 {
+	#region Instance declarations
+
 	private readonly ITotpService _totpService;
 	private readonly IQrCodeService _qrCodeService;
 	private readonly IDpapiService _dpapiService;
@@ -18,6 +20,8 @@ public partial class SettingsTwoFactor_ViewModel : ObservableRecipient, INavigat
 	private readonly INavigationService _navigationService;
 	private readonly ResourceLoader resourceLoader = new();
 	private TotpSecret? _tempSecret;
+
+	#endregion Instance declarations
 
 	#region ObservableProperties & View Properties
 
