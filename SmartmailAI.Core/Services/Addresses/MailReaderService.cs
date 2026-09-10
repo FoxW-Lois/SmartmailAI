@@ -15,6 +15,8 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 	IAuthService authService, IAccountRepository accountRepository, IAccountService accountService, IAddressesRepository addressesRepository,
 	IMappersToEmailDTOService mappersToEmailDTOService) : IMailReaderService
 {
+	#region Instance declarations
+
 	private readonly IEmailRepository _emailRepository = emailRepository;
 	private readonly IGmailCredentialService _gmailCredentialService = gmailCredentialService;
 	private readonly IGmailApiService _gmailApiService = gmailApiService;
@@ -29,12 +31,14 @@ public class MailReaderService(IEmailRepository emailRepository, IGmailCredentia
 	private readonly IAddressesRepository _addressesRepository = addressesRepository;
 	private readonly IMappersToEmailDTOService _mappersToEmailDTOService = mappersToEmailDTOService;
 
+	#endregion Instance declarations
+
 	public async Task<IReadOnlyList<Email>?> GetLastMessagesFromAccountAsync(bool isAddingNewAddress, AccountMailBase mailAccount)
 	{
 		if (!await InternetCheckService.HasInternetConnectionAsync())
 		{
 			// Il est strictement interdit (et impossible) de gérer l'affichage d'une erreur de manque de connexion internet au sein du sous-projet
-			// .Core, l'abscence de connexion de internet est donc remontée par le 'null' aux couches supérieurs appellant
+			// .Core, l'abscence de connexion internet est donc remontée par le 'null' aux couches supérieurs appellant
 			// GetLastMessagesFromAccountAsync(). Ces dernières doivent elles gérer l'affichage du message d'erreur
 			return null;
 		}
