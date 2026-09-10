@@ -155,11 +155,12 @@ public partial class VirusTotalService : IVirusTotalService, IDisposable
 			var attributes = file.GetProperty("attributes");
 			var stats = attributes.GetProperty("last_analysis_stats");
 
+			int harmless = stats.TryGetProperty("harmless", out var h) ? h.GetInt32() : 0;
 			int malicious = stats.TryGetProperty("malicious", out var m) ? m.GetInt32() : 0;
 			int suspicious = stats.TryGetProperty("suspicious", out var s) ? s.GetInt32() : 0;
-			int total = stats.TryGetProperty("harmless", out var h) ? h.GetInt32() : 0
-				+ malicious + suspicious
-				+ (stats.TryGetProperty("undetected", out var u) ? u.GetInt32() : 0);
+			int undetected = stats.TryGetProperty("undetected", out var u) ? u.GetInt32() : 0;
+
+			int total = harmless + malicious + suspicious + undetected;
 
 			string? permalink = file.TryGetProperty("id", out var id)
 				? $"https://www.virustotal.com/gui/file/{id.GetString()}"

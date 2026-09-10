@@ -61,7 +61,6 @@
   
   <ItemGroup>
     <Folder Include="Contracts\Services\Security\" />
-    <Folder Include="Services\Security\" />
   </ItemGroup>
   
 </Project>
