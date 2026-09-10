@@ -34,6 +34,7 @@ Le projet s'organise autour de l'architecture/méthode de conception MVVM (Model
   - SmartmailAI : Organise l'interface et l'expérience utilisateur (navigation, themes, langues, paramètres utilisateur...)  
   - SmartmailAI.Core : Organise et regroupe toutes les opérations relatives à la gestion des données (credentials, base de données, état des emails...)  
   - SmartmailAI.Infrastructure : Gère tout ce qui est relatif à l'écosystème WinUI3
+  - SmartmailAI.Tests : Sous-projet de tests unitaires
 
 <img width="645" height="512" alt="Schema_darchitecture_technique drawio" src="/Documentation/Schéma d’architecture technique.drawio.png" />
 
