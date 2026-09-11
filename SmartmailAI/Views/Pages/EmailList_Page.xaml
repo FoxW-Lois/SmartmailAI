@@ -259,6 +259,7 @@
 				Height="40"
 				Margin="0 8 16 32"
 				Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<!--  UpdateSourceTrigger=PropertyChanged permet de mettre à jour à chaque frappe  -->
 
 			<!--  Contenu principal du bouton  -->
 			<SplitButton

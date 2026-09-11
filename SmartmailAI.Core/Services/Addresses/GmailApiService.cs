@@ -123,6 +123,8 @@ public class GmailApiService : IGmailApiService
 
 	public async Task SaveAttachmentAsync(UserCredential credential, string messageId, MailAttachment attachment, string destinationFolder)
 	{
+		if (string.IsNullOrEmpty(attachment.AttachmentId)) return;
+
 		var bytes = await DownloadAttachmentAsync(credential, messageId, attachment.AttachmentId);
 		var path = Path.Combine(destinationFolder, attachment.FileName);
 

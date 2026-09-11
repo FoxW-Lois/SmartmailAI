@@ -3,5 +3,5 @@
 // Réponse avec l'adresse
 public sealed class ResponseAddressAccountMessage
 {
-	public string AddressAccount { get; set; }
+	public required string AddressAccount { get; set; }
 }

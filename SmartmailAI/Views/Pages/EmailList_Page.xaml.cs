@@ -13,6 +13,7 @@ public sealed partial class EmailList_Page : Page, INotifyPropertyChanged
 {
 	public EmailList_ViewModel ViewModel { get; }
 
+	// PropertyChanged permet de mettre à jour à chaque frappe dans SearchText, en implétamentant INotifyPropertyChanged
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	private MailboxCategory? _currentSelectedCategory;
