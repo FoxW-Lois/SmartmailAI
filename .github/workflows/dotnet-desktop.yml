@@ -1,0 +1,69 @@
+# This workflow restores and tests a WinUI 3 desktop application
+# built on .NET 10.
+
+name: WinUI 3 app CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64]
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: SmartmailAI.sln
+      Test_Project_Path: SmartmailAI.Tests\SmartmailAI.Tests.csproj
+
+    steps:
+
+      # Checkout
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      # MSBuild
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      # Restore
+      - name: Restore
+        run: >
+          msbuild $env:Solution_Name
+          /t:Restore
+          /p:Configuration=${{ matrix.configuration }}
+          /p:Platform=${{ matrix.platform }}
+
+      # Build
+      - name: Build
+        run: >
+          msbuild $env:Solution_Name
+          /t:Build
+          /p:Configuration=${{ matrix.configuration }}
+          /p:Platform=${{ matrix.platform }}
+          /p:Restore=false
+
+      # Tests
+      - name: Run tests
+        run: >
+          dotnet test $env:Test_Project_Path
+          --configuration ${{ matrix.configuration }}
+          --no-build
+          --no-restore
