@@ -120,7 +120,7 @@
       </None>
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="Exists('.env')">
       <Content Include=".env">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         <CopyToPublishDirectory>Always</CopyToPublishDirectory>
