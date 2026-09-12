@@ -67,3 +67,4 @@ jobs:
           --configuration ${{ matrix.configuration }}
           --no-build
           --no-restore
+          -p:Platform=${{ matrix.platform }}
