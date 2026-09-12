@@ -36,7 +36,7 @@ Le projet s'organise autour de l'architecture/méthode de conception MVVM (Model
   - SmartmailAI.Infrastructure : Gère tout ce qui est relatif à l'écosystème WinUI3
   - SmartmailAI.Tests : Sous-projet de tests unitaires
 
-<img width="645" height="512" alt="Schema_darchitecture_technique drawio" src="/Documentation/Schéma d’architecture technique.drawio.png" />
+<img width="645" height="654" alt="Schema_darchitecture_technique drawio" src="/Documentation/Schéma d’architecture technique.drawio.png" />
 
 L'utilisateur de l'application va se connecter avec un compte et utiliser Google Authenticator pour la double authentification. Ensuite quand il va ajouter un mail, l'utilisateur utilisera un serveur SMTP ou l'API Google pour intégrer sa boite mail et ses mails correspondant pour les intégrer dans l'application. Les mails de l'utilisateur seront ensuite enregistrés dans la base de données SQLite.
 
