@@ -7,10 +7,18 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'Documentation/**'
+      - 'Images/**'
 
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'Documentation/**'
+      - 'Images/**'
 
 jobs:
 
