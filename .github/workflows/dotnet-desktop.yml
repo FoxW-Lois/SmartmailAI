@@ -21,9 +21,7 @@ on:
       - 'Images/**'
 
 jobs:
-
   build:
-
     strategy:
       matrix:
         configuration: [Release]
@@ -36,7 +34,6 @@ jobs:
       Test_Project_Path: SmartmailAI.Tests\SmartmailAI.Tests.csproj
 
     steps:
-
       # Checkout
       - name: Checkout
         uses: actions/checkout@v5
