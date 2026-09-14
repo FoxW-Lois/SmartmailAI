@@ -124,13 +124,13 @@
     <value>SmartmailAI App (Debug)</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Mailbox project including AI tools for the Startup&amp;IT module in E5; with WinUI 3 and .NET 9.</value>
+    <value>Mailbox project including AI tools for the Startup&amp;IT module in E5; with WinUI 3 and .NET 10.</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About</value>
   </data>
   <data name="Settings_AboutApp_Expander.Description" xml:space="preserve">
-    <value>Mailbox project including AI tools for the Startup&amp;IT module in E5; with WinUI 3 and .NET 9.</value>
+    <value>Mailbox project including AI tools for the Startup&amp;IT module in E5; with WinUI 3 and .NET 10.</value>
   </data>
   <data name="Settings_Appearance.Text" xml:space="preserve">
     <value>Apperance</value>

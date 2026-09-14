@@ -124,13 +124,13 @@
     <value>SmartmailAI App (Debug)</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Projet de Boîte mail incluant des outils d'IA pour le module Startup&amp;IT en E5 ; avec WinUI 3 et .NET 9.</value>
+    <value>Projet de Boîte mail incluant des outils d'IA pour le module Startup&amp;IT en E5 ; avec WinUI 3 et .NET 10.</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>À propos</value>
   </data>
   <data name="Settings_AboutApp_Expander.Description" xml:space="preserve">
-    <value>Projet de Boîte mail incluant des outils d'IA pour le module Startup&amp;IT en E5 ; avec WinUI 3 et .NET 9.</value>
+    <value>Projet de Boîte mail incluant des outils d'IA pour le module Startup&amp;IT en E5 ; avec WinUI 3 et .NET 10.</value>
   </data>
   <data name="Settings_Appearance.Text" xml:space="preserve">
     <value>Apparence</value>
